@@ -3,6 +3,7 @@ import React, { useCallback, useState } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import { Country } from './countries/Country'
 import { al } from './countries/al'
+import { de } from './countries/de'
 import { ps } from './countries/ps'
 import { se } from './countries/se'
 import { sy } from './countries/sy'
@@ -10,7 +11,7 @@ import { tn } from './countries/tn'
 import { tr } from './countries/tr'
 
 function App() {
-	const COUNTRIES: Country[] = [al, ps, se, sy, tn, tr]
+	const COUNTRIES: Country[] = [al, de, ps, se, sy, tn, tr]
 	// language of the spoken country name
 	const LANG = 'en'
 	const [spokenName, setSpokenName] = useState('')
