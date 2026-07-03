@@ -72,3 +72,18 @@ button:active {
 .button-flag {
 	background-color: var(--flag-bg);
 }
+
+.language-select {
+	position: fixed;
+	top: 10px;
+	right: 125px;
+	padding: 6px 10px;
+	border-radius: 6px;
+	border: 1px solid var(--border);
+	font-family: inherit;
+	font-size: 16px;
+	cursor: pointer;
+	z-index: 1000;
+	background-color: var(--button-bg);
+	color: var(--button-fg);
+}

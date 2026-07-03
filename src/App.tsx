@@ -15,8 +15,12 @@ import { us } from './countries/us'
 
 function App() {
 	const COUNTRIES: Country[] = [al, de, ps, pt, se, sy, tn, tr, us]
+	const LANGUAGES: { code: Language, display: string }[] = [
+		{ code: 'ar', display: 'Arabic' },
+		{ code: 'en', display: 'English' },
+	]
 	// language of the displayed and spoken country name
-	const LANG: Language = 'en'
+	const [lang, setLang] = useState<Language>('en')
 	const [spokenName, setSpokenName] = useState('')
 
 	async function getAudio(audioUrl: string) {
@@ -63,7 +67,7 @@ function App() {
 	async function cacheAllAudioFiles() {
 		console.time('cacheAllAudioFiles')
 		try {
-			const audioUrls = COUNTRIES.map(c => `/sounds/${LANG}/${c.code}.aac`)
+			const audioUrls = LANGUAGES.flatMap(l => COUNTRIES.map(c => `/sounds/${l.code}/${c.code}.aac`))
 
 			await Promise.all([
 				caches.delete('audio-cache'),
@@ -102,7 +106,7 @@ function App() {
 
 	const playSound = useCallback(async (code: string) => {
 		try {
-			const audioUrl = `/sounds/${LANG}/${code}.aac`
+			const audioUrl = `/sounds/${lang}/${code}.aac`
 			const response = await getAudio(audioUrl)
 			const blob = await response.blob()
 			const objectUrl = URL.createObjectURL(blob)
@@ -111,11 +115,24 @@ function App() {
 		} catch (e) {
 			console.error(e)
 		}
-	}, [])
+	}, [lang])
 
 	const pageTitle = 'Flags Web'
 	return (
 		<div className="Flags">
+			<select
+				className="language-select"
+				title="Language of the country name"
+				value={lang}
+				onChange={(e) => {
+					setLang(e.target.value as Language)
+					setSpokenName('')
+				}}
+			>
+				{LANGUAGES.map(l => (
+					<option key={`lang-${l.code}`} value={l.code}>{l.display}</option>
+				))}
+			</select>
 			<ThemeToggle/>
 			<h1
 				onDoubleClick={() => {
@@ -134,10 +151,10 @@ function App() {
 					<button
 						key={`country-${c.code}`}
 						className="button-flag"
-						title={c.name[LANG]}
+						title={c.name[lang]}
 						onClick={() => {
 							playSound(c.code)
-							setSpokenName(c.name[LANG])
+							setSpokenName(c.name[lang])
 						}}
 					>
 						{c.flag}
