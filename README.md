@@ -2,24 +2,41 @@
 # Flags
 
 Small react project to show country flags (as emoji) and pronounce the country
-name out loud. Sister project of [Arqaam](https://github.com/amerharb/arqaam).
+name out loud in the selected language, or play the national anthem.
+Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 
 ## Countries supported
+- Albania 🇦🇱
+- Germany 🇩🇪
 - Palestine 🇵🇸
+- Portugal 🇵🇹
+- Sweden 🇸🇪
 - Syria 🇸🇾
+- Tunisia 🇹🇳
+- Turkey 🇹🇷
+- United States of America 🇺🇸
 - We are looking for more countries, see How to contribute
 
 ## Languages supported
-- English (for the spoken country name)
+- Arabic
+- English
+- German
+- Swedish
+- National Anthem (fictional language code `xa`: shows the anthem title in its
+  native language and plays the anthem itself)
 
 ## How it works
-Click a flag to hear the country's name spoken. Double-click the title to
-pre-download and cache all the audio files for offline use.
+Pick a language from the dropdown in the top right, then click a flag to hear
+the country's name spoken (or its anthem played) and see it written.
+
+- Theme toggle: system / light / dark mode, remembered between visits.
+- Double-click the title to pre-download and cache all the audio files for
+  offline use.
 
 ## How to contribute
 ### Media files
-All that is needed to support a new country is 1 sound file in AAC format with
-the spoken country name in English.
+To support a new country, one sound file in AAC format is needed per language,
+with the spoken country name (or the anthem for `xa`).
 
 Audio files live under `public/sounds/<lang>/<country-code>.aac`, for example
 `public/sounds/en/ps.aac` for Palestine in English.
@@ -29,9 +46,16 @@ Flags is an open source project built on Vite, React 19, TypeScript v6.x
 and npm. All the code is Frontend, no backend needed.
 
 To add a country:
-1. Create `src/countries/<code>.ts` exporting a `Country` (`code`, `name`, `flag`).
+1. Create `src/countries/<code>.ts` exporting a `Country` (`code`, `name`, `flag`)
+   with the name in every supported language.
 2. Import it and add it to the `COUNTRIES` array in `src/App.tsx`.
-3. Drop the audio file at `public/sounds/en/<code>.aac`.
+3. Drop the audio files at `public/sounds/<lang>/<code>.aac`.
+
+To add a language:
+1. Add its code to the `Language` type in `src/countries/Country.ts` —
+   TypeScript will then point out every country file missing the new name.
+2. Add it to the `LANGUAGES` array in `src/App.tsx`.
+3. Drop the audio files at `public/sounds/<lang>/<code>.aac`.
 
 #### Setup environment
 - Node 20.19 or above
