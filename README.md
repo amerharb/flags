@@ -25,7 +25,7 @@ Audio files live under `public/sounds/<lang>/<country-code>.aac`, for example
 `public/sounds/en/ps.aac` for Palestine in English.
 
 ### Coding
-Flags is an open source project built on Create React App, TypeScript v4.9.x
+Flags is an open source project built on Vite, React 19, TypeScript v6.x
 and npm. All the code is Frontend, no backend needed.
 
 To add a country:
@@ -34,11 +34,12 @@ To add a country:
 3. Drop the audio file at `public/sounds/en/<code>.aac`.
 
 #### Setup environment
-- Node 18.x or above
+- Node 20.19 or above
 - npm 9.x or above
 - Install `npm install`
-- Build: `npm run build`
-- Start: `npm start`
+- Build: `npm run build` (output in `dist/`)
+- Start dev server: `npm start`
+- Preview production build: `npm run preview`
 
 ### Deploying
 Once a PR is merged to the main branch it is automatically deployed using the
