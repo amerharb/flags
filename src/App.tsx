@@ -18,6 +18,7 @@ function App() {
 	const LANGUAGES: { code: Language, display: string }[] = [
 		{ code: 'ar', display: 'Arabic' },
 		{ code: 'en', display: 'English' },
+		{ code: 'de', display: 'German' },
 	]
 	// language of the displayed and spoken country name
 	const [lang, setLang] = useState<Language>('en')

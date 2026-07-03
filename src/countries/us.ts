@@ -5,6 +5,7 @@ export const us: Country = {
 	name: {
 		en: 'United States of America',
 		ar: 'الولايات المتحدة الأمريكية',
+		de: 'Vereinigte Staaten von Amerika',
 	},
 	flag: '🇺🇸',
 }

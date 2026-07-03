@@ -5,6 +5,7 @@ export const pt: Country = {
 	name: {
 		en: 'Portugal',
 		ar: 'البرتغال',
+		de: 'Portugal',
 	},
 	flag: '🇵🇹',
 }

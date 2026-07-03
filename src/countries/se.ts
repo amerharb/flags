@@ -5,6 +5,7 @@ export const se: Country = {
 	name: {
 		en: 'Sweden',
 		ar: 'السويد',
+		de: 'Schweden',
 	},
 	flag: '🇸🇪',
 }

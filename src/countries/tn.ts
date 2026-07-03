@@ -5,6 +5,7 @@ export const tn: Country = {
 	name: {
 		en: 'Tunisia',
 		ar: 'تونس',
+		de: 'Tunesien',
 	},
 	flag: '🇹🇳',
 }

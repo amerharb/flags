@@ -5,6 +5,7 @@ export const sy: Country = {
 	name: {
 		en: 'Syria',
 		ar: 'سوريا',
+		de: 'Syrien',
 	},
 	flag: '🇸🇾',
 }

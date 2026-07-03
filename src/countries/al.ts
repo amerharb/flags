@@ -5,6 +5,7 @@ export const al: Country = {
 	name: {
 		en: 'Albania',
 		ar: 'ألبانيا',
+		de: 'Albanien',
 	},
 	flag: '🇦🇱',
 }
