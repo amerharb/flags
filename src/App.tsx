@@ -1,6 +1,7 @@
 import './App.css'
 import React, { useCallback, useState } from 'react'
 import { Analytics } from '@vercel/analytics/react'
+import ThemeToggle from './ThemeToggle'
 import { Country } from './countries/Country'
 import { al } from './countries/al'
 import { de } from './countries/de'
@@ -115,6 +116,7 @@ function App() {
 	const pageTitle = 'Flags Web'
 	return (
 		<div className="Flags">
+			<ThemeToggle/>
 			<h1
 				onDoubleClick={() => {
 					const h1 = document.querySelector('h1')

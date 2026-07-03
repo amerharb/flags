@@ -1,3 +1,28 @@
+/*
+ * Color theming. Colors resolve via CSS `light-dark()`, driven by `color-scheme`.
+ * Default `color-scheme: light dark` follows the OS; the theme toggle overrides it
+ * by setting `data-theme` on <html> (see ThemeToggle + the init script in index.html).
+ */
+:root {
+	color-scheme: light dark;
+
+	--bg: light-dark(#ffffff, #121212);
+	--fg: light-dark(#1a1a1a, #e6e6e6);
+	--border: light-dark(#cccccc, #3a3a3a);
+	--surface-hover: light-dark(#ececec, #2c2c2c);
+	--button-bg: light-dark(#f0f0f0, #2a2a2a);
+	--button-fg: light-dark(#1a1a1a, #e6e6e6);
+	--flag-bg: light-dark(lightsteelblue, #3a4d6b);
+}
+
+:root[data-theme='light'] {
+	color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+	color-scheme: dark;
+}
+
 * {
 	user-select: none;
 }
@@ -9,6 +34,8 @@ body {
 	sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	background-color: var(--bg);
+	color: var(--fg);
 }
 
 h1 {
@@ -22,13 +49,19 @@ button {
 	font-family: inherit;
 	font-size: 60px;
 	border-radius: 0.45rem;
-	border: none;
+	border: 1px solid var(--border);
 	cursor: pointer;
 	padding: 15px 15px;
 	text-align: center;
 	text-decoration: none;
 	margin: 10px;
 	align-content: center;
+	background-color: var(--button-bg);
+	color: var(--button-fg);
+}
+
+button:hover {
+	background-color: var(--surface-hover);
 }
 
 button:active {
@@ -37,5 +70,5 @@ button:active {
 }
 
 .button-flag {
-	background-color: lightsteelblue;
+	background-color: var(--flag-bg);
 }
