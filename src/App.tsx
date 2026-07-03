@@ -1,5 +1,5 @@
 import './App.css'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import ThemeToggle from './ThemeToggle'
 import { Country, Language } from './countries/Country'
@@ -25,6 +25,8 @@ function App() {
 	// language of the displayed and spoken country name
 	const [lang, setLang] = useState<Language>('en')
 	const [spokenName, setSpokenName] = useState('')
+	// the sound currently playing, so starting a new one can stop it first
+	const playingAudio = useRef<HTMLAudioElement | null>(null)
 
 	async function getAudio(audioUrl: string) {
 		const TTL = 1000 * 60 * 60 * 24 * 7 // 7 days
@@ -113,7 +115,13 @@ function App() {
 			const response = await getAudio(audioUrl)
 			const blob = await response.blob()
 			const objectUrl = URL.createObjectURL(blob)
+			if (playingAudio.current) {
+				playingAudio.current.pause()
+				URL.revokeObjectURL(playingAudio.current.src)
+			}
 			const audio = new Audio(objectUrl)
+			audio.onended = () => URL.revokeObjectURL(objectUrl)
+			playingAudio.current = audio
 			await audio.play()
 		} catch (e) {
 			console.error(e)
