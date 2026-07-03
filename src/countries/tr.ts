@@ -2,6 +2,9 @@ import { Country } from './Country'
 
 export const tr: Country = {
 	code: 'tr',
-	name: 'Turkey',
+	name: {
+		en: 'Turkey',
+		ar: 'تركيا',
+	},
 	flag: '🇹🇷',
 }

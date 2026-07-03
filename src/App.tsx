@@ -15,8 +15,8 @@ import { us } from './countries/us'
 
 function App() {
 	const COUNTRIES: Country[] = [al, de, ps, pt, se, sy, tn, tr, us]
-	// language of the spoken country name
-	const LANG = 'en'
+	// language of the displayed and spoken country name
+	const LANG: keyof Country['name'] = 'en'
 	const [spokenName, setSpokenName] = useState('')
 
 	async function getAudio(audioUrl: string) {
@@ -134,10 +134,10 @@ function App() {
 					<button
 						key={`country-${c.code}`}
 						className="button-flag"
-						title={c.name}
+						title={c.name[LANG]}
 						onClick={() => {
 							playSound(c.code)
-							setSpokenName(c.name)
+							setSpokenName(c.name[LANG])
 						}}
 					>
 						{c.flag}

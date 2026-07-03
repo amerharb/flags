@@ -2,6 +2,9 @@ import { Country } from './Country'
 
 export const us: Country = {
 	code: 'us',
-	name: 'United States of America',
+	name: {
+		en: 'United States of America',
+		ar: 'الولايات المتحدة الأمريكية',
+	},
 	flag: '🇺🇸',
 }

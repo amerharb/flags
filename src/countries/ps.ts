@@ -2,6 +2,9 @@ import { Country } from './Country'
 
 export const ps: Country = {
 	code: 'ps',
-	name: 'Palestine',
+	name: {
+		en: 'Palestine',
+		ar: 'فلسطين',
+	},
 	flag: '🇵🇸',
 }
