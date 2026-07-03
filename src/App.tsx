@@ -5,6 +5,7 @@ import { Country } from './countries/Country'
 import { al } from './countries/al'
 import { de } from './countries/de'
 import { ps } from './countries/ps'
+import { pt } from './countries/pt'
 import { se } from './countries/se'
 import { sy } from './countries/sy'
 import { tn } from './countries/tn'
@@ -12,7 +13,7 @@ import { tr } from './countries/tr'
 import { us } from './countries/us'
 
 function App() {
-	const COUNTRIES: Country[] = [al, de, ps, se, sy, tn, tr, us]
+	const COUNTRIES: Country[] = [al, de, ps, pt, se, sy, tn, tr, us]
 	// language of the spoken country name
 	const LANG = 'en'
 	const [spokenName, setSpokenName] = useState('')
