@@ -27,6 +27,8 @@ function App() {
 	const [spokenName, setSpokenName] = useState('')
 	// the sound currently playing, so starting a new one can stop it first
 	const playingAudio = useRef<HTMLAudioElement | null>(null)
+	// code of the country whose sound is playing, to show the play icon on its button
+	const [playingCode, setPlayingCode] = useState<string | null>(null)
 
 	async function getAudio(audioUrl: string) {
 		const TTL = 1000 * 60 * 60 * 24 * 7 // 7 days
@@ -120,13 +122,26 @@ function App() {
 				URL.revokeObjectURL(playingAudio.current.src)
 			}
 			const audio = new Audio(objectUrl)
-			audio.onended = () => URL.revokeObjectURL(objectUrl)
+			audio.onended = () => {
+				URL.revokeObjectURL(objectUrl)
+				setPlayingCode(null)
+			}
 			playingAudio.current = audio
 			await audio.play()
+			setPlayingCode(code)
 		} catch (e) {
 			console.error(e)
 		}
 	}, [lang])
+
+	const stopSound = useCallback(() => {
+		if (playingAudio.current) {
+			playingAudio.current.pause()
+			URL.revokeObjectURL(playingAudio.current.src)
+			playingAudio.current = null
+		}
+		setPlayingCode(null)
+	}, [])
 
 	const pageTitle = 'Flags Web'
 	return (
@@ -138,6 +153,7 @@ function App() {
 				onChange={(e) => {
 					setLang(e.target.value as Language)
 					setSpokenName('')
+					stopSound()
 				}}
 			>
 				{LANGUAGES.map(l => (
@@ -161,14 +177,19 @@ function App() {
 				{COUNTRIES.map(c => (
 					<button
 						key={`country-${c.code}`}
-						className="button-flag"
+						className={playingCode === c.code ? 'button-flag playing' : 'button-flag'}
 						title={c.name[lang]}
 						onClick={() => {
-							playSound(c.code)
-							setSpokenName(c.name[lang])
+							if (playingCode === c.code) {
+								stopSound()
+							} else {
+								playSound(c.code)
+								setSpokenName(c.name[lang])
+							}
 						}}
 					>
 						{c.flag}
+						{playingCode === c.code && <span className="play-icon">▶</span>}
 					</button>
 				))}
 			</hgroup>
