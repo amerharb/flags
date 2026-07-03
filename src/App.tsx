@@ -2,7 +2,7 @@ import './App.css'
 import React, { useCallback, useState } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import ThemeToggle from './ThemeToggle'
-import { Country } from './countries/Country'
+import { Country, Language } from './countries/Country'
 import { al } from './countries/al'
 import { de } from './countries/de'
 import { ps } from './countries/ps'
@@ -16,7 +16,7 @@ import { us } from './countries/us'
 function App() {
 	const COUNTRIES: Country[] = [al, de, ps, pt, se, sy, tn, tr, us]
 	// language of the displayed and spoken country name
-	const LANG: keyof Country['name'] = 'en'
+	const LANG: Language = 'en'
 	const [spokenName, setSpokenName] = useState('')
 
 	async function getAudio(audioUrl: string) {
