@@ -4,11 +4,12 @@ import { Analytics } from '@vercel/analytics/react'
 import { Country } from './countries/Country'
 import { al } from './countries/al'
 import { ps } from './countries/ps'
+import { se } from './countries/se'
 import { sy } from './countries/sy'
 import { tr } from './countries/tr'
 
 function App() {
-	const COUNTRIES: Country[] = [al, ps, sy, tr]
+	const COUNTRIES: Country[] = [al, ps, se, sy, tr]
 	// language of the spoken country name
 	const LANG = 'en'
 	const [spokenName, setSpokenName] = useState('')
