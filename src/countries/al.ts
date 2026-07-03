@@ -7,6 +7,7 @@ export const al: Country = {
 		ar: 'ألبانيا',
 		de: 'Albanien',
 		sv: 'Albanien',
+		xa: 'Himni i Flamurit',
 	},
 	flag: '🇦🇱',
 }

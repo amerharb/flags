@@ -7,6 +7,7 @@ export const ps: Country = {
 		ar: 'فلسطين',
 		de: 'Palästina',
 		sv: 'Palestina',
+		xa: 'فدائي',
 	},
 	flag: '🇵🇸',
 }

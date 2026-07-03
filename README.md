@@ -44,3 +44,11 @@ To add a country:
 ### Deploying
 Once a PR is merged to the main branch it is automatically deployed using the
 Vercel integration tool with GitHub.
+
+## Credits
+### For sound
+- Country name pronunciations: macOS text-to-speech (Samantha for English,
+  Majed for Arabic, Anna for German, Alva for Swedish)
+- National anthem recordings: [Wikimedia Commons](https://commons.wikimedia.org/)
+  public-domain uploads, including performances by the United States Navy Band
+  and the USAREUR Band

@@ -20,6 +20,7 @@ function App() {
 		{ code: 'en', display: 'English' },
 		{ code: 'de', display: 'German' },
 		{ code: 'sv', display: 'Swedish' },
+		{ code: 'xa', display: 'National Anthem' },
 	]
 	// language of the displayed and spoken country name
 	const [lang, setLang] = useState<Language>('en')
