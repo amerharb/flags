@@ -6,6 +6,7 @@ export const tr: Country = {
 		en: 'Turkey',
 		ar: 'تركيا',
 		de: 'Türkei',
+		sv: 'Turkiet',
 	},
 	flag: '🇹🇷',
 }

@@ -6,6 +6,7 @@ export const pt: Country = {
 		en: 'Portugal',
 		ar: 'البرتغال',
 		de: 'Portugal',
+		sv: 'Portugal',
 	},
 	flag: '🇵🇹',
 }

@@ -6,6 +6,7 @@ export const us: Country = {
 		en: 'United States of America',
 		ar: 'الولايات المتحدة الأمريكية',
 		de: 'Vereinigte Staaten von Amerika',
+		sv: 'Amerikas förenta stater',
 	},
 	flag: '🇺🇸',
 }

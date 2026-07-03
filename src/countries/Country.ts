@@ -1,4 +1,4 @@
-export type Language = 'en' | 'ar' | 'de'
+export type Language = 'en' | 'ar' | 'de' | 'sv'
 
 export type Country = {
     code: string,

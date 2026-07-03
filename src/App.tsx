@@ -19,6 +19,7 @@ function App() {
 		{ code: 'ar', display: 'Arabic' },
 		{ code: 'en', display: 'English' },
 		{ code: 'de', display: 'German' },
+		{ code: 'sv', display: 'Swedish' },
 	]
 	// language of the displayed and spoken country name
 	const [lang, setLang] = useState<Language>('en')

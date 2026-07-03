@@ -6,6 +6,7 @@ export const de: Country = {
 		en: 'Germany',
 		ar: 'ألمانيا',
 		de: 'Deutschland',
+		sv: 'Tyskland',
 	},
 	flag: '🇩🇪',
 }
