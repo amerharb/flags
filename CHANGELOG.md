@@ -14,6 +14,8 @@
 ### Changed
 - Replace Arabic voice with a more natural one, Amany (Microsoft Edge
   neural text-to-speech, Syrian Arabic) instead of macOS Majed
+- Replace English voice with a more natural one, Ava (Microsoft Edge
+  neural text-to-speech, US English) instead of macOS Samantha
 
 ### Fixed
 - Starting a new sound stops the one currently playing instead of
