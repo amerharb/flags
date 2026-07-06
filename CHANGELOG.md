@@ -11,6 +11,10 @@
 - Keep the country button pressed down while its sound is playing
 - Clicking the playing country button again stops the sound
 
+### Changed
+- Replace Arabic voice with a more natural one, Amany (Microsoft Edge
+  neural text-to-speech, Syrian Arabic) instead of macOS Majed
+
 ### Fixed
 - Starting a new sound stops the one currently playing instead of
   playing both at the same time

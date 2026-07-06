@@ -75,8 +75,9 @@ Vercel integration tool with GitHub.
 ## Credits
 ### For sound
 - Country name pronunciations: macOS text-to-speech (Samantha for English,
-  Majed for Arabic, Anna for German, Alva for Swedish, Sara for Danish)
-  and Google Translate text-to-speech for Albanian
+  1Anna for German, Alva for Swedish, Sara for Danish), Microsoft Edge neural
+  text-to-speech for Arabic (Amany, Syrian Arabic), and Google Translate
+  text-to-speech for Albanian
 - National anthem recordings: [Wikimedia Commons](https://commons.wikimedia.org/)
   public-domain uploads, including performances by the United States Navy Band
   and the USAREUR Band
