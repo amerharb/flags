@@ -19,6 +19,7 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 - We are looking for more countries, see How to contribute
 
 ## Languages supported
+- Albanian
 - Arabic
 - Danish
 - English
@@ -75,6 +76,7 @@ Vercel integration tool with GitHub.
 ### For sound
 - Country name pronunciations: macOS text-to-speech (Samantha for English,
   Majed for Arabic, Anna for German, Alva for Swedish, Sara for Danish)
+  and Google Translate text-to-speech for Albanian
 - National anthem recordings: [Wikimedia Commons](https://commons.wikimedia.org/)
   public-domain uploads, including performances by the United States Navy Band
   and the USAREUR Band

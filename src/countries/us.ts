@@ -8,6 +8,7 @@ export const us: Country = {
 		de: 'Vereinigte Staaten von Amerika',
 		sv: 'Amerikas förenta stater',
 		da: 'Amerikas Forenede Stater',
+		sq: 'Shtetet e Bashkuara të Amerikës',
 		xa: 'The Star-Spangled Banner',
 	},
 	flag: '🇺🇸',

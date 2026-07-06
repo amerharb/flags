@@ -6,6 +6,7 @@
 ### Added
 - Add Denmark
 - Add Danish language
+- Add Albanian language
 - Show a play icon on the country button while its sound is playing
 - Keep the country button pressed down while its sound is playing
 - Clicking the playing country button again stops the sound
@@ -13,6 +14,8 @@
 ### Fixed
 - Starting a new sound stops the one currently playing instead of
   playing both at the same time
+- Don't cache failed sound file responses, a missing file no longer
+  poisons the audio cache with a 404 page for a week
 
 ## [0.1.0] 2026-07-03
 ### Added

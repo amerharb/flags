@@ -8,6 +8,7 @@ export const tn: Country = {
 		de: 'Tunesien',
 		sv: 'Tunisien',
 		da: 'Tunesien',
+		sq: 'Tunizia',
 		xa: 'حماة الحمى',
 	},
 	flag: '🇹🇳',

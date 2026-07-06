@@ -8,6 +8,7 @@ export const tr: Country = {
 		de: 'Türkei',
 		sv: 'Turkiet',
 		da: 'Tyrkiet',
+		sq: 'Turqia',
 		xa: 'İstiklal Marşı',
 	},
 	flag: '🇹🇷',

@@ -8,6 +8,7 @@ export const pt: Country = {
 		de: 'Portugal',
 		sv: 'Portugal',
 		da: 'Portugal',
+		sq: 'Portugalia',
 		xa: 'A Portuguesa',
 	},
 	flag: '🇵🇹',

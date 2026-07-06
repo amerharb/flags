@@ -17,6 +17,7 @@ import { us } from './countries/us'
 function App() {
 	const COUNTRIES: Country[] = [al, de, dk, ps, pt, se, sy, tn, tr, us]
 	const LANGUAGES: { code: Language, display: string }[] = [
+		{ code: 'sq', display: 'Albanian' },
 		{ code: 'ar', display: 'Arabic' },
 		{ code: 'da', display: 'Danish' },
 		{ code: 'en', display: 'English' },
@@ -58,8 +59,8 @@ function App() {
 			}
 
 			const response = await fetch(audioUrl)
-			// skip caching if response empty
-			if (!response.headers.get('Content-Length') || response.headers.get('Content-Length') === '0') {
+			// skip caching if response failed or empty, so a 404 page is never cached as audio
+			if (!response.ok || !response.headers.get('Content-Length') || response.headers.get('Content-Length') === '0') {
 				return response
 			}
 
