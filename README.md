@@ -24,7 +24,9 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 - Danish
 - English
 - German
+- Portuguese
 - Swedish
+- Turkish
 - National Anthem (fictional language code `xa`: shows the anthem title in its
   native language and plays the anthem itself)
 
@@ -76,8 +78,8 @@ Vercel integration tool with GitHub.
 ### For sound
 - Country name pronunciations: Microsoft Edge neural text-to-speech for
   English (Ava), Arabic (Amany, Syrian Arabic), German (Katja),
-  Swedish (Sofie) and Danish (Christel), and Google Translate text-to-speech
-  for Albanian
+  Swedish (Sofie), Danish (Christel), Portuguese (Raquel) and Turkish (Emel),
+  and Google Translate text-to-speech for Albanian
 - National anthem recordings: [Wikimedia Commons](https://commons.wikimedia.org/)
   public-domain uploads, including performances by the United States Navy Band
   and the USAREUR Band

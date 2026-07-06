@@ -22,7 +22,9 @@ function App() {
 		{ code: 'da', display: 'Danish' },
 		{ code: 'en', display: 'English' },
 		{ code: 'de', display: 'German' },
+		{ code: 'pt', display: 'Portuguese' },
 		{ code: 'sv', display: 'Swedish' },
+		{ code: 'tr', display: 'Turkish' },
 		{ code: 'xa', display: 'National Anthem' },
 	]
 	// language of the displayed and spoken country name

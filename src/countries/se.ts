@@ -9,6 +9,8 @@ export const se: Country = {
 		sv: 'Sverige',
 		da: 'Sverige',
 		sq: 'Suedia',
+		pt: 'Suécia',
+		tr: 'İsveç',
 		xa: 'Du gamla, du fria',
 	},
 	flag: '🇸🇪',

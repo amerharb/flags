@@ -9,6 +9,8 @@ export const al: Country = {
 		sv: 'Albanien',
 		da: 'Albanien',
 		sq: 'Shqipëria',
+		pt: 'Albânia',
+		tr: 'Arnavutluk',
 		xa: 'Himni i Flamurit',
 	},
 	flag: '🇦🇱',
