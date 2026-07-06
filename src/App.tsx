@@ -5,6 +5,7 @@ import ThemeToggle from './ThemeToggle'
 import { Country, Language } from './countries/Country'
 import { al } from './countries/al'
 import { de } from './countries/de'
+import { dk } from './countries/dk'
 import { ps } from './countries/ps'
 import { pt } from './countries/pt'
 import { se } from './countries/se'
@@ -14,7 +15,7 @@ import { tr } from './countries/tr'
 import { us } from './countries/us'
 
 function App() {
-	const COUNTRIES: Country[] = [al, de, ps, pt, se, sy, tn, tr, us]
+	const COUNTRIES: Country[] = [al, de, dk, ps, pt, se, sy, tn, tr, us]
 	const LANGUAGES: { code: Language, display: string }[] = [
 		{ code: 'ar', display: 'Arabic' },
 		{ code: 'en', display: 'English' },

@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](https://github.com/amerharb/flags)
+[![Version](https://img.shields.io/badge/version-0.10.0-blue.svg)](https://github.com/amerharb/flags)
 # Flags
 
 Small react project to show country flags (as emoji) and pronounce the country
@@ -7,6 +7,7 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 
 ## Countries supported
 - Albania 🇦🇱
+- Denmark 🇩🇰
 - Germany 🇩🇪
 - Palestine 🇵🇸
 - Portugal 🇵🇹
