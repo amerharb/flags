@@ -2,9 +2,10 @@
 
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
-## [0.10.0] 2026-07-05
+## [0.10.0] 2026-07-06
 ### Added
 - Add Denmark
+- Add Danish language
 - Show a play icon on the country button while its sound is playing
 - Keep the country button pressed down while its sound is playing
 - Clicking the playing country button again stops the sound

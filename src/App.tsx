@@ -18,6 +18,7 @@ function App() {
 	const COUNTRIES: Country[] = [al, de, dk, ps, pt, se, sy, tn, tr, us]
 	const LANGUAGES: { code: Language, display: string }[] = [
 		{ code: 'ar', display: 'Arabic' },
+		{ code: 'da', display: 'Danish' },
 		{ code: 'en', display: 'English' },
 		{ code: 'de', display: 'German' },
 		{ code: 'sv', display: 'Swedish' },

@@ -20,6 +20,7 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 
 ## Languages supported
 - Arabic
+- Danish
 - English
 - German
 - Swedish
@@ -73,7 +74,7 @@ Vercel integration tool with GitHub.
 ## Credits
 ### For sound
 - Country name pronunciations: macOS text-to-speech (Samantha for English,
-  Majed for Arabic, Anna for German, Alva for Swedish)
+  Majed for Arabic, Anna for German, Alva for Swedish, Sara for Danish)
 - National anthem recordings: [Wikimedia Commons](https://commons.wikimedia.org/)
   public-domain uploads, including performances by the United States Navy Band
   and the USAREUR Band

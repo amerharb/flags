@@ -7,6 +7,7 @@ export const sy: Country = {
 		ar: 'سوريا',
 		de: 'Syrien',
 		sv: 'Syrien',
+		da: 'Syrien',
 		xa: 'حماة الديار',
 	},
 	flag: '🇸🇾',
