@@ -16,6 +16,8 @@
   neural text-to-speech, Syrian Arabic) instead of macOS Majed
 - Replace English voice with a more natural one, Ava (Microsoft Edge
   neural text-to-speech, US English) instead of macOS Samantha
+- Replace German, Swedish and Danish voices with more natural Microsoft
+  Edge neural ones (Katja, Sofie, Christel) instead of macOS Anna, Alva, Sara
 
 ### Fixed
 - Starting a new sound stops the one currently playing instead of
