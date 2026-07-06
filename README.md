@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](https://github.com/amerharb/flags)
+[![Version](https://img.shields.io/badge/version-0.10.0-blue.svg)](https://github.com/amerharb/flags)
 # Flags
 
 Small react project to show country flags (as emoji) and pronounce the country
@@ -7,6 +7,7 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 
 ## Countries supported
 - Albania 🇦🇱
+- Denmark 🇩🇰
 - Germany 🇩🇪
 - Palestine 🇵🇸
 - Portugal 🇵🇹
@@ -18,10 +19,14 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 - We are looking for more countries, see How to contribute
 
 ## Languages supported
+- Albanian
 - Arabic
+- Danish
 - English
 - German
+- Portuguese
 - Swedish
+- Turkish
 - National Anthem (fictional language code `xa`: shows the anthem title in its
   native language and plays the anthem itself)
 
@@ -71,8 +76,10 @@ Vercel integration tool with GitHub.
 
 ## Credits
 ### For sound
-- Country name pronunciations: macOS text-to-speech (Samantha for English,
-  Majed for Arabic, Anna for German, Alva for Swedish)
+- Country name pronunciations: Microsoft Edge neural text-to-speech for
+  English (Ava), Arabic (Amany, Syrian Arabic), German (Katja),
+  Swedish (Sofie), Danish (Christel), Portuguese (Raquel) and Turkish (Emel),
+  and Google Translate text-to-speech for Albanian
 - National anthem recordings: [Wikimedia Commons](https://commons.wikimedia.org/)
   public-domain uploads, including performances by the United States Navy Band
   and the USAREUR Band

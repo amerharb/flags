@@ -5,6 +5,7 @@ import ThemeToggle from './ThemeToggle'
 import { Country, Language } from './countries/Country'
 import { al } from './countries/al'
 import { de } from './countries/de'
+import { dk } from './countries/dk'
 import { ps } from './countries/ps'
 import { pt } from './countries/pt'
 import { se } from './countries/se'
@@ -14,12 +15,16 @@ import { tr } from './countries/tr'
 import { us } from './countries/us'
 
 function App() {
-	const COUNTRIES: Country[] = [al, de, ps, pt, se, sy, tn, tr, us]
+	const COUNTRIES: Country[] = [al, de, dk, ps, pt, se, sy, tn, tr, us]
 	const LANGUAGES: { code: Language, display: string }[] = [
+		{ code: 'sq', display: 'Albanian' },
 		{ code: 'ar', display: 'Arabic' },
+		{ code: 'da', display: 'Danish' },
 		{ code: 'en', display: 'English' },
 		{ code: 'de', display: 'German' },
+		{ code: 'pt', display: 'Portuguese' },
 		{ code: 'sv', display: 'Swedish' },
+		{ code: 'tr', display: 'Turkish' },
 		{ code: 'xa', display: 'National Anthem' },
 	]
 	// language of the displayed and spoken country name
@@ -56,8 +61,8 @@ function App() {
 			}
 
 			const response = await fetch(audioUrl)
-			// skip caching if response empty
-			if (!response.headers.get('Content-Length') || response.headers.get('Content-Length') === '0') {
+			// skip caching if response failed or empty, so a 404 page is never cached as audio
+			if (!response.ok || !response.headers.get('Content-Length') || response.headers.get('Content-Length') === '0') {
 				return response
 			}
 
@@ -72,6 +77,11 @@ function App() {
 	}
 
 	async function cacheAllAudioFiles() {
+		// Some browsers like Safari disable Cache Storage in lockdown mode
+		if (!('caches' in window)) {
+			console.warn('Cache Storage API not available; skipping offline cache')
+			return
+		}
 		console.time('cacheAllAudioFiles')
 		try {
 			const audioUrls = LANGUAGES.flatMap(l => COUNTRIES.map(c => `/sounds/${l.code}/${c.code}.aac`))
