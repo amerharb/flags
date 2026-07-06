@@ -77,6 +77,11 @@ function App() {
 	}
 
 	async function cacheAllAudioFiles() {
+		// Some browsers like Safari disable Cache Storage in lockdown mode
+		if (!('caches' in window)) {
+			console.warn('Cache Storage API not available; skipping offline cache')
+			return
+		}
 		console.time('cacheAllAudioFiles')
 		try {
 			const audioUrls = LANGUAGES.flatMap(l => COUNTRIES.map(c => `/sounds/${l.code}/${c.code}.aac`))
