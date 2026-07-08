@@ -11,6 +11,7 @@ export const sy: Country = {
 		sq: 'Siria',
 		pt: 'Síria',
 		tr: 'Suriye',
+		fa: 'سوریه',
 		xa: 'حماة الديار',
 		xt: 'حماة الديار',
 	},

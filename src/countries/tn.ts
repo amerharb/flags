@@ -11,6 +11,7 @@ export const tn: Country = {
 		sq: 'Tunizia',
 		pt: 'Tunísia',
 		tr: 'Tunus',
+		fa: 'تونس',
 		xa: 'حماة الحمى',
 		xt: 'حماة الحمى',
 	},

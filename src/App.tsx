@@ -7,6 +7,7 @@ import { isVisible } from './featureFlags'
 import { al } from './countries/al'
 import { de } from './countries/de'
 import { dk } from './countries/dk'
+import { ir } from './countries/ir'
 import { ps } from './countries/ps'
 import { pt } from './countries/pt'
 import { se } from './countries/se'
@@ -16,13 +17,14 @@ import { tr } from './countries/tr'
 import { us } from './countries/us'
 
 function App() {
-	const COUNTRIES: Country[] = [al, de, dk, ps, pt, se, sy, tn, tr, us].filter(isVisible)
+	const COUNTRIES: Country[] = [al, de, dk, ir, ps, pt, se, sy, tn, tr, us].filter(isVisible)
 	const ALL_LANGUAGES: { code: Language, display: string, beta?: boolean }[] = [
 		{ code: 'sq', display: 'Albanian' },
 		{ code: 'ar', display: 'Arabic' },
 		{ code: 'da', display: 'Danish' },
 		{ code: 'en', display: 'English' },
 		{ code: 'de', display: 'German' },
+		{ code: 'fa', display: 'Persian' },
 		{ code: 'pt', display: 'Portuguese' },
 		{ code: 'sv', display: 'Swedish' },
 		{ code: 'tr', display: 'Turkish' },
@@ -40,7 +42,7 @@ function App() {
 
 	async function getAudio(audioUrl: string) {
 		const TTL = 1000 * 60 * 60 * 24 * 7 // 7 days
-		if ('caches' in window) {
+		if ('caches' in globalThis) {
 			const audioCache = await caches.open('audio-cache')
 			const audioCacheTimestamps = await caches.open('audio-cache-timestamps')
 			const cachedResponse = await audioCache.match(audioUrl)
@@ -54,8 +56,8 @@ function App() {
 
 					if (currentTime - cachedTime > TTL) {
 						await Promise.all([
-							await audioCache.delete(audioUrl),
-							await audioCacheTimestamps.delete(audioUrl),
+							audioCache.delete(audioUrl),
+							audioCacheTimestamps.delete(audioUrl),
 						])
 					} else {
 						return cachedResponse
@@ -81,7 +83,7 @@ function App() {
 
 	async function cacheAllAudioFiles() {
 		// Some browsers like Safari disable Cache Storage in lockdown mode
-		if (!('caches' in window)) {
+		if (!('caches' in globalThis)) {
 			console.warn('Cache Storage API not available; skipping offline cache')
 			return
 		}

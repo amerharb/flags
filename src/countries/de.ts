@@ -11,6 +11,7 @@ export const de: Country = {
 		sq: 'Gjermania',
 		pt: 'Alemanha',
 		tr: 'Almanya',
+		fa: 'آلمان',
 		xa: 'Das Lied der Deutschen',
 		xt: 'Das Lied der Deutschen',
 	},

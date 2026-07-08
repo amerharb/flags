@@ -11,6 +11,7 @@ export const al: Country = {
 		sq: 'Shqipëria',
 		pt: 'Albânia',
 		tr: 'Arnavutluk',
+		fa: 'آلبانی',
 		xa: 'Himni i Flamurit',
 		xt: 'Himni i Flamurit',
 	},

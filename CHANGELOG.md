@@ -6,6 +6,10 @@
 ### Added
 - Add 🎹 language (code `xt`): plays a pure-tone rendering of each anthem's
   main melody notes, synthesized from public-domain MIDI transcriptions
+- Add Iran
+- Add Persian language
+- Add a feature flag (`beta`) to hide unfinished countries/languages from
+  production builds while keeping them visible in development
 
 ### Fixed
 - Don't crash in Safari when the Cache Storage API is unavailable (e.g. over

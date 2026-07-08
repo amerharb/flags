@@ -11,6 +11,7 @@ export const se: Country = {
 		sq: 'Suedia',
 		pt: 'Suécia',
 		tr: 'İsveç',
+		fa: 'سوئد',
 		xa: 'Du gamla, du fria',
 		xt: 'Du gamla, du fria',
 	},

@@ -9,6 +9,7 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 - Albania 🇦🇱
 - Denmark 🇩🇰
 - Germany 🇩🇪
+- Iran 🇮🇷
 - Palestine 🇵🇸
 - Portugal 🇵🇹
 - Sweden 🇸🇪
@@ -24,6 +25,7 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 - Danish
 - English
 - German
+- Persian
 - Portuguese
 - Swedish
 - Turkish
@@ -80,8 +82,8 @@ Vercel integration tool with GitHub.
 ### For sound
 - Country name pronunciations: Microsoft Edge neural text-to-speech for
   English (Ava), Arabic (Amany, Syrian Arabic), German (Katja),
-  Swedish (Sofie), Danish (Christel), Portuguese (Raquel) and Turkish (Emel),
-  and Google Translate text-to-speech for Albanian
+  Swedish (Sofie), Danish (Christel), Portuguese (Raquel), Turkish (Emel) and
+  Persian (Dilara), and Google Translate text-to-speech for Albanian
 - National anthem recordings: [Wikimedia Commons](https://commons.wikimedia.org/)
   public-domain uploads, including performances by the United States Navy Band
   and the USAREUR Band
