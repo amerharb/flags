@@ -14,10 +14,11 @@ import { se } from './countries/se'
 import { sy } from './countries/sy'
 import { tn } from './countries/tn'
 import { tr } from './countries/tr'
+import { ua } from './countries/ua'
 import { us } from './countries/us'
 
 function App() {
-	const COUNTRIES: Country[] = [al, de, dk, ir, ps, pt, se, sy, tn, tr, us].filter(isVisible)
+	const COUNTRIES: Country[] = [al, de, dk, ir, ps, pt, se, sy, tn, tr, ua, us].filter(isVisible)
 	const ALL_LANGUAGES: { code: Language, display: string, beta?: boolean }[] = [
 		{ code: 'sq', display: 'Albanian' },
 		{ code: 'ar', display: 'Arabic' },
@@ -28,6 +29,7 @@ function App() {
 		{ code: 'pt', display: 'Portuguese' },
 		{ code: 'sv', display: 'Swedish' },
 		{ code: 'tr', display: 'Turkish' },
+		{ code: 'uk', display: 'Ukrainian' },
 		{ code: 'xa', display: 'National Anthem' },
 		{ code: 'xt', display: '🎹', beta: true },
 	]

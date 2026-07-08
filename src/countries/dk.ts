@@ -12,6 +12,7 @@ export const dk: Country = {
 		pt: 'Dinamarca',
 		tr: 'Danimarka',
 		fa: 'دانمارک',
+		uk: 'Данія',
 		xa: 'Der er et yndigt land',
 		xt: 'Der er et yndigt land',
 	},

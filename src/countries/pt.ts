@@ -12,6 +12,7 @@ export const pt: Country = {
 		pt: 'Portugal',
 		tr: 'Portekiz',
 		fa: 'پرتغال',
+		uk: 'Португалія',
 		xa: 'A Portuguesa',
 		xt: 'A Portuguesa',
 	},

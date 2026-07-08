@@ -16,6 +16,7 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 - Syria 🇸🇾
 - Tunisia 🇹🇳
 - Turkey 🇹🇷
+- Ukraine 🇺🇦
 - United States of America 🇺🇸
 - We are looking for more countries, see How to contribute
 
@@ -29,6 +30,7 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 - Portuguese
 - Swedish
 - Turkish
+- Ukrainian
 - National Anthem (fictional language code `xa`: shows the anthem title in its
   native language and plays a recorded performance)
 - 🎹 (fictional language code `xt`: shows the anthem title and plays a pure-tone
@@ -83,7 +85,8 @@ Vercel integration tool with GitHub.
 - Country name pronunciations: Microsoft Edge neural text-to-speech for
   English (Ava), Arabic (Amany, Syrian Arabic), German (Katja),
   Swedish (Sofie), Danish (Christel), Portuguese (Raquel), Turkish (Emel) and
-  Persian (Dilara), and Google Translate text-to-speech for Albanian
+  Persian (Dilara) and Ukrainian (Polina), and Google Translate text-to-speech
+  for Albanian
 - National anthem recordings: [Wikimedia Commons](https://commons.wikimedia.org/)
   public-domain uploads, including performances by the United States Navy Band
   and the USAREUR Band
