@@ -12,6 +12,7 @@ export const de: Country = {
 		pt: 'Alemanha',
 		tr: 'Almanya',
 		xa: 'Das Lied der Deutschen',
+		xt: 'Das Lied der Deutschen',
 	},
 	flag: '🇩🇪',
 }

@@ -12,6 +12,7 @@ export const dk: Country = {
 		pt: 'Dinamarca',
 		tr: 'Danimarka',
 		xa: 'Der er et yndigt land',
+		xt: 'Der er et yndigt land',
 	},
 	flag: '🇩🇰',
 }

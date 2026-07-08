@@ -3,6 +3,7 @@ import React, { useCallback, useRef, useState } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import ThemeToggle from './ThemeToggle'
 import { Country, Language } from './countries/Country'
+import { isVisible } from './featureFlags'
 import { al } from './countries/al'
 import { de } from './countries/de'
 import { dk } from './countries/dk'
@@ -15,8 +16,8 @@ import { tr } from './countries/tr'
 import { us } from './countries/us'
 
 function App() {
-	const COUNTRIES: Country[] = [al, de, dk, ps, pt, se, sy, tn, tr, us]
-	const LANGUAGES: { code: Language, display: string }[] = [
+	const COUNTRIES: Country[] = [al, de, dk, ps, pt, se, sy, tn, tr, us].filter(isVisible)
+	const ALL_LANGUAGES: { code: Language, display: string, beta?: boolean }[] = [
 		{ code: 'sq', display: 'Albanian' },
 		{ code: 'ar', display: 'Arabic' },
 		{ code: 'da', display: 'Danish' },
@@ -26,7 +27,9 @@ function App() {
 		{ code: 'sv', display: 'Swedish' },
 		{ code: 'tr', display: 'Turkish' },
 		{ code: 'xa', display: 'National Anthem' },
+		{ code: 'xt', display: '🎹', beta: true },
 	]
+	const LANGUAGES = ALL_LANGUAGES.filter(isVisible)
 	// language of the displayed and spoken country name
 	const [lang, setLang] = useState<Language>('en')
 	const [spokenName, setSpokenName] = useState('')

@@ -12,6 +12,7 @@ export const al: Country = {
 		pt: 'Albânia',
 		tr: 'Arnavutluk',
 		xa: 'Himni i Flamurit',
+		xt: 'Himni i Flamurit',
 	},
 	flag: '🇦🇱',
 }

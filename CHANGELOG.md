@@ -2,6 +2,15 @@
 
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.11.0] 2026-07-08
+### Added
+- Add 🎹 language (code `xt`): plays a pure-tone rendering of each anthem's
+  main melody notes, synthesized from public-domain MIDI transcriptions
+
+### Fixed
+- Don't crash in Safari when the Cache Storage API is unavailable (e.g. over
+  plain http); skip the offline cache gracefully instead
+
 ## [0.10.0] 2026-07-06
 ### Added
 - Add Denmark
