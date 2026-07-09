@@ -53,23 +53,6 @@ export function saveSettings(settings: Settings): void {
 	}
 }
 
-// Wipe all persisted settings (and any cookies) so the next load is a clean default.
-export function clearSettings(): void {
-	try {
-		localStorage.removeItem(STORAGE_KEY)
-		localStorage.removeItem('theme') // legacy key
-	} catch {
-		// ignore
-	}
-	// expire any cookies this site may hold
-	document.cookie.split(';').forEach(cookie => {
-		const name = cookie.split('=')[0].trim()
-		if (name) {
-			document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`
-		}
-	})
-}
-
 // Drive the CSS `color-scheme` via the data-theme attribute on <html>.
 export function applyTheme(theme: Theme): void {
 	const root = document.documentElement

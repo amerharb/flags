@@ -9,7 +9,6 @@ import {
 	DEFAULT_SETTINGS,
 	loadSettings,
 	saveSettings,
-	clearSettings,
 	applyTheme,
 } from './settingsStore'
 import { al } from './countries/al'
@@ -86,11 +85,6 @@ function App() {
 		setSettings(next)
 		saveSettings(next)
 		applyTheme(next.theme)
-	}
-	const resetSettings = () => {
-		clearSettings()
-		setSettings(DEFAULT_SETTINGS)
-		applyTheme(DEFAULT_SETTINGS.theme)
 	}
 
 	// what the main screen actually shows
@@ -287,7 +281,6 @@ function App() {
 				caching={caching}
 				cachedCount={cachedCount}
 				onChange={updateSettings}
-				onClear={resetSettings}
 				onClearCache={clearSoundCache}
 			/>
 			<hgroup>

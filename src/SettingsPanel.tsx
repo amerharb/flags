@@ -18,11 +18,10 @@ type Props = {
 	// number of sound files currently in the cache
 	cachedCount: number,
 	onChange: (settings: Settings) => void,
-	onClear: () => void,
 	onClearCache: () => void,
 }
 
-export default function SettingsPanel({ settings, languages, countries, caching, cachedCount, onChange, onClear, onClearCache }: Readonly<Props>) {
+export default function SettingsPanel({ settings, languages, countries, caching, cachedCount, onChange, onClearCache }: Readonly<Props>) {
 	const [open, setOpen] = useState(false)
 	const containerRef = useRef<HTMLDivElement | null>(null)
 
@@ -53,6 +52,11 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 			: [...settings.hiddenCountries, code]
 		onChange({ ...settings, hiddenCountries })
 	}
+
+	const showAllLanguages = () => onChange({ ...settings, hiddenLanguages: [] })
+	const hideAllLanguages = () => onChange({ ...settings, hiddenLanguages: languages.map(l => l.code) })
+	const showAllCountries = () => onChange({ ...settings, hiddenCountries: [] })
+	const hideAllCountries = () => onChange({ ...settings, hiddenCountries: countries.map(c => c.code) })
 
 	return (
 		<div className="settings" ref={containerRef}>
@@ -88,6 +92,24 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 					</div>
 
 					<div className="settings-row">
+						<div className="settings-select-all">
+							<button
+								type="button"
+								aria-label="Select all languages"
+								title="Select all"
+								onClick={showAllLanguages}
+							>
+								✅
+							</button>
+							<button
+								type="button"
+								aria-label="Deselect all languages"
+								title="Deselect all"
+								onClick={hideAllLanguages}
+							>
+								⬜
+							</button>
+						</div>
 						<div className="settings-checklist" role="group" aria-label="Languages">
 							{languages.map(l => {
 								const shown = !settings.hiddenLanguages.includes(l.code)
@@ -106,6 +128,24 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 					</div>
 
 					<div className="settings-row">
+						<div className="settings-select-all">
+							<button
+								type="button"
+								aria-label="Select all countries"
+								title="Select all"
+								onClick={showAllCountries}
+							>
+								✅
+							</button>
+							<button
+								type="button"
+								aria-label="Deselect all countries"
+								title="Deselect all"
+								onClick={hideAllCountries}
+							>
+								⬜
+							</button>
+						</div>
 						<div className="settings-flag-grid" role="group" aria-label="Countries">
 							{countries.map(c => {
 								const shown = !settings.hiddenCountries.includes(c.code)
@@ -156,15 +196,6 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 						</button>
 					</div>
 
-					<button
-						type="button"
-						className="settings-clear"
-						aria-label="Clear settings"
-						title="Clear settings: delete all saved settings and reset to default"
-						onClick={onClear}
-					>
-						🔄
-					</button>
 				</div>
 			)}
 		</div>

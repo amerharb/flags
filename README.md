@@ -40,9 +40,10 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 Pick a language from the dropdown in the top right, then click a flag to hear
 the country's name spoken (or its anthem played) and see it written.
 
-- Settings (⚙️ top right): Dark Mode (system / light / dark, system is the
-  default), checklists to show/hide any language or country on the main
-  screen, a flight mode toggle (✈️), and Clear settings to reset everything.
+- Settings (⚙️ top right): theme (system / light / dark, system is the
+  default), a language checklist and a flag grid to show/hide anything on the
+  main screen (with ✅/⬜ select-all/deselect-all buttons), a flight mode
+  toggle (✈️), and cache info (🔊 count and a 🗑️ clear button).
   Saved in localStorage, remembered between visits.
 - Flight mode (✈️): downloads all visible sounds to the cache; anything newly
   shown while it is on is downloaded right away. Turning it off keeps the

@@ -13,12 +13,11 @@
 - Add a feature flag (`beta`) to hide unfinished countries/languages from
   production builds while keeping them visible in development
 - Add a settings panel (⚙️): Theme with system/light/dark icon options
-  (system is the default) and a clear settings button (🔄) that resets
-  everything; settings are saved in localStorage
+  (system is the default); settings are saved in localStorage
 - Settings include a language checklist and a scrollable grid of flag squares
-  to show or hide any language or country on the main screen; everything can
-  be hidden, and with no visible language a flag click shows 🤷‍♂️ instead of
-  playing a sound
+  to show or hide any language or country on the main screen, with ✅/⬜
+  buttons to select or deselect all at once; everything can be hidden, and
+  with no visible language a flag click shows 🤷‍♂️ instead of playing a sound
 - Hiding the playing country or the selected language stops the playing sound
 - Add a flight mode toggle (✈️) in settings: downloads all visible sounds,
   caches newly shown languages/countries right away while on, and keeps the

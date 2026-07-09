@@ -155,6 +155,20 @@ button:active {
 	padding: 6px 8px;
 }
 
+/* small select-all / deselect-all buttons above each list */
+.settings-select-all {
+	display: flex;
+	gap: 6px;
+}
+
+.settings-select-all button {
+	font-size: 12px;
+	line-height: 1;
+	padding: 4px 8px;
+	margin: 0;
+	border-radius: 5px;
+}
+
 .settings-check {
 	display: flex;
 	align-items: center;
@@ -283,12 +297,4 @@ button:active {
 	50% {
 		opacity: 0.4;
 	}
-}
-
-.settings-clear {
-	font-size: 20px;
-	line-height: 1;
-	padding: 8px 12px;
-	margin: 0;
-	border-radius: 6px;
 }
