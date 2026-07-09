@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.10.0-blue.svg)](https://github.com/amerharb/flags)
+[![Version](https://img.shields.io/badge/version-0.11.0-blue.svg)](https://github.com/amerharb/flags)
 # Flags
 
 Small react project to show country flags (as emoji) and pronounce the country
@@ -9,12 +9,14 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 - Albania 🇦🇱
 - Denmark 🇩🇰
 - Germany 🇩🇪
+- Iran 🇮🇷
 - Palestine 🇵🇸
 - Portugal 🇵🇹
 - Sweden 🇸🇪
 - Syria 🇸🇾
 - Tunisia 🇹🇳
 - Turkey 🇹🇷
+- Ukraine 🇺🇦
 - United States of America 🇺🇸
 - We are looking for more countries, see How to contribute
 
@@ -24,19 +26,28 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 - Danish
 - English
 - German
+- Persian
 - Portuguese
 - Swedish
 - Turkish
-- National Anthem (fictional language code `xa`: shows the anthem title in its
-  native language and plays the anthem itself)
+- Ukrainian
+- 🎺 National Anthem (fictional language code `xa`: shows the anthem title in
+  its native language and plays a recorded performance)
+- 🎹 (fictional language code `xt`: shows the anthem title and plays a pure-tone
+  rendering of the melody's main notes)
 
 ## How it works
 Pick a language from the dropdown in the top right, then click a flag to hear
 the country's name spoken (or its anthem played) and see it written.
 
-- Theme toggle: system / light / dark mode, remembered between visits.
-- Double-click the title to pre-download and cache all the audio files for
-  offline use.
+- Settings (⚙️ top right): theme (system / light / dark, system is the
+  default), a language checklist and a flag grid to show/hide anything on the
+  main screen (with ✅/⬜ select-all/deselect-all buttons), a flight mode
+  toggle (✈️), and cache info (🔊 count and a 🗑️ clear button).
+  Saved in localStorage, remembered between visits.
+- Flight mode (✈️): downloads all visible sounds to the cache; anything newly
+  shown while it is on is downloaded right away. Turning it off keeps the
+  cached files.
 
 ## How to contribute
 ### Media files
@@ -78,8 +89,11 @@ Vercel integration tool with GitHub.
 ### For sound
 - Country name pronunciations: Microsoft Edge neural text-to-speech for
   English (Ava), Arabic (Amany, Syrian Arabic), German (Katja),
-  Swedish (Sofie), Danish (Christel), Portuguese (Raquel) and Turkish (Emel),
-  and Google Translate text-to-speech for Albanian
+  Swedish (Sofie), Danish (Christel), Portuguese (Raquel), Turkish (Emel) and
+  Persian (Dilara) and Ukrainian (Polina), and Google Translate text-to-speech
+  for Albanian
 - National anthem recordings: [Wikimedia Commons](https://commons.wikimedia.org/)
   public-domain uploads, including performances by the United States Navy Band
   and the USAREUR Band
+- 🎹 pure-tone anthems: synthesized as sine tones from the melody (top voice) of
+  public-domain MIDI transcriptions

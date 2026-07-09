@@ -1,43 +1,143 @@
 import './App.css'
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Analytics } from '@vercel/analytics/react'
-import ThemeToggle from './ThemeToggle'
+import SettingsPanel from './SettingsPanel'
 import { Country, Language } from './countries/Country'
+import { isVisible } from './featureFlags'
+import {
+	Settings,
+	DEFAULT_SETTINGS,
+	loadSettings,
+	saveSettings,
+	applyTheme,
+} from './settingsStore'
 import { al } from './countries/al'
 import { de } from './countries/de'
 import { dk } from './countries/dk'
+import { ir } from './countries/ir'
 import { ps } from './countries/ps'
 import { pt } from './countries/pt'
 import { se } from './countries/se'
 import { sy } from './countries/sy'
 import { tn } from './countries/tn'
 import { tr } from './countries/tr'
+import { ua } from './countries/ua'
 import { us } from './countries/us'
 
 function App() {
-	const COUNTRIES: Country[] = [al, de, dk, ps, pt, se, sy, tn, tr, us]
-	const LANGUAGES: { code: Language, display: string }[] = [
-		{ code: 'sq', display: 'Albanian' },
-		{ code: 'ar', display: 'Arabic' },
-		{ code: 'da', display: 'Danish' },
+	// everything the build supports (after the beta feature flag)
+	const ALL_COUNTRIES: Country[] = [al, de, dk, ir, ps, pt, se, sy, tn, tr, ua, us].filter(isVisible)
+	const LANGUAGE_DEFS: { code: Language, display: string, beta?: boolean }[] = [
+		{ code: 'sq', display: 'Shqip' },
+		{ code: 'ar', display: 'عربي' },
+		{ code: 'da', display: 'Dansk' },
 		{ code: 'en', display: 'English' },
-		{ code: 'de', display: 'German' },
-		{ code: 'pt', display: 'Portuguese' },
-		{ code: 'sv', display: 'Swedish' },
-		{ code: 'tr', display: 'Turkish' },
-		{ code: 'xa', display: 'National Anthem' },
+		{ code: 'de', display: 'Deutsch' },
+		{ code: 'fa', display: 'فارسی' },
+		{ code: 'pt', display: 'Português' },
+		{ code: 'sv', display: 'Svenska' },
+		{ code: 'tr', display: 'Türkçe' },
+		{ code: 'uk', display: 'Українська' },
+		{ code: 'xa', display: '🎺' },
+		{ code: 'xt', display: '🎹', beta: true },
 	]
+	const ALL_LANGUAGES = LANGUAGE_DEFS.filter(isVisible)
+
+	// user settings (theme + which languages/countries to show on the main screen)
+	const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
+	useEffect(() => {
+		const loaded = loadSettings()
+		setSettings(loaded)
+		applyTheme(loaded.theme)
+	}, [])
+	const updateSettings = (next: Settings) => {
+		// stop playback when its country, or the selected language, just got hidden —
+		// otherwise the sound would keep playing with no button left to stop it
+		if (
+			(playingCode && next.hiddenCountries.includes(playingCode)) ||
+			next.hiddenLanguages.includes(lang)
+		) {
+			stopSound()
+		}
+
+		// flight mode: download what is (or becomes) visible
+		const visibleLangs = ALL_LANGUAGES.filter(l => !next.hiddenLanguages.includes(l.code))
+		const visibleCountries = ALL_COUNTRIES.filter(c => !next.hiddenCountries.includes(c.code))
+		const urlsFor = (langs: typeof visibleLangs, countries: typeof visibleCountries) =>
+			langs.flatMap(l => countries.map(c => `/sounds/${l.code}/${c.code}.aac`))
+		if (next.flightMode && !settings.flightMode) {
+			// just switched on: cache everything currently visible
+			cacheAudioUrls(urlsFor(visibleLangs, visibleCountries))
+		} else if (next.flightMode) {
+			// already on: cache only what just became visible
+			const newLangs = visibleLangs.filter(l => settings.hiddenLanguages.includes(l.code))
+			const newCountries = visibleCountries.filter(c => settings.hiddenCountries.includes(c.code))
+			const oldLangs = visibleLangs.filter(l => !settings.hiddenLanguages.includes(l.code))
+			const urls = [
+				...urlsFor(newLangs, visibleCountries),
+				...urlsFor(oldLangs, newCountries),
+			]
+			if (urls.length > 0) {
+				cacheAudioUrls(urls)
+			}
+		}
+
+		setSettings(next)
+		saveSettings(next)
+		applyTheme(next.theme)
+	}
+
+	// what the main screen actually shows
+	const COUNTRIES = ALL_COUNTRIES.filter(c => !settings.hiddenCountries.includes(c.code))
+	const LANGUAGES = ALL_LANGUAGES.filter(l => !settings.hiddenLanguages.includes(l.code))
+
 	// language of the displayed and spoken country name
 	const [lang, setLang] = useState<Language>('en')
 	const [spokenName, setSpokenName] = useState('')
+
+	// if the selected language gets hidden in settings, fall back to the first visible one
+	useEffect(() => {
+		if (LANGUAGES.length > 0 && !LANGUAGES.some(l => l.code === lang)) {
+			setLang(LANGUAGES[0].code)
+			setSpokenName('')
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [settings.hiddenLanguages])
 	// the sound currently playing, so starting a new one can stop it first
 	const playingAudio = useRef<HTMLAudioElement | null>(null)
 	// code of the country whose sound is playing, to show the play icon on its button
 	const [playingCode, setPlayingCode] = useState<string | null>(null)
+	// true while flight-mode downloads are in progress, to show it on the toggle
+	const [caching, setCaching] = useState(false)
+	// how many sound files are currently in the cache, shown in settings
+	const [cachedCount, setCachedCount] = useState(0)
+
+	const refreshCacheCount = useCallback(async () => {
+		if (!('caches' in globalThis)) return
+		try {
+			const audioCache = await caches.open('audio-cache')
+			setCachedCount((await audioCache.keys()).length)
+		} catch {
+			// leave the previous count
+		}
+	}, [])
+	useEffect(() => {
+		refreshCacheCount()
+	}, [refreshCacheCount])
+
+	// delete only the downloaded sound files (settings stay); not allowed in flight mode
+	const clearSoundCache = useCallback(async () => {
+		if (!('caches' in globalThis)) return
+		await Promise.all([
+			caches.delete('audio-cache'),
+			caches.delete('audio-cache-timestamps'),
+		])
+		setCachedCount(0)
+	}, [])
 
 	async function getAudio(audioUrl: string) {
 		const TTL = 1000 * 60 * 60 * 24 * 7 // 7 days
-		if ('caches' in window) {
+		if ('caches' in globalThis) {
 			const audioCache = await caches.open('audio-cache')
 			const audioCacheTimestamps = await caches.open('audio-cache-timestamps')
 			const cachedResponse = await audioCache.match(audioUrl)
@@ -51,8 +151,8 @@ function App() {
 
 					if (currentTime - cachedTime > TTL) {
 						await Promise.all([
-							await audioCache.delete(audioUrl),
-							await audioCacheTimestamps.delete(audioUrl),
+							audioCache.delete(audioUrl),
+							audioCacheTimestamps.delete(audioUrl),
 						])
 					} else {
 						return cachedResponse
@@ -76,20 +176,18 @@ function App() {
 		}
 	}
 
-	async function cacheAllAudioFiles() {
+	// Download the given sound files into the cache (already-cached ones are skipped,
+	// so incremental calls only fetch what is missing). Never deletes anything:
+	// switching flight mode off keeps the cached files.
+	async function cacheAudioUrls(audioUrls: string[]) {
 		// Some browsers like Safari disable Cache Storage in lockdown mode
-		if (!('caches' in window)) {
-			console.warn('Cache Storage API not available; skipping offline cache')
+		if (!('caches' in globalThis)) {
+			console.warn('Cache Storage API not available; skipping flight mode cache')
 			return
 		}
-		console.time('cacheAllAudioFiles')
+		setCaching(true)
+		console.time('cacheAudioUrls')
 		try {
-			const audioUrls = LANGUAGES.flatMap(l => COUNTRIES.map(c => `/sounds/${l.code}/${c.code}.aac`))
-
-			await Promise.all([
-				caches.delete('audio-cache'),
-				caches.delete('audio-cache-timestamps'),
-			])
 			const [audioCache, audioCacheTimestamps] = await Promise.all([
 				caches.open('audio-cache'),
 				caches.open('audio-cache-timestamps'),
@@ -98,6 +196,10 @@ function App() {
 			await Promise.all(
 				audioUrls.map(async url => {
 					try {
+						// already downloaded earlier — keep it
+						if (await audioCache.match(url)) {
+							return
+						}
 						const res = await fetch(url)
 						if (res.ok && res.body && res.headers.get('Content-Length') && res.headers.get('Content-Length') !== '0') {
 							await Promise.all([
@@ -117,7 +219,9 @@ function App() {
 		} catch (error) {
 			console.error('Failed to cache audio files:', error)
 		} finally {
-			console.timeEnd('cacheAllAudioFiles')
+			console.timeEnd('cacheAudioUrls')
+			setCaching(false)
+			refreshCacheCount()
 		}
 	}
 
@@ -139,10 +243,11 @@ function App() {
 			playingAudio.current = audio
 			await audio.play()
 			setPlayingCode(code)
+			refreshCacheCount() // playing may have added the file to the cache
 		} catch (e) {
 			console.error(e)
 		}
-	}, [lang])
+	}, [lang, refreshCacheCount])
 
 	const stopSound = useCallback(() => {
 		if (playingAudio.current) {
@@ -153,7 +258,6 @@ function App() {
 		setPlayingCode(null)
 	}, [])
 
-	const pageTitle = 'Flags Web'
 	return (
 		<div className="Flags">
 			<select
@@ -170,28 +274,27 @@ function App() {
 					<option key={`lang-${l.code}`} value={l.code}>{l.display}</option>
 				))}
 			</select>
-			<ThemeToggle/>
-			<h1
-				onDoubleClick={() => {
-					const h1 = document.querySelector('h1')
-					if (!h1) return
-					h1.style.backgroundColor = 'darkgreen'
-					h1.textContent = 'Downloading...'
-					cacheAllAudioFiles().then(() => {
-						h1.style.backgroundColor = ''
-						h1.textContent = pageTitle
-					})
-				}}
-			>{pageTitle}</h1>
+			<SettingsPanel
+				settings={settings}
+				languages={ALL_LANGUAGES}
+				countries={ALL_COUNTRIES.map(c => ({ code: c.code, flag: c.flag }))}
+				caching={caching}
+				cachedCount={cachedCount}
+				onChange={updateSettings}
+				onClearCache={clearSoundCache}
+			/>
 			<hgroup>
 				{COUNTRIES.map(c => (
 					<button
 						key={`country-${c.code}`}
 						className={playingCode === c.code ? 'button-flag playing' : 'button-flag'}
-						title={c.name[lang]}
+						title={LANGUAGES.length > 0 ? c.name[lang] : '🤷‍♂️'}
 						onClick={() => {
 							if (playingCode === c.code) {
 								stopSound()
+							} else if (LANGUAGES.length === 0) {
+								// every language is hidden: nothing to say
+								setSpokenName('🤷‍♂️')
 							} else {
 								playSound(c.code)
 								setSpokenName(c.name[lang])

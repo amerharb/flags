@@ -2,6 +2,44 @@
 
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.11.0] 2026-07-08
+### Added
+- Add 🎹 language (code `xt`): plays a pure-tone rendering of each anthem's
+  main melody notes, synthesized from public-domain MIDI transcriptions
+- Add Iran
+- Add Ukraine
+- Add Persian language
+- Add Ukrainian language
+- Add a feature flag (`beta`) to hide unfinished countries/languages from
+  production builds while keeping them visible in development
+- Add a settings panel (⚙️): Theme with system/light/dark icon options
+  (system is the default); settings are saved in localStorage
+- Settings include a language checklist and a scrollable grid of flag squares
+  to show or hide any language or country on the main screen, with ✅/⬜
+  buttons to select or deselect all at once; everything can be hidden, and
+  with no visible language a flag click shows 🤷‍♂️ instead of playing a sound
+- Hiding the playing country or the selected language stops the playing sound
+- Add a flight mode toggle (✈️) in settings: downloads all visible sounds,
+  caches newly shown languages/countries right away while on, and keeps the
+  cached files when turned off
+- Show the number of cached sound files (🔊) next to the flight mode toggle,
+  with a clear sound cache button (🗑️) that only works outside flight mode
+
+### Changed
+- The theme toggle button is replaced by the Theme option in the
+  settings panel
+- Show each language under its native name, so Arabic becomes عربي,
+  German becomes Deutsch, and so on
+- Show the National Anthem option as 🎺
+
+### Removed
+- The page title and its double-click download; caching for offline use is
+  now the flight mode toggle in settings
+
+### Fixed
+- Don't crash in Safari when the Cache Storage API is unavailable (e.g. over
+  plain http); skip the offline cache gracefully instead
+
 ## [0.10.0] 2026-07-06
 ### Added
 - Add Denmark

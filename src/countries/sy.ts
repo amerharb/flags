@@ -11,7 +11,10 @@ export const sy: Country = {
 		sq: 'Siria',
 		pt: 'Síria',
 		tr: 'Suriye',
+		fa: 'سوریه',
+		uk: 'Сирія',
 		xa: 'حماة الديار',
+		xt: 'حماة الديار',
 	},
 	flag: '🇸🇾',
 }

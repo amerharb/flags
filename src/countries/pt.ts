@@ -11,7 +11,10 @@ export const pt: Country = {
 		sq: 'Portugalia',
 		pt: 'Portugal',
 		tr: 'Portekiz',
+		fa: 'پرتغال',
+		uk: 'Португалія',
 		xa: 'A Portuguesa',
+		xt: 'A Portuguesa',
 	},
 	flag: '🇵🇹',
 }

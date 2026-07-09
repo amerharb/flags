@@ -93,7 +93,7 @@ button:active {
 .language-select {
 	position: fixed;
 	top: 10px;
-	right: 125px;
+	right: 60px;
 	padding: 6px 10px;
 	border-radius: 6px;
 	border: 1px solid var(--border);
@@ -103,4 +103,198 @@ button:active {
 	z-index: 1000;
 	background-color: var(--button-bg);
 	color: var(--button-fg);
+}
+
+/* Settings: a gear button top-right that opens a small panel */
+.settings {
+	position: fixed;
+	top: 10px;
+	right: 10px;
+	z-index: 1000;
+}
+
+.settings-button {
+	font-size: 20px;
+	line-height: 1;
+	padding: 6px 10px;
+	margin: 0;
+	border-radius: 6px;
+}
+
+/* keep the gear looking pressed while the panel is open */
+.settings-button.open {
+	transform: scale(0.95);
+	box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35);
+	background-color: var(--surface-hover);
+}
+
+.settings-panel {
+	position: absolute;
+	top: 100%;
+	right: 0;
+	margin-top: 8px;
+	width: 260px;
+	max-height: calc(100vh - 80px);
+	overflow-y: auto;
+	padding: 16px;
+	border: 1px solid var(--border);
+	border-radius: 10px;
+	background-color: var(--bg);
+	box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+	text-align: left;
+}
+
+.settings-checklist {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	max-height: 180px;
+	overflow-y: auto;
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	padding: 6px 8px;
+}
+
+/* small select-all / deselect-all buttons above each list */
+.settings-select-all {
+	display: flex;
+	gap: 6px;
+}
+
+.settings-select-all button {
+	font-size: 12px;
+	line-height: 1;
+	padding: 4px 8px;
+	margin: 0;
+	border-radius: 5px;
+}
+
+.settings-check {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 14px;
+	padding: 3px 0;
+	cursor: pointer;
+	user-select: none;
+}
+
+.settings-check input {
+	margin: 0;
+	cursor: pointer;
+}
+
+.settings-check:has(input:disabled) {
+	cursor: default;
+	opacity: 0.6;
+}
+
+.settings-row {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-bottom: 16px;
+}
+
+.settings-segmented {
+	display: flex;
+	gap: 6px;
+}
+
+.settings-segmented .segment {
+	flex: 1;
+	font-size: 12px;
+	font-weight: 500;
+	padding: 8px 4px;
+	margin: 0;
+	border-radius: 6px;
+	white-space: nowrap;
+}
+
+.settings-segmented .segment.selected {
+	background-color: var(--flag-bg);
+	border-color: var(--fg);
+	font-weight: 700;
+}
+
+/* countries as a scrollable grid of flag squares; click toggles visibility */
+.settings-flag-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+	gap: 6px;
+	max-height: 190px;
+	overflow-y: auto;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	padding: 8px;
+}
+
+.flag-toggle {
+	font-size: 24px;
+	line-height: 1;
+	aspect-ratio: 1;
+	padding: 0;
+	margin: 0;
+	border-radius: 6px;
+	background-color: var(--flag-bg);
+}
+
+.flag-toggle.hidden {
+	background-color: transparent;
+	opacity: 0.35;
+}
+
+/* flight mode + cache info on one row */
+.settings-cache-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 0 0 12px;
+}
+
+.settings-cache-count {
+	font-size: 14px;
+	font-variant-numeric: tabular-nums;
+	flex: 1;
+}
+
+.settings-cache-clear {
+	font-size: 16px;
+	line-height: 1;
+	padding: 6px 10px;
+	margin: 0;
+	border-radius: 6px;
+}
+
+.settings-cache-clear:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+
+/* flight mode toggle: sticky icon button, pressed while on, pulsing while downloading */
+.settings-flight-mode {
+	display: block;
+	font-size: 20px;
+	line-height: 1;
+	padding: 8px 12px;
+	margin: 0;
+	border-radius: 6px;
+}
+
+.settings-flight-mode.on {
+	transform: scale(0.95);
+	box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35);
+	background-color: var(--flag-bg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.settings-flight-mode.busy {
+		animation: flight-mode-pulse 1s ease-in-out infinite;
+	}
+}
+
+@keyframes flight-mode-pulse {
+	50% {
+		opacity: 0.4;
+	}
 }
