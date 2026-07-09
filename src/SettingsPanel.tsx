@@ -130,7 +130,7 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 						}
 						aria-label="flight mode"
 						aria-pressed={settings.flightMode}
-						title="Flight mode: download all visible sounds"
+						title="Flight mode: cache all visible sounds"
 						onClick={() => onChange({ ...settings, flightMode: !settings.flightMode })}
 					>
 						✈️
