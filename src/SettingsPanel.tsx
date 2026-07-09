@@ -108,20 +108,22 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 					</div>
 
 					<div className="settings-row">
-						<div className="settings-checklist" role="group" aria-label="Countries">
+						<div className="settings-flag-grid" role="group" aria-label="Countries">
 							{countries.map(c => {
 								const shown = !settings.hiddenCountries.includes(c.code)
 								return (
-									<label key={`setting-country-${c.code}`} className="settings-check">
-										<input
-											type="checkbox"
-											checked={shown}
-											// keep at least one country visible
-											disabled={shown && visibleCountryCount === 1}
-											onChange={() => toggleCountry(c.code)}
-										/>
-										{c.flag} {c.display}
-									</label>
+									<button
+										key={`setting-country-${c.code}`}
+										type="button"
+										className={shown ? 'flag-toggle' : 'flag-toggle hidden'}
+										aria-pressed={shown}
+										title={c.display}
+										// keep at least one country visible
+										disabled={shown && visibleCountryCount === 1}
+										onClick={() => toggleCountry(c.code)}
+									>
+										{c.flag}
+									</button>
 								)
 							})}
 						</div>

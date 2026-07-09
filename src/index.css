@@ -203,6 +203,33 @@ button:active {
 	font-weight: 700;
 }
 
+/* countries as a scrollable grid of flag squares; click toggles visibility */
+.settings-flag-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+	gap: 6px;
+	max-height: 190px;
+	overflow-y: auto;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	padding: 8px;
+}
+
+.flag-toggle {
+	font-size: 24px;
+	line-height: 1;
+	aspect-ratio: 1;
+	padding: 0;
+	margin: 0;
+	border-radius: 6px;
+	background-color: var(--flag-bg);
+}
+
+.flag-toggle.hidden {
+	background-color: transparent;
+	opacity: 0.35;
+}
+
 /* flight mode toggle: sticky icon button, pressed while on, pulsing while downloading */
 .settings-flight-mode {
 	display: block;
