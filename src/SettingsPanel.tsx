@@ -70,7 +70,6 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 			{open && (
 				<div className="settings-panel" role="dialog" aria-label="Settings">
 					<div className="settings-row">
-						<span className="settings-label" title="Theme" aria-label="Theme">🎨</span>
 						<div className="settings-segmented" role="group" aria-label="Theme">
 							{THEME_OPTIONS.map(opt => (
 								<button
@@ -89,8 +88,7 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 					</div>
 
 					<div className="settings-row">
-						<span className="settings-label" title="Languages" aria-label="Languages">🗣️</span>
-						<div className="settings-checklist">
+						<div className="settings-checklist" role="group" aria-label="Languages">
 							{languages.map(l => {
 								const shown = !settings.hiddenLanguages.includes(l.code)
 								return (
@@ -110,8 +108,7 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 					</div>
 
 					<div className="settings-row">
-						<span className="settings-label" title="Countries" aria-label="Countries">🌍</span>
-						<div className="settings-checklist">
+						<div className="settings-checklist" role="group" aria-label="Countries">
 							{countries.map(c => {
 								const shown = !settings.hiddenCountries.includes(c.code)
 								return (

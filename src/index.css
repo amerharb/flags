@@ -182,11 +182,6 @@ button:active {
 	margin-bottom: 16px;
 }
 
-.settings-label {
-	font-size: 14px;
-	font-weight: 600;
-}
-
 .settings-segmented {
 	display: flex;
 	gap: 6px;
