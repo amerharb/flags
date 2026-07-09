@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import { Language } from './countries/Country'
 import { Theme, Settings } from './settingsStore'
 
-const THEME_OPTIONS: { value: Theme, label: string }[] = [
-	{ value: 'system', label: '🖥️ System' },
-	{ value: 'light', label: '☀️ Light' },
-	{ value: 'dark', label: '🌙 Dark' },
+const THEME_OPTIONS: { value: Theme, icon: string, name: string }[] = [
+	{ value: 'system', icon: '🖥️', name: 'System' },
+	{ value: 'light', icon: '☀️', name: 'Light' },
+	{ value: 'dark', icon: '🌙', name: 'Dark' },
 ]
 
 type Props = {
@@ -70,24 +70,26 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 			{open && (
 				<div className="settings-panel" role="dialog" aria-label="Settings">
 					<div className="settings-row">
-						<span className="settings-label">Dark Mode</span>
-						<div className="settings-segmented" role="group" aria-label="Dark Mode">
+						<span className="settings-label" title="Theme" aria-label="Theme">🎨</span>
+						<div className="settings-segmented" role="group" aria-label="Theme">
 							{THEME_OPTIONS.map(opt => (
 								<button
 									key={opt.value}
 									type="button"
 									className={settings.theme === opt.value ? 'segment selected' : 'segment'}
 									aria-pressed={settings.theme === opt.value}
+									aria-label={opt.name}
+									title={opt.name}
 									onClick={() => setTheme(opt.value)}
 								>
-									{opt.label}
+									{opt.icon}
 								</button>
 							))}
 						</div>
 					</div>
 
 					<div className="settings-row">
-						<span className="settings-label">Languages</span>
+						<span className="settings-label" title="Languages" aria-label="Languages">🗣️</span>
 						<div className="settings-checklist">
 							{languages.map(l => {
 								const shown = !settings.hiddenLanguages.includes(l.code)
@@ -108,7 +110,7 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 					</div>
 
 					<div className="settings-row">
-						<span className="settings-label">Countries</span>
+						<span className="settings-label" title="Countries" aria-label="Countries">🌍</span>
 						<div className="settings-checklist">
 							{countries.map(c => {
 								const shown = !settings.hiddenCountries.includes(c.code)

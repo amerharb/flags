@@ -29,17 +29,17 @@ function App() {
 	// everything the build supports (after the beta feature flag)
 	const ALL_COUNTRIES: Country[] = [al, de, dk, ir, ps, pt, se, sy, tn, tr, ua, us].filter(isVisible)
 	const LANGUAGE_DEFS: { code: Language, display: string, beta?: boolean }[] = [
-		{ code: 'sq', display: 'Albanian' },
-		{ code: 'ar', display: 'Arabic' },
-		{ code: 'da', display: 'Danish' },
+		{ code: 'sq', display: 'Shqip' },
+		{ code: 'ar', display: 'عربي' },
+		{ code: 'da', display: 'Dansk' },
 		{ code: 'en', display: 'English' },
-		{ code: 'de', display: 'German' },
-		{ code: 'fa', display: 'Persian' },
-		{ code: 'pt', display: 'Portuguese' },
-		{ code: 'sv', display: 'Swedish' },
-		{ code: 'tr', display: 'Turkish' },
-		{ code: 'uk', display: 'Ukrainian' },
-		{ code: 'xa', display: 'National Anthem' },
+		{ code: 'de', display: 'Deutsch' },
+		{ code: 'fa', display: 'فارسی' },
+		{ code: 'pt', display: 'Português' },
+		{ code: 'sv', display: 'Svenska' },
+		{ code: 'tr', display: 'Türkçe' },
+		{ code: 'uk', display: 'Українська' },
+		{ code: 'xa', display: '🎺' },
 		{ code: 'xt', display: '🎹', beta: true },
 	]
 	const ALL_LANGUAGES = LANGUAGE_DEFS.filter(isVisible)

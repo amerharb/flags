@@ -31,8 +31,8 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 - Swedish
 - Turkish
 - Ukrainian
-- National Anthem (fictional language code `xa`: shows the anthem title in its
-  native language and plays a recorded performance)
+- 🎺 National Anthem (fictional language code `xa`: shows the anthem title in
+  its native language and plays a recorded performance)
 - 🎹 (fictional language code `xt`: shows the anthem title and plays a pure-tone
   rendering of the melody's main notes)
 

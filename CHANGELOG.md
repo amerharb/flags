@@ -12,7 +12,7 @@
 - Add Ukrainian language
 - Add a feature flag (`beta`) to hide unfinished countries/languages from
   production builds while keeping them visible in development
-- Add a settings panel (⚙️): Dark Mode with system/light/dark options
+- Add a settings panel (⚙️): Theme with system/light/dark icon options
   (system is the default) and a Clear settings button that resets everything;
   settings are saved in localStorage
 - Settings include language and country checklists to show or hide any of
@@ -22,8 +22,11 @@
   cached files when turned off
 
 ### Changed
-- The theme toggle button is replaced by the Dark Mode option in the
+- The theme toggle button is replaced by the Theme option in the
   settings panel
+- Show each language under its native name, so Arabic becomes عربي,
+  German becomes Deutsch, and so on
+- Show the National Anthem option as 🎺
 
 ### Removed
 - The page title and its double-click download; caching for offline use is
