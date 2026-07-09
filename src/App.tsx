@@ -1,9 +1,17 @@
 import './App.css'
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import SettingsPanel from './SettingsPanel'
 import { Country, Language } from './countries/Country'
 import { isVisible } from './featureFlags'
+import {
+	Settings,
+	DEFAULT_SETTINGS,
+	loadSettings,
+	saveSettings,
+	clearSettings,
+	applyTheme,
+} from './settingsStore'
 import { al } from './countries/al'
 import { de } from './countries/de'
 import { dk } from './countries/dk'
@@ -18,8 +26,9 @@ import { ua } from './countries/ua'
 import { us } from './countries/us'
 
 function App() {
-	const COUNTRIES: Country[] = [al, de, dk, ir, ps, pt, se, sy, tn, tr, ua, us].filter(isVisible)
-	const ALL_LANGUAGES: { code: Language, display: string, beta?: boolean }[] = [
+	// everything the build supports (after the beta feature flag)
+	const ALL_COUNTRIES: Country[] = [al, de, dk, ir, ps, pt, se, sy, tn, tr, ua, us].filter(isVisible)
+	const LANGUAGE_DEFS: { code: Language, display: string, beta?: boolean }[] = [
 		{ code: 'sq', display: 'Albanian' },
 		{ code: 'ar', display: 'Arabic' },
 		{ code: 'da', display: 'Danish' },
@@ -33,10 +42,42 @@ function App() {
 		{ code: 'xa', display: 'National Anthem' },
 		{ code: 'xt', display: '🎹', beta: true },
 	]
-	const LANGUAGES = ALL_LANGUAGES.filter(isVisible)
+	const ALL_LANGUAGES = LANGUAGE_DEFS.filter(isVisible)
+
+	// user settings (theme + which languages/countries to show on the main screen)
+	const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
+	useEffect(() => {
+		const loaded = loadSettings()
+		setSettings(loaded)
+		applyTheme(loaded.theme)
+	}, [])
+	const updateSettings = (next: Settings) => {
+		setSettings(next)
+		saveSettings(next)
+		applyTheme(next.theme)
+	}
+	const resetSettings = () => {
+		clearSettings()
+		setSettings(DEFAULT_SETTINGS)
+		applyTheme(DEFAULT_SETTINGS.theme)
+	}
+
+	// what the main screen actually shows
+	const COUNTRIES = ALL_COUNTRIES.filter(c => !settings.hiddenCountries.includes(c.code))
+	const LANGUAGES = ALL_LANGUAGES.filter(l => !settings.hiddenLanguages.includes(l.code))
+
 	// language of the displayed and spoken country name
 	const [lang, setLang] = useState<Language>('en')
 	const [spokenName, setSpokenName] = useState('')
+
+	// if the selected language gets hidden in settings, fall back to the first visible one
+	useEffect(() => {
+		if (LANGUAGES.length > 0 && !LANGUAGES.some(l => l.code === lang)) {
+			setLang(LANGUAGES[0].code)
+			setSpokenName('')
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [settings.hiddenLanguages])
 	// the sound currently playing, so starting a new one can stop it first
 	const playingAudio = useRef<HTMLAudioElement | null>(null)
 	// code of the country whose sound is playing, to show the play icon on its button
@@ -91,6 +132,8 @@ function App() {
 		}
 		console.time('cacheAllAudioFiles')
 		try {
+			// only cache what is visible; hidden languages/countries are skipped to
+			// keep the download small (they are fetched normally when re-shown)
 			const audioUrls = LANGUAGES.flatMap(l => COUNTRIES.map(c => `/sounds/${l.code}/${c.code}.aac`))
 
 			await Promise.all([
@@ -177,7 +220,13 @@ function App() {
 					<option key={`lang-${l.code}`} value={l.code}>{l.display}</option>
 				))}
 			</select>
-			<SettingsPanel/>
+			<SettingsPanel
+				settings={settings}
+				languages={ALL_LANGUAGES}
+				countries={ALL_COUNTRIES.map(c => ({ code: c.code, flag: c.flag, display: c.name.en }))}
+				onChange={updateSettings}
+				onClear={resetSettings}
+			/>
 			<h1
 				onDoubleClick={() => {
 					const h1 = document.querySelector('h1')

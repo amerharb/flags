@@ -4,14 +4,22 @@
  * sending the data on every request). Stored as one JSON blob under STORAGE_KEY
  * so new settings can be added over time without new storage keys.
  */
+import { Language } from './countries/Country'
+
 export type Theme = 'system' | 'light' | 'dark'
 
 export type Settings = {
 	theme: Theme,
+	// codes the user chose to hide from the main screen; empty = show everything,
+	// so newly added languages/countries are visible by default
+	hiddenLanguages: Language[],
+	hiddenCountries: string[],
 }
 
 export const DEFAULT_SETTINGS: Settings = {
 	theme: 'system',
+	hiddenLanguages: [],
+	hiddenCountries: [],
 }
 
 const STORAGE_KEY = 'flags:settings'

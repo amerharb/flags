@@ -1,13 +1,6 @@
-import { useEffect, useState } from 'react'
-import {
-	Theme,
-	Settings,
-	DEFAULT_SETTINGS,
-	loadSettings,
-	saveSettings,
-	clearSettings,
-	applyTheme,
-} from './settingsStore'
+import { useEffect, useRef, useState } from 'react'
+import { Language } from './countries/Country'
+import { Theme, Settings } from './settingsStore'
 
 const THEME_OPTIONS: { value: Theme, label: string }[] = [
 	{ value: 'system', label: '🖥️ System' },
@@ -15,35 +8,55 @@ const THEME_OPTIONS: { value: Theme, label: string }[] = [
 	{ value: 'dark', label: '🌙 Dark' },
 ]
 
-export default function SettingsPanel() {
+type Props = {
+	settings: Settings,
+	// full (beta-filtered) lists, so the checklists always show everything supported
+	languages: { code: Language, display: string }[],
+	countries: { code: string, flag: string, display: string }[],
+	onChange: (settings: Settings) => void,
+	onClear: () => void,
+}
+
+export default function SettingsPanel({ settings, languages, countries, onChange, onClear }: Props) {
 	const [open, setOpen] = useState(false)
-	const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
+	const containerRef = useRef<HTMLDivElement | null>(null)
 
-	// Load persisted settings after mount and sync the applied theme.
+	// close the panel when clicking anywhere outside it
 	useEffect(() => {
-		const loaded = loadSettings()
-		setSettings(loaded)
-		applyTheme(loaded.theme)
-	}, [])
+		if (!open) return
+		const handleOutside = (e: MouseEvent) => {
+			if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+				setOpen(false)
+			}
+		}
+		document.addEventListener('mousedown', handleOutside)
+		return () => document.removeEventListener('mousedown', handleOutside)
+	}, [open])
 
-	const setTheme = (theme: Theme) => {
-		const next = { ...settings, theme }
-		setSettings(next)
-		saveSettings(next)
-		applyTheme(theme)
+	const setTheme = (theme: Theme) => onChange({ ...settings, theme })
+
+	const toggleLanguage = (code: Language) => {
+		const hiddenLanguages = settings.hiddenLanguages.includes(code)
+			? settings.hiddenLanguages.filter(c => c !== code)
+			: [...settings.hiddenLanguages, code]
+		onChange({ ...settings, hiddenLanguages })
 	}
 
-	const handleClear = () => {
-		clearSettings()
-		setSettings(DEFAULT_SETTINGS)
-		applyTheme(DEFAULT_SETTINGS.theme)
+	const toggleCountry = (code: string) => {
+		const hiddenCountries = settings.hiddenCountries.includes(code)
+			? settings.hiddenCountries.filter(c => c !== code)
+			: [...settings.hiddenCountries, code]
+		onChange({ ...settings, hiddenCountries })
 	}
+
+	const visibleLanguageCount = languages.filter(l => !settings.hiddenLanguages.includes(l.code)).length
+	const visibleCountryCount = countries.filter(c => !settings.hiddenCountries.includes(c.code)).length
 
 	return (
-		<div className="settings">
+		<div className="settings" ref={containerRef}>
 			<button
 				type="button"
-				className="settings-button"
+				className={open ? 'settings-button open' : 'settings-button'}
 				aria-label="Settings"
 				aria-expanded={open}
 				title="Settings"
@@ -71,7 +84,49 @@ export default function SettingsPanel() {
 						</div>
 					</div>
 
-					<button type="button" className="settings-clear" onClick={handleClear}>
+					<div className="settings-row">
+						<span className="settings-label">Languages</span>
+						<div className="settings-checklist">
+							{languages.map(l => {
+								const shown = !settings.hiddenLanguages.includes(l.code)
+								return (
+									<label key={`setting-lang-${l.code}`} className="settings-check">
+										<input
+											type="checkbox"
+											checked={shown}
+											// keep at least one language visible
+											disabled={shown && visibleLanguageCount === 1}
+											onChange={() => toggleLanguage(l.code)}
+										/>
+										{l.display}
+									</label>
+								)
+							})}
+						</div>
+					</div>
+
+					<div className="settings-row">
+						<span className="settings-label">Countries</span>
+						<div className="settings-checklist">
+							{countries.map(c => {
+								const shown = !settings.hiddenCountries.includes(c.code)
+								return (
+									<label key={`setting-country-${c.code}`} className="settings-check">
+										<input
+											type="checkbox"
+											checked={shown}
+											// keep at least one country visible
+											disabled={shown && visibleCountryCount === 1}
+											onChange={() => toggleCountry(c.code)}
+										/>
+										{c.flag} {c.display}
+									</label>
+								)
+							})}
+						</div>
+					</div>
+
+					<button type="button" className="settings-clear" onClick={onClear}>
 						Clear settings
 					</button>
 				</div>
