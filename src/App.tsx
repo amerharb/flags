@@ -52,6 +52,14 @@ function App() {
 		applyTheme(loaded.theme)
 	}, [])
 	const updateSettings = (next: Settings) => {
+		// stop playback when its country, or the selected language, just got hidden —
+		// otherwise the sound would keep playing with no button left to stop it
+		if (
+			(playingCode && next.hiddenCountries.includes(playingCode)) ||
+			next.hiddenLanguages.includes(lang)
+		) {
+			stopSound()
+		}
 		setSettings(next)
 		saveSettings(next)
 		applyTheme(next.theme)
