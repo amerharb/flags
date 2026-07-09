@@ -13,11 +13,13 @@ type Props = {
 	// full (beta-filtered) lists, so the checklists always show everything supported
 	languages: { code: Language, display: string }[],
 	countries: { code: string, flag: string, display: string }[],
+	// true while flight-mode downloads are running
+	caching: boolean,
 	onChange: (settings: Settings) => void,
 	onClear: () => void,
 }
 
-export default function SettingsPanel({ settings, languages, countries, onChange, onClear }: Props) {
+export default function SettingsPanel({ settings, languages, countries, caching, onChange, onClear }: Props) {
 	const [open, setOpen] = useState(false)
 	const containerRef = useRef<HTMLDivElement | null>(null)
 
@@ -125,6 +127,21 @@ export default function SettingsPanel({ settings, languages, countries, onChange
 							})}
 						</div>
 					</div>
+
+					<button
+						type="button"
+						className={
+							'settings-flight-mode'
+							+ (settings.flightMode ? ' on' : '')
+							+ (caching ? ' busy' : '')
+						}
+						aria-label="flight mode"
+						aria-pressed={settings.flightMode}
+						title="Flight mode: download all visible sounds"
+						onClick={() => onChange({ ...settings, flightMode: !settings.flightMode })}
+					>
+						✈️
+					</button>
 
 					<button type="button" className="settings-clear" onClick={onClear}>
 						Clear settings

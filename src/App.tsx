@@ -60,6 +60,29 @@ function App() {
 		) {
 			stopSound()
 		}
+
+		// flight mode: download what is (or becomes) visible
+		const visibleLangs = ALL_LANGUAGES.filter(l => !next.hiddenLanguages.includes(l.code))
+		const visibleCountries = ALL_COUNTRIES.filter(c => !next.hiddenCountries.includes(c.code))
+		const urlsFor = (langs: typeof visibleLangs, countries: typeof visibleCountries) =>
+			langs.flatMap(l => countries.map(c => `/sounds/${l.code}/${c.code}.aac`))
+		if (next.flightMode && !settings.flightMode) {
+			// just switched on: cache everything currently visible
+			cacheAudioUrls(urlsFor(visibleLangs, visibleCountries))
+		} else if (next.flightMode) {
+			// already on: cache only what just became visible
+			const newLangs = visibleLangs.filter(l => settings.hiddenLanguages.includes(l.code))
+			const newCountries = visibleCountries.filter(c => settings.hiddenCountries.includes(c.code))
+			const oldLangs = visibleLangs.filter(l => !settings.hiddenLanguages.includes(l.code))
+			const urls = [
+				...urlsFor(newLangs, visibleCountries),
+				...urlsFor(oldLangs, newCountries),
+			]
+			if (urls.length > 0) {
+				cacheAudioUrls(urls)
+			}
+		}
+
 		setSettings(next)
 		saveSettings(next)
 		applyTheme(next.theme)
@@ -90,6 +113,8 @@ function App() {
 	const playingAudio = useRef<HTMLAudioElement | null>(null)
 	// code of the country whose sound is playing, to show the play icon on its button
 	const [playingCode, setPlayingCode] = useState<string | null>(null)
+	// true while flight-mode downloads are in progress, to show it on the toggle
+	const [caching, setCaching] = useState(false)
 
 	async function getAudio(audioUrl: string) {
 		const TTL = 1000 * 60 * 60 * 24 * 7 // 7 days
@@ -132,22 +157,18 @@ function App() {
 		}
 	}
 
-	async function cacheAllAudioFiles() {
+	// Download the given sound files into the cache (already-cached ones are skipped,
+	// so incremental calls only fetch what is missing). Never deletes anything:
+	// switching flight mode off keeps the cached files.
+	async function cacheAudioUrls(audioUrls: string[]) {
 		// Some browsers like Safari disable Cache Storage in lockdown mode
 		if (!('caches' in globalThis)) {
-			console.warn('Cache Storage API not available; skipping offline cache')
+			console.warn('Cache Storage API not available; skipping flight mode cache')
 			return
 		}
-		console.time('cacheAllAudioFiles')
+		setCaching(true)
+		console.time('cacheAudioUrls')
 		try {
-			// only cache what is visible; hidden languages/countries are skipped to
-			// keep the download small (they are fetched normally when re-shown)
-			const audioUrls = LANGUAGES.flatMap(l => COUNTRIES.map(c => `/sounds/${l.code}/${c.code}.aac`))
-
-			await Promise.all([
-				caches.delete('audio-cache'),
-				caches.delete('audio-cache-timestamps'),
-			])
 			const [audioCache, audioCacheTimestamps] = await Promise.all([
 				caches.open('audio-cache'),
 				caches.open('audio-cache-timestamps'),
@@ -156,6 +177,10 @@ function App() {
 			await Promise.all(
 				audioUrls.map(async url => {
 					try {
+						// already downloaded earlier — keep it
+						if (await audioCache.match(url)) {
+							return
+						}
 						const res = await fetch(url)
 						if (res.ok && res.body && res.headers.get('Content-Length') && res.headers.get('Content-Length') !== '0') {
 							await Promise.all([
@@ -175,7 +200,8 @@ function App() {
 		} catch (error) {
 			console.error('Failed to cache audio files:', error)
 		} finally {
-			console.timeEnd('cacheAllAudioFiles')
+			console.timeEnd('cacheAudioUrls')
+			setCaching(false)
 		}
 	}
 
@@ -211,7 +237,6 @@ function App() {
 		setPlayingCode(null)
 	}, [])
 
-	const pageTitle = 'Flags Web'
 	return (
 		<div className="Flags">
 			<select
@@ -232,21 +257,10 @@ function App() {
 				settings={settings}
 				languages={ALL_LANGUAGES}
 				countries={ALL_COUNTRIES.map(c => ({ code: c.code, flag: c.flag, display: c.name.en }))}
+				caching={caching}
 				onChange={updateSettings}
 				onClear={resetSettings}
 			/>
-			<h1
-				onDoubleClick={() => {
-					const h1 = document.querySelector('h1')
-					if (!h1) return
-					h1.style.backgroundColor = 'darkgreen'
-					h1.textContent = 'Downloading...'
-					cacheAllAudioFiles().then(() => {
-						h1.style.backgroundColor = ''
-						h1.textContent = pageTitle
-					})
-				}}
-			>{pageTitle}</h1>
 			<hgroup>
 				{COUNTRIES.map(c => (
 					<button

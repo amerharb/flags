@@ -42,10 +42,11 @@ the country's name spoken (or its anthem played) and see it written.
 
 - Settings (⚙️ top right): Dark Mode (system / light / dark, system is the
   default), checklists to show/hide any language or country on the main
-  screen, and Clear settings to reset everything. Saved in localStorage,
-  remembered between visits.
-- Double-click the title to pre-download and cache all the audio files for
-  offline use.
+  screen, a flight mode toggle (✈️), and Clear settings to reset everything.
+  Saved in localStorage, remembered between visits.
+- Flight mode (✈️): downloads all visible sounds to the cache; anything newly
+  shown while it is on is downloaded right away. Turning it off keeps the
+  cached files.
 
 ## How to contribute
 ### Media files

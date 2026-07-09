@@ -17,10 +17,17 @@
   settings are saved in localStorage
 - Settings include language and country checklists to show or hide any of
   them on the main screen
+- Add a flight mode toggle (✈️) in settings: downloads all visible sounds,
+  caches newly shown languages/countries right away while on, and keeps the
+  cached files when turned off
 
 ### Changed
 - The theme toggle button is replaced by the Dark Mode option in the
   settings panel
+
+### Removed
+- The page title and its double-click download; caching for offline use is
+  now the flight mode toggle in settings
 
 ### Fixed
 - Don't crash in Safari when the Cache Storage API is unavailable (e.g. over
