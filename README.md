@@ -40,7 +40,9 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 Pick a language from the dropdown in the top right, then click a flag to hear
 the country's name spoken (or its anthem played) and see it written.
 
-- Theme toggle: system / light / dark mode, remembered between visits.
+- Settings (⚙️ top right): Dark Mode (system / light / dark, system is the
+  default) and Clear settings to reset everything. Saved in localStorage,
+  remembered between visits.
 - Double-click the title to pre-download and cache all the audio files for
   offline use.
 

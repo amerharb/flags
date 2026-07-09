@@ -104,3 +104,77 @@ button:active {
 	background-color: var(--button-bg);
 	color: var(--button-fg);
 }
+
+/* Settings: a gear button top-right that opens a small panel */
+.settings {
+	position: fixed;
+	top: 10px;
+	right: 10px;
+	z-index: 1000;
+}
+
+.settings-button {
+	font-size: 20px;
+	line-height: 1;
+	padding: 6px 10px;
+	margin: 0;
+	border-radius: 6px;
+}
+
+.settings-panel {
+	position: absolute;
+	top: 100%;
+	right: 0;
+	margin-top: 8px;
+	width: 240px;
+	padding: 16px;
+	border: 1px solid var(--border);
+	border-radius: 10px;
+	background-color: var(--bg);
+	box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+	text-align: left;
+}
+
+.settings-row {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-bottom: 16px;
+}
+
+.settings-label {
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.settings-segmented {
+	display: flex;
+	gap: 6px;
+}
+
+.settings-segmented .segment {
+	flex: 1;
+	font-size: 12px;
+	font-weight: 500;
+	padding: 8px 4px;
+	margin: 0;
+	border-radius: 6px;
+	white-space: nowrap;
+}
+
+.settings-segmented .segment.selected {
+	background-color: var(--flag-bg);
+	border-color: var(--fg);
+	font-weight: 700;
+}
+
+.settings-clear {
+	width: 100%;
+	font-size: 13px;
+	font-weight: 600;
+	padding: 9px;
+	margin: 0;
+	border-radius: 6px;
+	color: #c8353c;
+	border-color: #c8353c;
+}

@@ -12,6 +12,13 @@
 - Add Ukrainian language
 - Add a feature flag (`beta`) to hide unfinished countries/languages from
   production builds while keeping them visible in development
+- Add a settings panel (⚙️): Dark Mode with system/light/dark options
+  (system is the default) and a Clear settings button that resets everything;
+  settings are saved in localStorage
+
+### Changed
+- The theme toggle button is replaced by the Dark Mode option in the
+  settings panel
 
 ### Fixed
 - Don't crash in Safari when the Cache Storage API is unavailable (e.g. over

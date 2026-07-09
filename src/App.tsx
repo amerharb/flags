@@ -1,7 +1,7 @@
 import './App.css'
 import React, { useCallback, useRef, useState } from 'react'
 import { Analytics } from '@vercel/analytics/react'
-import ThemeToggle from './ThemeToggle'
+import SettingsPanel from './SettingsPanel'
 import { Country, Language } from './countries/Country'
 import { isVisible } from './featureFlags'
 import { al } from './countries/al'
@@ -177,7 +177,7 @@ function App() {
 					<option key={`lang-${l.code}`} value={l.code}>{l.display}</option>
 				))}
 			</select>
-			<ThemeToggle/>
+			<SettingsPanel/>
 			<h1
 				onDoubleClick={() => {
 					const h1 = document.querySelector('h1')
