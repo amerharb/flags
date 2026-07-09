@@ -256,7 +256,7 @@ function App() {
 			<SettingsPanel
 				settings={settings}
 				languages={ALL_LANGUAGES}
-				countries={ALL_COUNTRIES.map(c => ({ code: c.code, flag: c.flag, display: c.name.en }))}
+				countries={ALL_COUNTRIES.map(c => ({ code: c.code, flag: c.flag }))}
 				caching={caching}
 				onChange={updateSettings}
 				onClear={resetSettings}
@@ -266,10 +266,13 @@ function App() {
 					<button
 						key={`country-${c.code}`}
 						className={playingCode === c.code ? 'button-flag playing' : 'button-flag'}
-						title={c.name[lang]}
+						title={LANGUAGES.length > 0 ? c.name[lang] : '🤷‍♂️'}
 						onClick={() => {
 							if (playingCode === c.code) {
 								stopSound()
+							} else if (LANGUAGES.length === 0) {
+								// every language is hidden: nothing to say
+								setSpokenName('🤷‍♂️')
 							} else {
 								playSound(c.code)
 								setSpokenName(c.name[lang])

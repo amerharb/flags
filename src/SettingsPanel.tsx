@@ -12,14 +12,14 @@ type Props = {
 	settings: Settings,
 	// full (beta-filtered) lists, so the checklists always show everything supported
 	languages: { code: Language, display: string }[],
-	countries: { code: string, flag: string, display: string }[],
+	countries: { code: string, flag: string }[],
 	// true while flight-mode downloads are running
 	caching: boolean,
 	onChange: (settings: Settings) => void,
 	onClear: () => void,
 }
 
-export default function SettingsPanel({ settings, languages, countries, caching, onChange, onClear }: Props) {
+export default function SettingsPanel({ settings, languages, countries, caching, onChange, onClear }: Readonly<Props>) {
 	const [open, setOpen] = useState(false)
 	const containerRef = useRef<HTMLDivElement | null>(null)
 
@@ -50,9 +50,6 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 			: [...settings.hiddenCountries, code]
 		onChange({ ...settings, hiddenCountries })
 	}
-
-	const visibleLanguageCount = languages.filter(l => !settings.hiddenLanguages.includes(l.code)).length
-	const visibleCountryCount = countries.filter(c => !settings.hiddenCountries.includes(c.code)).length
 
 	return (
 		<div className="settings" ref={containerRef}>
@@ -96,8 +93,6 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 										<input
 											type="checkbox"
 											checked={shown}
-											// keep at least one language visible
-											disabled={shown && visibleLanguageCount === 1}
 											onChange={() => toggleLanguage(l.code)}
 										/>
 										{l.display}
@@ -117,9 +112,6 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 										type="button"
 										className={shown ? 'flag-toggle' : 'flag-toggle hidden'}
 										aria-pressed={shown}
-										title={c.display}
-										// keep at least one country visible
-										disabled={shown && visibleCountryCount === 1}
 										onClick={() => toggleCountry(c.code)}
 									>
 										{c.flag}
@@ -144,8 +136,14 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 						✈️
 					</button>
 
-					<button type="button" className="settings-clear" onClick={onClear}>
-						Clear settings
+					<button
+						type="button"
+						className="settings-clear"
+						aria-label="Clear settings"
+						title="Clear settings: delete all saved settings and reset to default"
+						onClick={onClear}
+					>
+						🔄
 					</button>
 				</div>
 			)}
