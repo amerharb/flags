@@ -230,13 +230,40 @@ button:active {
 	opacity: 0.35;
 }
 
+/* flight mode + cache info on one row */
+.settings-cache-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 0 0 12px;
+}
+
+.settings-cache-count {
+	font-size: 14px;
+	font-variant-numeric: tabular-nums;
+	flex: 1;
+}
+
+.settings-cache-clear {
+	font-size: 16px;
+	line-height: 1;
+	padding: 6px 10px;
+	margin: 0;
+	border-radius: 6px;
+}
+
+.settings-cache-clear:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+
 /* flight mode toggle: sticky icon button, pressed while on, pulsing while downloading */
 .settings-flight-mode {
 	display: block;
 	font-size: 20px;
 	line-height: 1;
 	padding: 8px 12px;
-	margin: 0 0 12px;
+	margin: 0;
 	border-radius: 6px;
 }
 

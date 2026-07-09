@@ -115,6 +115,31 @@ function App() {
 	const [playingCode, setPlayingCode] = useState<string | null>(null)
 	// true while flight-mode downloads are in progress, to show it on the toggle
 	const [caching, setCaching] = useState(false)
+	// how many sound files are currently in the cache, shown in settings
+	const [cachedCount, setCachedCount] = useState(0)
+
+	const refreshCacheCount = useCallback(async () => {
+		if (!('caches' in globalThis)) return
+		try {
+			const audioCache = await caches.open('audio-cache')
+			setCachedCount((await audioCache.keys()).length)
+		} catch {
+			// leave the previous count
+		}
+	}, [])
+	useEffect(() => {
+		refreshCacheCount()
+	}, [refreshCacheCount])
+
+	// delete only the downloaded sound files (settings stay); not allowed in flight mode
+	const clearSoundCache = useCallback(async () => {
+		if (!('caches' in globalThis)) return
+		await Promise.all([
+			caches.delete('audio-cache'),
+			caches.delete('audio-cache-timestamps'),
+		])
+		setCachedCount(0)
+	}, [])
 
 	async function getAudio(audioUrl: string) {
 		const TTL = 1000 * 60 * 60 * 24 * 7 // 7 days
@@ -202,6 +227,7 @@ function App() {
 		} finally {
 			console.timeEnd('cacheAudioUrls')
 			setCaching(false)
+			refreshCacheCount()
 		}
 	}
 
@@ -223,10 +249,11 @@ function App() {
 			playingAudio.current = audio
 			await audio.play()
 			setPlayingCode(code)
+			refreshCacheCount() // playing may have added the file to the cache
 		} catch (e) {
 			console.error(e)
 		}
-	}, [lang])
+	}, [lang, refreshCacheCount])
 
 	const stopSound = useCallback(() => {
 		if (playingAudio.current) {
@@ -258,8 +285,10 @@ function App() {
 				languages={ALL_LANGUAGES}
 				countries={ALL_COUNTRIES.map(c => ({ code: c.code, flag: c.flag }))}
 				caching={caching}
+				cachedCount={cachedCount}
 				onChange={updateSettings}
 				onClear={resetSettings}
+				onClearCache={clearSoundCache}
 			/>
 			<hgroup>
 				{COUNTRIES.map(c => (

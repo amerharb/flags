@@ -15,11 +15,14 @@ type Props = {
 	countries: { code: string, flag: string }[],
 	// true while flight-mode downloads are running
 	caching: boolean,
+	// number of sound files currently in the cache
+	cachedCount: number,
 	onChange: (settings: Settings) => void,
 	onClear: () => void,
+	onClearCache: () => void,
 }
 
-export default function SettingsPanel({ settings, languages, countries, caching, onChange, onClear }: Readonly<Props>) {
+export default function SettingsPanel({ settings, languages, countries, caching, cachedCount, onChange, onClear, onClearCache }: Readonly<Props>) {
 	const [open, setOpen] = useState(false)
 	const containerRef = useRef<HTMLDivElement | null>(null)
 
@@ -121,20 +124,37 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 						</div>
 					</div>
 
-					<button
-						type="button"
-						className={
-							'settings-flight-mode'
-							+ (settings.flightMode ? ' on' : '')
-							+ (caching ? ' busy' : '')
-						}
-						aria-label="flight mode"
-						aria-pressed={settings.flightMode}
-						title="Flight mode: cache all visible sounds"
-						onClick={() => onChange({ ...settings, flightMode: !settings.flightMode })}
-					>
-						✈️
-					</button>
+					<div className="settings-cache-row">
+						<button
+							type="button"
+							className={
+								'settings-flight-mode'
+								+ (settings.flightMode ? ' on' : '')
+								+ (caching ? ' busy' : '')
+							}
+							aria-label="flight mode"
+							aria-pressed={settings.flightMode}
+							title="Flight mode: cache all visible sounds"
+							onClick={() => onChange({ ...settings, flightMode: !settings.flightMode })}
+						>
+							✈️
+						</button>
+						<span className="settings-cache-count" title="Cached sound files">
+							🔊 {cachedCount}
+						</span>
+						<button
+							type="button"
+							className="settings-cache-clear"
+							aria-label="Clear sound cache"
+							title={settings.flightMode
+								? 'Clear sound cache (not available in flight mode)'
+								: 'Clear sound cache: delete the downloaded sound files'}
+							disabled={settings.flightMode || caching}
+							onClick={onClearCache}
+						>
+							🗑️
+						</button>
+					</div>
 
 					<button
 						type="button"
