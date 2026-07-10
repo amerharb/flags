@@ -17,13 +17,20 @@ type Props = {
 	caching: boolean,
 	// number of sound files currently in the cache
 	cachedCount: number,
+	// when true (game in progress), the panel can't be opened
+	locked: boolean,
 	onChange: (settings: Settings) => void,
 	onClearCache: () => void,
 }
 
-export default function SettingsPanel({ settings, languages, countries, caching, cachedCount, onChange, onClearCache }: Readonly<Props>) {
+export default function SettingsPanel({ settings, languages, countries, caching, cachedCount, locked, onChange, onClearCache }: Readonly<Props>) {
 	const [open, setOpen] = useState(false)
 	const containerRef = useRef<HTMLDivElement | null>(null)
+
+	// force the panel shut whenever it becomes locked (e.g. a game starts)
+	useEffect(() => {
+		if (locked) setOpen(false)
+	}, [locked])
 
 	// close the panel when clicking anywhere outside it
 	useEffect(() => {
@@ -65,7 +72,8 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 				className={open ? 'settings-button open' : 'settings-button'}
 				aria-label="Settings"
 				aria-expanded={open}
-				title="Settings"
+				title={locked ? 'Settings locked during the game' : 'Settings'}
+				disabled={locked}
 				onClick={() => setOpen(o => !o)}
 			>
 				⚙️

@@ -69,9 +69,61 @@ button:active {
 	transition: transform 0.1s;
 }
 
+/* big play/stop button that toggles game mode */
+.game-toggle {
+	display: block;
+	margin: 0 auto 12px;
+	font-size: 40px;
+	line-height: 1;
+	padding: 10px 24px;
+	border-radius: 12px;
+}
+
+.game-toggle.on {
+	transform: scale(0.95);
+	box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.4);
+	background-color: var(--flag-bg);
+}
+
+.game-toggle:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
+/* thumbs up/down that flashes once over the board after a guess */
+.game-feedback {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 30vmin;
+	pointer-events: none;
+	z-index: 1200;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.game-feedback {
+		animation: game-feedback-flash 0.7s ease-out forwards;
+	}
+}
+
+@keyframes game-feedback-flash {
+	0% { opacity: 0; transform: scale(0.6); }
+	25% { opacity: 1; transform: scale(1); }
+	70% { opacity: 1; transform: scale(1); }
+	100% { opacity: 0; transform: scale(1.1); }
+}
+
 .button-flag {
 	background-color: var(--flag-bg);
 	position: relative;
+}
+
+/* a correctly-guessed flag is disabled and dimmed during the game */
+.button-flag:disabled {
+	opacity: 0.3;
+	cursor: default;
 }
 
 /* keep the button looking pressed while its sound is playing */

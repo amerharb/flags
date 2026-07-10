@@ -24,6 +24,27 @@ import { tr } from './countries/tr'
 import { ua } from './countries/ua'
 import { us } from './countries/us'
 
+// Fisher–Yates shuffle into a new array (used to scramble the flag positions on game start)
+function shuffle<T>(items: T[]): T[] {
+	const out = items.slice()
+	for (let i = out.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1))
+		;[out[i], out[j]] = [out[j], out[i]]
+	}
+	return out
+}
+
+const randomOf = <T,>(items: T[]): T => items[Math.floor(Math.random() * items.length)]
+
+// short win/lose feedback sounds
+function playFx(name: 'correct' | 'wrong') {
+	try {
+		new Audio(`/sound/fx/${name}.aac`).play().catch(() => {})
+	} catch {
+		// ignore
+	}
+}
+
 function App() {
 	// everything the build supports (after the beta feature flag)
 	const ALL_COUNTRIES: Country[] = [al, de, dk, ir, ps, pt, se, sy, tn, tr, ua, us].filter(isVisible)
@@ -64,7 +85,7 @@ function App() {
 		const visibleLangs = ALL_LANGUAGES.filter(l => !next.hiddenLanguages.includes(l.code))
 		const visibleCountries = ALL_COUNTRIES.filter(c => !next.hiddenCountries.includes(c.code))
 		const urlsFor = (langs: typeof visibleLangs, countries: typeof visibleCountries) =>
-			langs.flatMap(l => countries.map(c => `/sounds/${l.code}/${c.code}.aac`))
+			langs.flatMap(l => countries.map(c => `/sound/lang/${l.code}/${c.code}.aac`))
 		if (next.flightMode && !settings.flightMode) {
 			// just switched on: cache everything currently visible
 			cacheAudioUrls(urlsFor(visibleLangs, visibleCountries))
@@ -227,7 +248,7 @@ function App() {
 
 	const playSound = useCallback(async (code: string) => {
 		try {
-			const audioUrl = `/sounds/${lang}/${code}.aac`
+			const audioUrl = `/sound/lang/${lang}/${code}.aac`
 			const response = await getAudio(audioUrl)
 			const blob = await response.blob()
 			const objectUrl = URL.createObjectURL(blob)
@@ -258,12 +279,104 @@ function App() {
 		setPlayingCode(null)
 	}, [])
 
+	// play a country sound without touching the play-icon UI (used by the game)
+	const playFile = useCallback(async (url: string) => {
+		try {
+			const response = await getAudio(url)
+			const blob = await response.blob()
+			const objectUrl = URL.createObjectURL(blob)
+			if (playingAudio.current) {
+				playingAudio.current.pause()
+				URL.revokeObjectURL(playingAudio.current.src)
+			}
+			const audio = new Audio(objectUrl)
+			audio.onended = () => URL.revokeObjectURL(objectUrl)
+			playingAudio.current = audio
+			await audio.play()
+			refreshCacheCount()
+		} catch (e) {
+			console.error(e)
+		}
+	}, [refreshCacheCount])
+
+	// ---- Game mode ----
+	const [gameOn, setGameOn] = useState(false)
+	const [gameFlags, setGameFlags] = useState<Country[]>([]) // shuffled board for this game
+	const [target, setTarget] = useState<string | null>(null) // country code to find
+	const [solved, setSolved] = useState<string[]>([])         // codes answered correctly
+	const [score, setScore] = useState(0)
+	const [feedback, setFeedback] = useState<{ emoji: string, id: number } | null>(null)
+	const feedbackId = useRef(0)
+
+	const canPlayGame = LANGUAGES.length > 0 && COUNTRIES.length > 0
+
+	const flashFeedback = (emoji: string) => {
+		feedbackId.current += 1
+		const id = feedbackId.current
+		setFeedback({ emoji, id })
+		setTimeout(() => setFeedback(f => (f && f.id === id ? null : f)), 700)
+	}
+
+	const startGame = () => {
+		if (!canPlayGame) return
+		stopSound()
+		const board = shuffle(COUNTRIES)
+		const first = randomOf(board)
+		setGameFlags(board)
+		setSolved([])
+		setScore(0)
+		setSpokenName('')
+		setTarget(first.code)
+		setGameOn(true)
+		playFile(`/sound/lang/${lang}/${first.code}.aac`)
+	}
+
+	const endGame = () => {
+		stopSound()
+		setGameOn(false)
+		setTarget(null)
+		setSolved([])
+		setFeedback(null)
+	}
+
+	const guessFlag = (code: string) => {
+		if (target === null || solved.includes(code)) return
+		if (code === target) {
+			playFx('correct')
+			flashFeedback('👍')
+			const nextSolved = [...solved, code]
+			const nextScore = score + 1
+			setSolved(nextSolved)
+			setScore(nextScore)
+			const remaining = gameFlags.filter(c => !nextSolved.includes(c.code))
+			if (remaining.length === 0) {
+				// all visible countries played — game over.
+				// stop the last prompt sound (an anthem can run for minutes)
+				stopSound()
+				setGameOn(false)
+				setTarget(null)
+				setSpokenName(`🎉 ${nextScore}/${gameFlags.length}`)
+			} else {
+				const next = randomOf(remaining)
+				setTarget(next.code)
+				// let the ding and 👍 land before the next prompt
+				setTimeout(() => playFile(`/sound/lang/${lang}/${next.code}.aac`), 650)
+			}
+		} else {
+			playFx('wrong')
+			flashFeedback('👎')
+		}
+	}
+
+	const board = gameOn ? gameFlags : COUNTRIES
+
 	return (
 		<div className="Flags">
 			<select
 				className="language-select"
 				title="Language of the country name"
 				value={lang}
+				disabled={gameOn}
 				onChange={(e) => {
 					setLang(e.target.value as Language)
 					setSpokenName('')
@@ -280,37 +393,63 @@ function App() {
 				countries={ALL_COUNTRIES.map(c => ({ code: c.code, flag: c.flag }))}
 				caching={caching}
 				cachedCount={cachedCount}
+				locked={gameOn}
 				onChange={updateSettings}
 				onClearCache={clearSoundCache}
 			/>
+			<button
+				className={gameOn ? 'game-toggle on' : 'game-toggle'}
+				aria-label={gameOn ? 'End game' : 'Start game'}
+				aria-pressed={gameOn}
+				title={
+					gameOn
+						? 'End game'
+						: (canPlayGame ? 'Start game' : 'Select at least one language and country to play')
+				}
+				disabled={!gameOn && !canPlayGame}
+				onClick={() => (gameOn ? endGame() : startGame())}
+			>
+				▶️
+			</button>
 			<hgroup>
-				{COUNTRIES.map(c => (
-					<button
-						key={`country-${c.code}`}
-						className={playingCode === c.code ? 'button-flag playing' : 'button-flag'}
-						title={LANGUAGES.length > 0 ? c.name[lang] : '🤷‍♂️'}
-						onClick={() => {
-							if (playingCode === c.code) {
-								stopSound()
-							} else if (LANGUAGES.length === 0) {
-								// every language is hidden: nothing to say
-								setSpokenName('🤷‍♂️')
-							} else {
-								playSound(c.code)
-								setSpokenName(c.name[lang])
-							}
-						}}
-					>
-						{c.flag}
-						{playingCode === c.code && <span className="play-icon">▶</span>}
-					</button>
-				))}
+				{board.map(c => {
+					const isSolved = gameOn && solved.includes(c.code)
+					return (
+						<button
+							key={`country-${c.code}`}
+							className={playingCode === c.code ? 'button-flag playing' : 'button-flag'}
+							title={gameOn ? '' : (LANGUAGES.length > 0 ? c.name[lang] : '🤷‍♂️')}
+							disabled={isSolved}
+							onClick={() => {
+								if (gameOn) {
+									guessFlag(c.code)
+								} else if (playingCode === c.code) {
+									stopSound()
+								} else if (LANGUAGES.length === 0) {
+									// every language is hidden: nothing to say
+									setSpokenName('🤷‍♂️')
+								} else {
+									playSound(c.code)
+									setSpokenName(c.name[lang])
+								}
+							}}
+						>
+							{c.flag}
+							{playingCode === c.code && <span className="play-icon">▶</span>}
+						</button>
+					)
+				})}
 			</hgroup>
 			<hgroup>
 				<h1>
-					{spokenName}
+					{gameOn ? `${score} / ${gameFlags.length}` : spokenName}
 				</h1>
 			</hgroup>
+			{feedback && (
+				<div key={feedback.id} className="game-feedback" aria-hidden="true">
+					{feedback.emoji}
+				</div>
+			)}
 			<Analytics/>
 		</div>
 	)

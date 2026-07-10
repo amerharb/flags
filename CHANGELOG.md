@@ -2,6 +2,17 @@
 
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.12.0] 2026-07-09
+### Added
+- Add a guessing game: press the ▶️ button to start (disabled until at least
+  one language and one country are visible). The flags shuffle, a random
+  country's name is played in the selected language, and you tap the matching
+  flag. A correct tap scores a point, flashes 👍, plays a chime and disables
+  that flag; a wrong tap scores nothing and flashes 👎 with a buzz. The game
+  ends when every visible country has been played (showing your score), or
+  when you press ▶️ again to stop. Language and settings are locked while
+  playing.
+
 ## [0.11.0] 2026-07-08
 ### Added
 - Add 🎹 language (code `xt`): plays a pure-tone rendering of each anthem's
