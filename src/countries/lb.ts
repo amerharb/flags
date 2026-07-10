@@ -17,5 +17,4 @@ export const lb: Country = {
 		xt: 'كلّنا للوطن',
 	},
 	flag: '🇱🇧',
-	beta: true,
 }

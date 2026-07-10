@@ -17,5 +17,4 @@ export const ae: Country = {
 		xt: 'عيشي بلادي',
 	},
 	flag: '🇦🇪',
-	beta: true,
 }

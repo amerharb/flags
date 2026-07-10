@@ -17,5 +17,4 @@ export const iq: Country = {
 		xt: 'موطني',
 	},
 	flag: '🇮🇶',
-	beta: true,
 }
