@@ -284,11 +284,37 @@ function App() {
 		setPlayingCode(null)
 	}, [])
 
-	// play a country sound without touching the play-icon UI (used by the game)
+	// In-memory blob cache for game sounds. This works in every browser — including
+	// Safari Lockdown Mode, where the Cache Storage API is disabled — so the game
+	// can pre-load its sounds regardless of whether the offline cache is available.
+	const memAudio = useRef<Map<string, Blob>>(new Map())
+
+	// Fetch the given sounds into memory (skipping ones already held). Falls back to
+	// the network when Cache Storage is unavailable, so it always succeeds if online.
+	const prefetchToMemory = useCallback(async (urls: string[]) => {
+		await Promise.all(urls.map(async url => {
+			if (memAudio.current.has(url)) return
+			try {
+				const response = await getAudio(url)
+				if (!response.ok) return
+				const blob = await response.blob()
+				if (blob.size > 0) memAudio.current.set(url, blob)
+			} catch (e) {
+				console.error(`Failed to preload ${url}:`, e)
+			}
+		}))
+	}, [])
+
+	// play a country sound without touching the play-icon UI (used by the game).
+	// Prefers the in-memory blob so gameplay is instant and offline-cache-independent.
 	const playFile = useCallback(async (url: string) => {
 		try {
-			const response = await getAudio(url)
-			const blob = await response.blob()
+			let blob = memAudio.current.get(url)
+			if (!blob) {
+				const response = await getAudio(url)
+				blob = await response.blob()
+				if (blob.size > 0) memAudio.current.set(url, blob)
+			}
 			const objectUrl = URL.createObjectURL(blob)
 			if (playingAudio.current) {
 				playingAudio.current.pause()
@@ -315,6 +341,7 @@ function App() {
 	const [result, setResult] = useState<{ played: number, total: number, mistakes: number, giveUps: number, ms: number } | null>(null)
 	const [feedback, setFeedback] = useState<{ emoji: string, id: number } | null>(null)
 	const feedbackId = useRef(0)
+	const [preparing, setPreparing] = useState(false) // downloading game sounds before start
 
 	const canPlayGame = LANGUAGES.length > 0 && COUNTRIES.length > 0
 
@@ -332,10 +359,15 @@ function App() {
 		setTimeout(() => setFeedback(f => (f && f.id === id ? null : f)), 700)
 	}
 
-	const startGame = () => {
-		if (!canPlayGame) return
+	const startGame = async () => {
+		if (!canPlayGame || preparing) return
 		stopSound()
 		const board = shuffle(COUNTRIES)
+		// pre-load every prompt sound before the game begins, so gameplay never waits
+		// on the network — and so it works where Cache Storage is unavailable
+		setPreparing(true)
+		await prefetchToMemory(board.map(c => `/sound/lang/${lang}/${c.code}.aac`))
+		setPreparing(false)
 		const first = randomOf(board)
 		setGameFlags(board)
 		setSolved([])
@@ -419,7 +451,7 @@ function App() {
 		<div className="Flags">
 			<div className="top-controls">
 				<button
-					className={gameOn ? 'game-toggle on' : 'game-toggle'}
+					className={(gameOn ? 'game-toggle on' : 'game-toggle') + (preparing ? ' busy' : '')}
 					aria-label={gameOn ? 'End game' : 'Start game'}
 					aria-pressed={gameOn}
 					title={
@@ -427,7 +459,7 @@ function App() {
 							? 'End game'
 							: (canPlayGame ? 'Start game' : 'Select at least one language and country to play')
 					}
-					disabled={!gameOn && !canPlayGame}
+					disabled={(!gameOn && !canPlayGame) || preparing}
 					onClick={() => (gameOn ? endGame() : startGame())}
 				>
 					🎮
@@ -498,7 +530,7 @@ function App() {
 					</div>
 				) : (
 					<h1>
-						{gameOn ? `${solved.length} / ${gameFlags.length}` : spokenName}
+						{preparing ? '⏳' : gameOn ? `${solved.length} / ${gameFlags.length}` : spokenName}
 					</h1>
 				)}
 			</hgroup>
@@ -506,7 +538,7 @@ function App() {
 				<button
 					className="game-giveup"
 					aria-label="Give up"
-					title="Give up: reveal this one and count it as a mistake"
+					title="Give up: reveal this one and move on"
 					onClick={giveUp}
 				>
 					🤷‍♂️

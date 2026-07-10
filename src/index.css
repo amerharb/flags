@@ -89,6 +89,13 @@ button:active {
 	cursor: not-allowed;
 }
 
+/* pulse while pre-loading the game's sounds */
+@media (prefers-reduced-motion: no-preference) {
+	.game-toggle.busy {
+		animation: flight-mode-pulse 1s ease-in-out infinite;
+	}
+}
+
 /* give-up button, shown centered below the score during a game */
 .game-giveup {
 	display: block;

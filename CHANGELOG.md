@@ -2,6 +2,13 @@
 
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.12.1] 2026-07-09
+### Fixed
+- Pre-load all of a game's sounds before it starts, so gameplay never waits on
+  the network. The sounds are held in memory, which also works in Safari
+  Lockdown Mode (where the Cache Storage API is disabled and offline caching
+  cannot run)
+
 ## [0.12.0] 2026-07-09
 ### Added
 - Add Iraq, Lebanon and the United Arab Emirates (beta)
