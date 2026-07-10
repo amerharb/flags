@@ -19,11 +19,13 @@ import { dk } from './countries/dk'
 import { iq } from './countries/iq'
 import { ir } from './countries/ir'
 import { lb } from './countries/lb'
+import { om } from './countries/om'
 import { ps } from './countries/ps'
 import { pt } from './countries/pt'
 import { se } from './countries/se'
 import { sy } from './countries/sy'
 import { tn } from './countries/tn'
+import { th } from './countries/th'
 import { tr } from './countries/tr'
 import { ua } from './countries/ua'
 import { us } from './countries/us'
@@ -51,7 +53,7 @@ function playFx(name: 'correct' | 'wrong') {
 
 function App() {
 	// everything the build supports (after the beta feature flag)
-	const ALL_COUNTRIES: Country[] = [ae, al, de, dk, iq, ir, lb, ps, pt, se, sy, tn, tr, ua, us].filter(isVisible)
+	const ALL_COUNTRIES: Country[] = [ae, al, de, dk, iq, ir, lb, om, ps, pt, se, sy, th, tn, tr, ua, us].filter(isVisible)
 	const LANGUAGE_DEFS: { code: Language, display: string, beta?: boolean }[] = [
 		{ code: 'sq', display: 'Shqip' },
 		{ code: 'ar', display: 'عربي' },
