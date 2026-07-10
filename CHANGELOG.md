@@ -2,6 +2,15 @@
 
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.13.0] 2026-07-09
+### Added
+- Add an About section at the bottom of the settings panel showing the app
+  version and a link to the developer's GitHub
+
+### Changed
+- Iraq, Lebanon and the United Arab Emirates are no longer beta; they now show
+  in production (Iran and Ukraine remain beta)
+
 ## [0.12.1] 2026-07-09
 ### Fixed
 - Pre-load all of a game's sounds before it starts, so gameplay never waits on

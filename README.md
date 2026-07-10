@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.12.1-blue.svg)](https://github.com/amerharb/flags)
+[![Version](https://img.shields.io/badge/version-0.13.0-blue.svg)](https://github.com/amerharb/flags)
 # Flags
 
 Small react project to show country flags (as emoji) and pronounce the country
@@ -9,15 +9,18 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 - Albania 🇦🇱
 - Denmark 🇩🇰
 - Germany 🇩🇪
+- Iraq 🇮🇶
+- Lebanon 🇱🇧
 - Palestine 🇵🇸
 - Portugal 🇵🇹
 - Sweden 🇸🇪
 - Syria 🇸🇾
 - Tunisia 🇹🇳
 - Turkey 🇹🇷
+- United Arab Emirates 🇦🇪
 - United States of America 🇺🇸
-- Iran 🇮🇷, Iraq 🇮🇶, Lebanon 🇱🇧, Ukraine 🇺🇦, United Arab Emirates 🇦🇪 (beta —
-  visible in development, hidden from production for now)
+- Iran 🇮🇷, Ukraine 🇺🇦 (beta — visible in development, hidden from production
+  for now)
 - We are looking for more countries, see How to contribute
 
 ## Languages supported

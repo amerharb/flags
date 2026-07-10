@@ -204,6 +204,16 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 						</button>
 					</div>
 
+					<div className="settings-about">
+						<span>v{__APP_VERSION__}</span>
+						<a
+							href="https://github.com/amerharb/flags"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							Amer Harb · GitHub
+						</a>
+					</div>
 				</div>
 			)}
 		</div>
