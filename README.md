@@ -48,10 +48,12 @@ the country's name spoken (or its anthem played) and see it written.
 - Flight mode (✈️): downloads all visible sounds to the cache; anything newly
   shown while it is on is downloaded right away. Turning it off keeps the
   cached files.
-- Game (▶️): press play to start a guessing game — a random country name is
-  spoken and you tap the matching flag. Correct taps score a point (👍),
-  wrong taps don't (👎). It runs through every visible country; press ▶️
-  again to stop early. Needs at least one language and one country visible.
+- Game (🎮 in the top bar): start a guessing game — a random country name is
+  spoken and you tap the matching flag (👍 correct, 👎 wrong). Stuck? The
+  give-up button (🤷‍♂️) reveals it and counts a mistake. It runs through every
+  visible country, then shows how many you played, your mistakes, and your
+  time; press 🎮 again to stop early. Needs at least one language and one
+  country visible.
 
 ## How to contribute
 ### Media files

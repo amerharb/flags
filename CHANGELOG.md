@@ -4,14 +4,15 @@
 
 ## [0.12.0] 2026-07-09
 ### Added
-- Add a guessing game: press the ▶️ button to start (disabled until at least
-  one language and one country are visible). The flags shuffle, a random
-  country's name is played in the selected language, and you tap the matching
-  flag. A correct tap scores a point, flashes 👍, plays a chime and disables
-  that flag; a wrong tap scores nothing and flashes 👎 with a buzz. The game
-  ends when every visible country has been played (showing your score), or
-  when you press ▶️ again to stop. Language and settings are locked while
-  playing.
+- Add a guessing game: press the 🎮 button (in the top control bar, disabled
+  until at least one language and one country are visible). The flags shuffle,
+  a random country's name is played in the selected language, and you tap the
+  matching flag. A correct tap flashes 👍, plays a chime and disables that
+  flag; a wrong tap flashes 👎 with a buzz. A give-up button (🤷‍♂️) reveals
+  the current one, counting it as played plus one mistake. The game ends when
+  every visible country has been played, or when you press 🎮 again to stop;
+  either way it shows how many countries you played, your mistakes, and your
+  time. Language and settings are locked while playing.
 
 ## [0.11.0] 2026-07-08
 ### Added

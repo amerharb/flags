@@ -303,12 +303,21 @@ function App() {
 	const [gameOn, setGameOn] = useState(false)
 	const [gameFlags, setGameFlags] = useState<Country[]>([]) // shuffled board for this game
 	const [target, setTarget] = useState<string | null>(null) // country code to find
-	const [solved, setSolved] = useState<string[]>([])         // codes answered correctly
-	const [score, setScore] = useState(0)
+	const [solved, setSolved] = useState<string[]>([])         // codes already played (guessed or given up)
+	const [mistakes, setMistakes] = useState(0)      // wrong taps + give-ups this game
+	const gameStart = useRef(0)                       // Date.now() when the game began
+	const [result, setResult] = useState<{ played: number, total: number, mistakes: number, ms: number } | null>(null)
 	const [feedback, setFeedback] = useState<{ emoji: string, id: number } | null>(null)
 	const feedbackId = useRef(0)
 
 	const canPlayGame = LANGUAGES.length > 0 && COUNTRIES.length > 0
+
+	const formatDuration = (ms: number) => {
+		const total = Math.round(ms / 1000)
+		const m = Math.floor(total / 60)
+		const s = total % 60
+		return m > 0 ? `${m}:${String(s).padStart(2, '0')}` : `${s}s`
+	}
 
 	const flashFeedback = (emoji: string) => {
 		feedbackId.current += 1
@@ -324,8 +333,10 @@ function App() {
 		const first = randomOf(board)
 		setGameFlags(board)
 		setSolved([])
-		setScore(0)
+		setMistakes(0)
+		setResult(null)
 		setSpokenName('')
+		gameStart.current = Date.now()
 		setTarget(first.code)
 		setGameOn(true)
 		playFile(`/sound/lang/${lang}/${first.code}.aac`)
@@ -335,8 +346,40 @@ function App() {
 		stopSound()
 		setGameOn(false)
 		setTarget(null)
-		setSolved([])
 		setFeedback(null)
+		// show the result for the countries played so far
+		setResult({
+			played: solved.length,
+			total: gameFlags.length,
+			mistakes,
+			ms: Date.now() - gameStart.current,
+		})
+	}
+
+	// mark the target country played and move on (or finish). mistakesTotal is the
+	// running mistake count to record if this was the last country.
+	const advance = (code: string, mistakesTotal: number) => {
+		const nextSolved = [...solved, code]
+		setSolved(nextSolved)
+		const remaining = gameFlags.filter(c => !nextSolved.includes(c.code))
+		if (remaining.length === 0) {
+			// all visible countries played — game over.
+			// stop the last prompt sound (an anthem can run for minutes)
+			stopSound()
+			setGameOn(false)
+			setTarget(null)
+			setResult({
+				played: nextSolved.length,
+				total: gameFlags.length,
+				mistakes: mistakesTotal,
+				ms: Date.now() - gameStart.current,
+			})
+		} else {
+			const next = randomOf(remaining)
+			setTarget(next.code)
+			// let the feedback land before the next prompt
+			setTimeout(() => playFile(`/sound/lang/${lang}/${next.code}.aac`), 650)
+		}
 	}
 
 	const guessFlag = (code: string) => {
@@ -344,73 +387,69 @@ function App() {
 		if (code === target) {
 			playFx('correct')
 			flashFeedback('👍')
-			const nextSolved = [...solved, code]
-			const nextScore = score + 1
-			setSolved(nextSolved)
-			setScore(nextScore)
-			const remaining = gameFlags.filter(c => !nextSolved.includes(c.code))
-			if (remaining.length === 0) {
-				// all visible countries played — game over.
-				// stop the last prompt sound (an anthem can run for minutes)
-				stopSound()
-				setGameOn(false)
-				setTarget(null)
-				setSpokenName(`🎉 ${nextScore}/${gameFlags.length}`)
-			} else {
-				const next = randomOf(remaining)
-				setTarget(next.code)
-				// let the ding and 👍 land before the next prompt
-				setTimeout(() => playFile(`/sound/lang/${lang}/${next.code}.aac`), 650)
-			}
+			advance(code, mistakes)
 		} else {
+			setMistakes(m => m + 1)
 			playFx('wrong')
 			flashFeedback('👎')
 		}
+	}
+
+	// give up on the current country: counts as played, adds a mistake
+	const giveUp = () => {
+		if (target === null) return
+		const nextMistakes = mistakes + 1
+		setMistakes(nextMistakes)
+		playFx('wrong')
+		flashFeedback('🤷‍♂️')
+		advance(target, nextMistakes)
 	}
 
 	const board = gameOn ? gameFlags : COUNTRIES
 
 	return (
 		<div className="Flags">
-			<select
-				className="language-select"
-				title="Language of the country name"
-				value={lang}
-				disabled={gameOn}
-				onChange={(e) => {
-					setLang(e.target.value as Language)
-					setSpokenName('')
-					stopSound()
-				}}
-			>
-				{LANGUAGES.map(l => (
-					<option key={`lang-${l.code}`} value={l.code}>{l.display}</option>
-				))}
-			</select>
-			<SettingsPanel
-				settings={settings}
-				languages={ALL_LANGUAGES}
-				countries={ALL_COUNTRIES.map(c => ({ code: c.code, flag: c.flag }))}
-				caching={caching}
-				cachedCount={cachedCount}
-				locked={gameOn}
-				onChange={updateSettings}
-				onClearCache={clearSoundCache}
-			/>
-			<button
-				className={gameOn ? 'game-toggle on' : 'game-toggle'}
-				aria-label={gameOn ? 'End game' : 'Start game'}
-				aria-pressed={gameOn}
-				title={
-					gameOn
-						? 'End game'
-						: (canPlayGame ? 'Start game' : 'Select at least one language and country to play')
-				}
-				disabled={!gameOn && !canPlayGame}
-				onClick={() => (gameOn ? endGame() : startGame())}
-			>
-				▶️
-			</button>
+			<div className="top-controls">
+				<button
+					className={gameOn ? 'game-toggle on' : 'game-toggle'}
+					aria-label={gameOn ? 'End game' : 'Start game'}
+					aria-pressed={gameOn}
+					title={
+						gameOn
+							? 'End game'
+							: (canPlayGame ? 'Start game' : 'Select at least one language and country to play')
+					}
+					disabled={!gameOn && !canPlayGame}
+					onClick={() => (gameOn ? endGame() : startGame())}
+				>
+					🎮
+				</button>
+				<select
+					className="language-select"
+					title="Language of the country name"
+					value={lang}
+					disabled={gameOn}
+					onChange={(e) => {
+						setLang(e.target.value as Language)
+						setSpokenName('')
+						stopSound()
+					}}
+				>
+					{LANGUAGES.map(l => (
+						<option key={`lang-${l.code}`} value={l.code}>{l.display}</option>
+					))}
+				</select>
+				<SettingsPanel
+					settings={settings}
+					languages={ALL_LANGUAGES}
+					countries={ALL_COUNTRIES.map(c => ({ code: c.code, flag: c.flag }))}
+					caching={caching}
+					cachedCount={cachedCount}
+					locked={gameOn}
+					onChange={updateSettings}
+					onClearCache={clearSoundCache}
+				/>
+			</div>
 			<hgroup>
 				{board.map(c => {
 					const isSolved = gameOn && solved.includes(c.code)
@@ -429,6 +468,7 @@ function App() {
 									// every language is hidden: nothing to say
 									setSpokenName('🤷‍♂️')
 								} else {
+									setResult(null)
 									playSound(c.code)
 									setSpokenName(c.name[lang])
 								}
@@ -441,10 +481,28 @@ function App() {
 				})}
 			</hgroup>
 			<hgroup>
-				<h1>
-					{gameOn ? `${score} / ${gameFlags.length}` : spokenName}
-				</h1>
+				{!gameOn && result ? (
+					<div className="game-result">
+						<span title="Countries played">🏁 {result.played} / {result.total}</span>
+						<span title="Mistakes">❌ {result.mistakes}</span>
+						<span title="Time">⏱️ {formatDuration(result.ms)}</span>
+					</div>
+				) : (
+					<h1>
+						{gameOn ? `${solved.length} / ${gameFlags.length}` : spokenName}
+					</h1>
+				)}
 			</hgroup>
+			{gameOn && (
+				<button
+					className="game-giveup"
+					aria-label="Give up"
+					title="Give up: reveal this one and count it as a mistake"
+					onClick={giveUp}
+				>
+					🤷‍♂️
+				</button>
+			)}
 			{feedback && (
 				<div key={feedback.id} className="game-feedback" aria-hidden="true">
 					{feedback.emoji}
