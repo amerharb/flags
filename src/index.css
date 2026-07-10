@@ -321,6 +321,16 @@ button:active {
 	opacity: 0.35;
 }
 
+/* controls locked while a game is running */
+.flag-toggle:disabled,
+.settings-select-all button:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+.flag-toggle.hidden:disabled {
+	opacity: 0.2;
+}
+
 /* flight mode + cache info on one row */
 .settings-cache-row {
 	display: flex;

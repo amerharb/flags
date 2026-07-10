@@ -10,11 +10,15 @@ import {
 	loadSettings,
 	saveSettings,
 	applyTheme,
+	preferredLanguage,
 } from './settingsStore'
+import { ae } from './countries/ae'
 import { al } from './countries/al'
 import { de } from './countries/de'
 import { dk } from './countries/dk'
+import { iq } from './countries/iq'
 import { ir } from './countries/ir'
+import { lb } from './countries/lb'
 import { ps } from './countries/ps'
 import { pt } from './countries/pt'
 import { se } from './countries/se'
@@ -47,7 +51,7 @@ function playFx(name: 'correct' | 'wrong') {
 
 function App() {
 	// everything the build supports (after the beta feature flag)
-	const ALL_COUNTRIES: Country[] = [al, de, dk, ir, ps, pt, se, sy, tn, tr, ua, us].filter(isVisible)
+	const ALL_COUNTRIES: Country[] = [ae, al, de, dk, iq, ir, lb, ps, pt, se, sy, tn, tr, ua, us].filter(isVisible)
 	const LANGUAGE_DEFS: { code: Language, display: string, beta?: boolean }[] = [
 		{ code: 'sq', display: 'Shqip' },
 		{ code: 'ar', display: 'عربي' },
@@ -112,8 +116,9 @@ function App() {
 	const COUNTRIES = ALL_COUNTRIES.filter(c => !settings.hiddenCountries.includes(c.code))
 	const LANGUAGES = ALL_LANGUAGES.filter(l => !settings.hiddenLanguages.includes(l.code))
 
-	// language of the displayed and spoken country name
-	const [lang, setLang] = useState<Language>('en')
+	// language of the displayed and spoken country name; defaults to the browser's
+	// preferred language on first load (the fallback effect below keeps it visible)
+	const [lang, setLang] = useState<Language>(() => preferredLanguage())
 	const [spokenName, setSpokenName] = useState('')
 
 	// if the selected language gets hidden in settings, fall back to the first visible one
@@ -304,9 +309,10 @@ function App() {
 	const [gameFlags, setGameFlags] = useState<Country[]>([]) // shuffled board for this game
 	const [target, setTarget] = useState<string | null>(null) // country code to find
 	const [solved, setSolved] = useState<string[]>([])         // codes already played (guessed or given up)
-	const [mistakes, setMistakes] = useState(0)      // wrong taps + give-ups this game
+	const [mistakes, setMistakes] = useState(0)      // wrong taps this game
+	const [giveUps, setGiveUps] = useState(0)        // countries given up on this game
 	const gameStart = useRef(0)                       // Date.now() when the game began
-	const [result, setResult] = useState<{ played: number, total: number, mistakes: number, ms: number } | null>(null)
+	const [result, setResult] = useState<{ played: number, total: number, mistakes: number, giveUps: number, ms: number } | null>(null)
 	const [feedback, setFeedback] = useState<{ emoji: string, id: number } | null>(null)
 	const feedbackId = useRef(0)
 
@@ -334,6 +340,7 @@ function App() {
 		setGameFlags(board)
 		setSolved([])
 		setMistakes(0)
+		setGiveUps(0)
 		setResult(null)
 		setSpokenName('')
 		gameStart.current = Date.now()
@@ -352,13 +359,14 @@ function App() {
 			played: solved.length,
 			total: gameFlags.length,
 			mistakes,
+			giveUps,
 			ms: Date.now() - gameStart.current,
 		})
 	}
 
-	// mark the target country played and move on (or finish). mistakesTotal is the
-	// running mistake count to record if this was the last country.
-	const advance = (code: string, mistakesTotal: number) => {
+	// mark the target country played and move on (or finish). mistakesTotal and
+	// giveUpsTotal are the running counts to record if this was the last country.
+	const advance = (code: string, mistakesTotal: number, giveUpsTotal: number) => {
 		const nextSolved = [...solved, code]
 		setSolved(nextSolved)
 		const remaining = gameFlags.filter(c => !nextSolved.includes(c.code))
@@ -372,6 +380,7 @@ function App() {
 				played: nextSolved.length,
 				total: gameFlags.length,
 				mistakes: mistakesTotal,
+				giveUps: giveUpsTotal,
 				ms: Date.now() - gameStart.current,
 			})
 		} else {
@@ -387,7 +396,7 @@ function App() {
 		if (code === target) {
 			playFx('correct')
 			flashFeedback('👍')
-			advance(code, mistakes)
+			advance(code, mistakes, giveUps)
 		} else {
 			setMistakes(m => m + 1)
 			playFx('wrong')
@@ -395,14 +404,13 @@ function App() {
 		}
 	}
 
-	// give up on the current country: counts as played, adds a mistake
+	// give up on the current country: counts as played and as a give-up (not a mistake)
 	const giveUp = () => {
 		if (target === null) return
-		const nextMistakes = mistakes + 1
-		setMistakes(nextMistakes)
-		playFx('wrong')
+		const nextGiveUps = giveUps + 1
+		setGiveUps(nextGiveUps)
 		flashFeedback('🤷‍♂️')
-		advance(target, nextMistakes)
+		advance(target, mistakes, nextGiveUps)
 	}
 
 	const board = gameOn ? gameFlags : COUNTRIES
@@ -485,6 +493,7 @@ function App() {
 					<div className="game-result">
 						<span title="Countries played">🏁 {result.played} / {result.total}</span>
 						<span title="Mistakes">❌ {result.mistakes}</span>
+						<span title="Give-ups">🤷‍♂️ {result.giveUps}</span>
 						<span title="Time">⏱️ {formatDuration(result.ms)}</span>
 					</div>
 				) : (

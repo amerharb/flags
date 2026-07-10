@@ -17,4 +17,5 @@ export const ua: Country = {
 		xt: 'Ще не вмерла України і слава, і воля',
 	},
 	flag: '🇺🇦',
+	beta: true,
 }

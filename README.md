@@ -9,15 +9,15 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 - Albania 🇦🇱
 - Denmark 🇩🇰
 - Germany 🇩🇪
-- Iran 🇮🇷
 - Palestine 🇵🇸
 - Portugal 🇵🇹
 - Sweden 🇸🇪
 - Syria 🇸🇾
 - Tunisia 🇹🇳
 - Turkey 🇹🇷
-- Ukraine 🇺🇦
 - United States of America 🇺🇸
+- Iran 🇮🇷, Iraq 🇮🇶, Lebanon 🇱🇧, Ukraine 🇺🇦, United Arab Emirates 🇦🇪 (beta —
+  visible in development, hidden from production for now)
 - We are looking for more countries, see How to contribute
 
 ## Languages supported
@@ -50,10 +50,13 @@ the country's name spoken (or its anthem played) and see it written.
   cached files.
 - Game (🎮 in the top bar): start a guessing game — a random country name is
   spoken and you tap the matching flag (👍 correct, 👎 wrong). Stuck? The
-  give-up button (🤷‍♂️) reveals it and counts a mistake. It runs through every
-  visible country, then shows how many you played, your mistakes, and your
-  time; press 🎮 again to stop early. Needs at least one language and one
-  country visible.
+  give-up button (🤷‍♂️) reveals it (tracked separately from mistakes). It runs
+  through every visible country, then shows how many you played, your mistakes,
+  give-ups, and your time; press 🎮 again to stop early. Theme and flight mode
+  stay changeable mid-game; the language and country lists are locked. Needs at
+  least one language and one country visible.
+- First visit: the starting language and which languages are shown come from
+  your browser's language settings (plus 🎺 and 🎹).
 
 ## How to contribute
 ### Media files

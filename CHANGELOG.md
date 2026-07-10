@@ -4,15 +4,23 @@
 
 ## [0.12.0] 2026-07-09
 ### Added
+- Add Iraq, Lebanon and the United Arab Emirates (beta)
 - Add a guessing game: press the 🎮 button (in the top control bar, disabled
   until at least one language and one country are visible). The flags shuffle,
   a random country's name is played in the selected language, and you tap the
   matching flag. A correct tap flashes 👍, plays a chime and disables that
   flag; a wrong tap flashes 👎 with a buzz. A give-up button (🤷‍♂️) reveals
-  the current one, counting it as played plus one mistake. The game ends when
-  every visible country has been played, or when you press 🎮 again to stop;
-  either way it shows how many countries you played, your mistakes, and your
-  time. Language and settings are locked while playing.
+  the current one (counted as played, tracked separately from mistakes). The
+  game ends when every visible country has been played, or when you press 🎮
+  again to stop; either way it shows how many countries you played, your
+  mistakes, your give-ups, and your time. During a game you can still open
+  settings to change the theme or flight mode, but the language and country
+  lists are locked.
+- On first visit, pick the starting language from the browser (navigator.language)
+  and show only the browser's languages (navigator.languages) plus 🎺 and 🎹
+
+### Changed
+- Mark Iran and Ukraine as beta (hidden from production for now)
 
 ## [0.11.0] 2026-07-08
 ### Added

@@ -27,11 +27,6 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 	const [open, setOpen] = useState(false)
 	const containerRef = useRef<HTMLDivElement | null>(null)
 
-	// force the panel shut whenever it becomes locked (e.g. a game starts)
-	useEffect(() => {
-		if (locked) setOpen(false)
-	}, [locked])
-
 	// close the panel when clicking anywhere outside it
 	useEffect(() => {
 		if (!open) return
@@ -72,8 +67,7 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 				className={open ? 'settings-button open' : 'settings-button'}
 				aria-label="Settings"
 				aria-expanded={open}
-				title={locked ? 'Settings locked during the game' : 'Settings'}
-				disabled={locked}
+				title="Settings"
 				onClick={() => setOpen(o => !o)}
 			>
 				⚙️
@@ -105,6 +99,7 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 								type="button"
 								aria-label="Select all languages"
 								title="Select all"
+								disabled={locked}
 								onClick={showAllLanguages}
 							>
 								✅
@@ -113,6 +108,7 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 								type="button"
 								aria-label="Deselect all languages"
 								title="Deselect all"
+								disabled={locked}
 								onClick={hideAllLanguages}
 							>
 								⬜
@@ -126,6 +122,7 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 										<input
 											type="checkbox"
 											checked={shown}
+											disabled={locked}
 											onChange={() => toggleLanguage(l.code)}
 										/>
 										{l.display}
@@ -141,6 +138,7 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 								type="button"
 								aria-label="Select all countries"
 								title="Select all"
+								disabled={locked}
 								onClick={showAllCountries}
 							>
 								✅
@@ -149,6 +147,7 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 								type="button"
 								aria-label="Deselect all countries"
 								title="Deselect all"
+								disabled={locked}
 								onClick={hideAllCountries}
 							>
 								⬜
@@ -163,6 +162,7 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 										type="button"
 										className={shown ? 'flag-toggle' : 'flag-toggle hidden'}
 										aria-pressed={shown}
+										disabled={locked}
 										onClick={() => toggleCountry(c.code)}
 									>
 										{c.flag}
