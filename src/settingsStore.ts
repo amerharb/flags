@@ -28,21 +28,42 @@ export const DEFAULT_SETTINGS: Settings = {
 
 const STORAGE_KEY = 'flags:settings'
 
+// real spoken languages that a browser locale can match (excludes 🎺 xa / 🎹 xt)
+const SPOKEN_LANGUAGES: Language[] = ['sq', 'ar', 'da', 'en', 'de', 'fa', 'pt', 'sv', 'tr', 'uk']
+
+// map a BCP-47 tag (e.g. "en-US", "sv") to one of our spoken codes, or null
+function tagToLanguage(tag: string): Language | null {
+	const primary = tag.toLowerCase().split('-')[0]
+	return (SPOKEN_LANGUAGES as string[]).includes(primary) ? primary as Language : null
+}
+
+// the browser's preferred language, mapped to a supported code (falls back to English)
+export function preferredLanguage(): Language {
+	const tag = (typeof navigator !== 'undefined' && navigator.language) || ''
+	return tagToLanguage(tag) ?? 'en'
+}
+
+// first-run settings: show only the browser's languages (navigator.languages) plus
+// the preferred one and the anthem options 🎺/🎹; everything else starts hidden
+function firstRunSettings(): Settings {
+	const tags = (typeof navigator !== 'undefined' && navigator.languages) || []
+	const visible = new Set<Language>(tags.map(tagToLanguage).filter(Boolean) as Language[])
+	visible.add(preferredLanguage())
+	const hiddenLanguages = SPOKEN_LANGUAGES.filter(code => !visible.has(code))
+	return { ...DEFAULT_SETTINGS, hiddenLanguages }
+}
+
 export function loadSettings(): Settings {
 	try {
 		const raw = localStorage.getItem(STORAGE_KEY)
 		if (raw) {
 			return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) }
 		}
-		// migrate the old standalone theme key, if present
-		const legacyTheme = localStorage.getItem('theme')
-		if (legacyTheme === 'light' || legacyTheme === 'dark' || legacyTheme === 'system') {
-			return { ...DEFAULT_SETTINGS, theme: legacyTheme }
-		}
 	} catch {
 		// localStorage may be unavailable (e.g. private mode); fall back to defaults
 	}
-	return { ...DEFAULT_SETTINGS }
+	// no saved settings: derive first-run visibility from the browser's languages
+	return firstRunSettings()
 }
 
 export function saveSettings(settings: Settings): void {

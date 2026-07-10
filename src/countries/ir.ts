@@ -17,4 +17,5 @@ export const ir: Country = {
 		xt: 'سرود ملی جمهوری اسلامی ایران',
 	},
 	flag: '🇮🇷',
+	beta: true,
 }

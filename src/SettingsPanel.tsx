@@ -17,11 +17,13 @@ type Props = {
 	caching: boolean,
 	// number of sound files currently in the cache
 	cachedCount: number,
+	// when true (game in progress), the panel can't be opened
+	locked: boolean,
 	onChange: (settings: Settings) => void,
 	onClearCache: () => void,
 }
 
-export default function SettingsPanel({ settings, languages, countries, caching, cachedCount, onChange, onClearCache }: Readonly<Props>) {
+export default function SettingsPanel({ settings, languages, countries, caching, cachedCount, locked, onChange, onClearCache }: Readonly<Props>) {
 	const [open, setOpen] = useState(false)
 	const containerRef = useRef<HTMLDivElement | null>(null)
 
@@ -97,6 +99,7 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 								type="button"
 								aria-label="Select all languages"
 								title="Select all"
+								disabled={locked}
 								onClick={showAllLanguages}
 							>
 								✅
@@ -105,6 +108,7 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 								type="button"
 								aria-label="Deselect all languages"
 								title="Deselect all"
+								disabled={locked}
 								onClick={hideAllLanguages}
 							>
 								⬜
@@ -118,6 +122,7 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 										<input
 											type="checkbox"
 											checked={shown}
+											disabled={locked}
 											onChange={() => toggleLanguage(l.code)}
 										/>
 										{l.display}
@@ -133,6 +138,7 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 								type="button"
 								aria-label="Select all countries"
 								title="Select all"
+								disabled={locked}
 								onClick={showAllCountries}
 							>
 								✅
@@ -141,6 +147,7 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 								type="button"
 								aria-label="Deselect all countries"
 								title="Deselect all"
+								disabled={locked}
 								onClick={hideAllCountries}
 							>
 								⬜
@@ -155,6 +162,7 @@ export default function SettingsPanel({ settings, languages, countries, caching,
 										type="button"
 										className={shown ? 'flag-toggle' : 'flag-toggle hidden'}
 										aria-pressed={shown}
+										disabled={locked}
 										onClick={() => toggleCountry(c.code)}
 									>
 										{c.flag}
