@@ -8,6 +8,9 @@
   version and a link to the developer's GitHub
 - Add Oman and Thailand (beta)
 - Add Norway and France (beta)
+- Add Switzerland and Netherlands (beta)
+- Add Spain and Italy (beta)
+- Add Vatican City and Austria (beta)
 
 ### Changed
 - Iraq, Lebanon and the United Arab Emirates are no longer beta; they now show

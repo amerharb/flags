@@ -14,12 +14,17 @@ import {
 } from './settingsStore'
 import { ae } from './countries/ae'
 import { al } from './countries/al'
+import { at } from './countries/at'
+import { ch } from './countries/ch'
 import { de } from './countries/de'
 import { dk } from './countries/dk'
+import { es } from './countries/es'
 import { fr } from './countries/fr'
 import { iq } from './countries/iq'
 import { ir } from './countries/ir'
+import { it } from './countries/it'
 import { lb } from './countries/lb'
+import { nl } from './countries/nl'
 import { no } from './countries/no'
 import { om } from './countries/om'
 import { ps } from './countries/ps'
@@ -31,6 +36,7 @@ import { th } from './countries/th'
 import { tr } from './countries/tr'
 import { ua } from './countries/ua'
 import { us } from './countries/us'
+import { va } from './countries/va'
 
 // Fisher–Yates shuffle into a new array (used to scramble the flag positions on game start)
 function shuffle<T>(items: T[]): T[] {
@@ -55,7 +61,7 @@ function playFx(name: 'correct' | 'wrong') {
 
 function App() {
 	// everything the build supports (after the beta feature flag)
-	const ALL_COUNTRIES: Country[] = [ae, al, de, dk, fr, iq, ir, lb, no, om, ps, pt, se, sy, th, tn, tr, ua, us].filter(isVisible)
+	const ALL_COUNTRIES: Country[] = [ae, al, at, ch, de, dk, es, fr, iq, ir, it, lb, nl, no, om, ps, pt, se, sy, th, tn, tr, ua, us, va].filter(isVisible)
 	const LANGUAGE_DEFS: { code: Language, display: string, beta?: boolean }[] = [
 		{ code: 'sq', display: 'Shqip' },
 		{ code: 'ar', display: 'عربي' },

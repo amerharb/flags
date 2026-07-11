@@ -19,8 +19,10 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 - Turkey 🇹🇷
 - United Arab Emirates 🇦🇪
 - United States of America 🇺🇸
-- France 🇫🇷, Iran 🇮🇷, Norway 🇳🇴, Oman 🇴🇲, Thailand 🇹🇭, Ukraine 🇺🇦 (beta —
-  visible in development, hidden from production for now)
+- Austria 🇦🇹, France 🇫🇷, Iran 🇮🇷, Italy 🇮🇹, Netherlands 🇳🇱, Norway 🇳🇴,
+  Oman 🇴🇲, Spain 🇪🇸, Switzerland 🇨🇭, Thailand 🇹🇭, Ukraine 🇺🇦,
+  Vatican City 🇻🇦 (beta — visible in development, hidden from production
+  for now)
 - We are looking for more countries, see How to contribute
 
 ## Languages supported
