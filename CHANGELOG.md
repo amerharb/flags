@@ -11,6 +11,7 @@
 - Add Switzerland and Netherlands (beta)
 - Add Spain and Italy (beta)
 - Add Vatican City and Austria (beta)
+- Add Greece (beta)
 
 ### Changed
 - Iraq, Lebanon and the United Arab Emirates are no longer beta; they now show
