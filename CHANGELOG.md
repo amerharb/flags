@@ -7,6 +7,7 @@
 - Add an About section at the bottom of the settings panel showing the app
   version and a link to the developer's GitHub
 - Add Oman and Thailand (beta)
+- Add Norway and France (beta)
 
 ### Changed
 - Iraq, Lebanon and the United Arab Emirates are no longer beta; they now show
