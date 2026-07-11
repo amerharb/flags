@@ -6,16 +6,17 @@
 ### Added
 - Add an About section at the bottom of the settings panel showing the app
   version and a link to the developer's GitHub
-- Add Oman and Thailand (beta)
-- Add Norway and France (beta)
-- Add Switzerland and Netherlands (beta)
-- Add Spain and Italy (beta)
-- Add Vatican City and Austria (beta)
-- Add Greece (beta)
+- Add Oman and Thailand
+- Add Norway and France
+- Add Switzerland and Netherlands
+- Add Spain and Italy
+- Add Vatican City and Austria
+- Add Greece
+- Add Poland, Egypt, Belgium, Luxembourg and Czech Republic
 
 ### Changed
-- Iraq, Lebanon and the United Arab Emirates are no longer beta; they now show
-  in production (Iran and Ukraine remain beta)
+- Promote all countries out of beta except Iran and Ukraine; every other
+  country now shows in production
 
 ## [0.12.1] 2026-07-09
 ### Fixed
@@ -26,7 +27,7 @@
 
 ## [0.12.0] 2026-07-09
 ### Added
-- Add Iraq, Lebanon and the United Arab Emirates (beta)
+- Add Iraq, Lebanon and the United Arab Emirates
 - Add a guessing game: press the 🎮 button (in the top control bar, disabled
   until at least one language and one country are visible). The flags shuffle,
   a random country's name is played in the selected language, and you tap the

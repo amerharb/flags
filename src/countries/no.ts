@@ -17,5 +17,4 @@ export const no: Country = {
 		xt: 'Ja, vi elsker dette landet',
 	},
 	flag: '🇳🇴',
-	beta: true,
 }

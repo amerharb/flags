@@ -17,5 +17,4 @@ export const es: Country = {
 		xt: 'La Marcha Real',
 	},
 	flag: '🇪🇸',
-	beta: true,
 }

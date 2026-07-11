@@ -17,5 +17,4 @@ export const th: Country = {
 		xt: 'เพลงชาติไทย',
 	},
 	flag: '🇹🇭',
-	beta: true,
 }

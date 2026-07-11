@@ -7,21 +7,35 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 
 ## Countries supported
 - Albania 🇦🇱
+- Austria 🇦🇹
+- Belgium 🇧🇪
+- Czech Republic 🇨🇿
 - Denmark 🇩🇰
+- Egypt 🇪🇬
+- France 🇫🇷
 - Germany 🇩🇪
+- Greece 🇬🇷
 - Iraq 🇮🇶
+- Italy 🇮🇹
 - Lebanon 🇱🇧
+- Luxembourg 🇱🇺
+- Netherlands 🇳🇱
+- Norway 🇳🇴
+- Oman 🇴🇲
 - Palestine 🇵🇸
+- Poland 🇵🇱
 - Portugal 🇵🇹
+- Spain 🇪🇸
 - Sweden 🇸🇪
+- Switzerland 🇨🇭
 - Syria 🇸🇾
+- Thailand 🇹🇭
 - Tunisia 🇹🇳
 - Turkey 🇹🇷
 - United Arab Emirates 🇦🇪
 - United States of America 🇺🇸
-- Austria 🇦🇹, France 🇫🇷, Greece 🇬🇷, Iran 🇮🇷, Italy 🇮🇹, Netherlands 🇳🇱,
-  Norway 🇳🇴, Oman 🇴🇲, Spain 🇪🇸, Switzerland 🇨🇭, Thailand 🇹🇭, Ukraine 🇺🇦,
-  Vatican City 🇻🇦 (beta — visible in development, hidden from production
+- Vatican City 🇻🇦
+- Iran 🇮🇷, Ukraine 🇺🇦 (beta — visible in development, hidden from production
   for now)
 - We are looking for more countries, see How to contribute
 

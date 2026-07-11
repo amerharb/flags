@@ -17,5 +17,4 @@ export const at: Country = {
 		xt: 'Land der Berge, Land am Strome',
 	},
 	flag: '🇦🇹',
-	beta: true,
 }

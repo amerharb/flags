@@ -17,5 +17,4 @@ export const va: Country = {
 		xt: 'Inno e Marcia Pontificale',
 	},
 	flag: '🇻🇦',
-	beta: true,
 }

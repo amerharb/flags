@@ -17,5 +17,4 @@ export const om: Country = {
 		xt: 'السلام السلطاني',
 	},
 	flag: '🇴🇲',
-	beta: true,
 }

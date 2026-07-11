@@ -17,5 +17,4 @@ export const nl: Country = {
 		xt: 'Het Wilhelmus',
 	},
 	flag: '🇳🇱',
-	beta: true,
 }

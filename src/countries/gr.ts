@@ -17,5 +17,4 @@ export const gr: Country = {
 		xt: 'Ύμνος εις την Ελευθερίαν',
 	},
 	flag: '🇬🇷',
-	beta: true,
 }

@@ -17,5 +17,4 @@ export const fr: Country = {
 		xt: 'La Marseillaise',
 	},
 	flag: '🇫🇷',
-	beta: true,
 }

@@ -17,5 +17,4 @@ export const ch: Country = {
 		xt: 'Schweizerpsalm',
 	},
 	flag: '🇨🇭',
-	beta: true,
 }

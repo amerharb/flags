@@ -17,5 +17,4 @@ export const it: Country = {
 		xt: 'Il Canto degli Italiani',
 	},
 	flag: '🇮🇹',
-	beta: true,
 }
