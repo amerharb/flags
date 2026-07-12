@@ -87,9 +87,33 @@ function App() {
 	// user settings (theme + which languages/countries to show on the main screen)
 	const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
 	useEffect(() => {
-		const loaded = loadSettings()
+		let loaded = loadSettings()
+
+		// URL params override visibility for a shareable/deep-linked view:
+		//   ?f=us,de,fr  -> only these flags (countries) are visible
+		//   ?l=en,ar     -> only these languages are visible; the first is selected
+		// Order in the params does not affect the on-screen order.
+		const params = new URLSearchParams(window.location.search)
+
+		const fParam = params.get('f')
+		if (fParam !== null) {
+			const want = new Set(fParam.split(',').map(s => s.trim()).filter(Boolean))
+			const hiddenCountries = ALL_COUNTRIES.map(c => c.code).filter(c => !want.has(c))
+			loaded = { ...loaded, hiddenCountries }
+		}
+
+		const lParam = params.get('l')
+		if (lParam !== null) {
+			const valid = new Set(ALL_LANGUAGES.map(l => l.code))
+			const want = lParam.split(',').map(s => s.trim()).filter(c => valid.has(c as Language))
+			const hiddenLanguages = ALL_LANGUAGES.map(l => l.code).filter(c => !want.includes(c))
+			loaded = { ...loaded, hiddenLanguages }
+			if (want.length > 0) setLang(want[0] as Language) // first listed = selected
+		}
+
 		setSettings(loaded)
 		applyTheme(loaded.theme)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 	const updateSettings = (next: Settings) => {
 		// stop playback when its country, or the selected language, just got hidden —

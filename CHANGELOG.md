@@ -3,6 +3,10 @@
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
 ## [0.14.0] 2026-07-12
+### Added
+- Support URL parameters for a shareable view: `f` sets which flags are shown
+  (e.g. `?f=us,de,fr`) and `l` sets which languages are shown with the first
+  one selected (e.g. `?l=en,ar`). List order does not affect the on-screen order.
 
 ## [0.13.0] 2026-07-09
 ### Added
