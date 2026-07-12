@@ -8,6 +8,11 @@
   (e.g. `?f=us,de,fr`) and `l` sets which languages are shown with the first
   one selected (e.g. `?l=en,ar`). List order does not affect the on-screen order.
 
+### Fixed
+- In the game, answering the final country before the previous prompt's sound
+  was scheduled to play no longer leaves that sound playing after the game ends
+  (the pending next-prompt timer is now cancelled)
+
 ## [0.13.0] 2026-07-09
 ### Added
 - Add an About section at the bottom of the settings panel showing the app

@@ -315,7 +315,16 @@ function App() {
 		}
 	}, [lang, refreshCacheCount])
 
+	// pending "play the next prompt" timer during the game, so it can be cancelled
+	// if the game ends (or is stopped) before it fires — otherwise a late timer
+	// would start a sound after the game is already over
+	const promptTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
 	const stopSound = useCallback(() => {
+		if (promptTimer.current) {
+			clearTimeout(promptTimer.current)
+			promptTimer.current = null
+		}
 		if (playingAudio.current) {
 			playingAudio.current.pause()
 			URL.revokeObjectURL(playingAudio.current.src)
@@ -439,6 +448,12 @@ function App() {
 	// mark the target country played and move on (or finish). mistakesTotal and
 	// giveUpsTotal are the running counts to record if this was the last country.
 	const advance = (code: string, mistakesTotal: number, giveUpsTotal: number) => {
+		// cancel any not-yet-fired next-prompt timer (e.g. the player answered the
+		// last country before the previous prompt was scheduled to play)
+		if (promptTimer.current) {
+			clearTimeout(promptTimer.current)
+			promptTimer.current = null
+		}
 		const nextSolved = [...solved, code]
 		setSolved(nextSolved)
 		const remaining = gameFlags.filter(c => !nextSolved.includes(c.code))
@@ -459,7 +474,7 @@ function App() {
 			const next = randomOf(remaining)
 			setTarget(next.code)
 			// let the feedback land before the next prompt
-			setTimeout(() => playFile(`/sound/lang/${lang}/${next.code}.aac`), 650)
+			promptTimer.current = setTimeout(() => playFile(`/sound/lang/${lang}/${next.code}.aac`), 650)
 		}
 	}
 
