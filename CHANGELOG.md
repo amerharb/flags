@@ -2,6 +2,22 @@
 
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.13.0] 2026-07-09
+### Added
+- Add an About section at the bottom of the settings panel showing the app
+  version and a link to the developer's GitHub
+- Add Oman and Thailand
+- Add Norway and France
+- Add Switzerland and Netherlands
+- Add Spain and Italy
+- Add Vatican City and Austria
+- Add Greece
+- Add Poland, Egypt, Belgium, Luxembourg and Czech Republic
+
+### Changed
+- Promote all countries out of beta except Iran and Ukraine; every other
+  country now shows in production
+
 ## [0.12.1] 2026-07-09
 ### Fixed
 - Pre-load all of a game's sounds before it starts, so gameplay never waits on
@@ -11,7 +27,7 @@
 
 ## [0.12.0] 2026-07-09
 ### Added
-- Add Iraq, Lebanon and the United Arab Emirates (beta)
+- Add Iraq, Lebanon and the United Arab Emirates
 - Add a guessing game: press the 🎮 button (in the top control bar, disabled
   until at least one language and one country are visible). The flags shuffle,
   a random country's name is played in the selected language, and you tap the
