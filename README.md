@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.13.0-blue.svg)](https://github.com/amerharb/flags)
+[![Version](https://img.shields.io/badge/version-0.14.0-blue.svg)](https://github.com/amerharb/flags)
 # Flags
 
 Small react project to show country flags (as emoji) and pronounce the country

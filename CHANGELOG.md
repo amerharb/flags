@@ -2,6 +2,8 @@
 
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.14.0] 2026-07-12
+
 ## [0.13.0] 2026-07-09
 ### Added
 - Add an About section at the bottom of the settings panel showing the app
