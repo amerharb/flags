@@ -6,6 +6,7 @@ import { Country, Language } from './countries/Country'
 import { isVisible } from './featureFlags'
 import {
 	Settings,
+	SortMode,
 	DEFAULT_SETTINGS,
 	loadSettings,
 	saveSettings,
@@ -55,6 +56,24 @@ function shuffle<T>(items: T[]): T[] {
 }
 
 const randomOf = <T,>(items: T[]): T => items[Math.floor(Math.random() * items.length)]
+
+// Order the countries for display. 'lang' sorts by the country name in the given
+// language (only when one is selected — otherwise falls back to iso); 'random' uses
+// the frozen randomOrder (unknown codes go last); 'iso' (default) sorts by code.
+function sortCountries(countries: Country[], mode: SortMode, lang: Language, hasLanguage: boolean, randomOrder: string[]): Country[] {
+	const list = countries.slice()
+	if (mode === 'lang' && hasLanguage) {
+		return list.sort((a, b) => a.name[lang].localeCompare(b.name[lang], lang) || a.code.localeCompare(b.code))
+	}
+	if (mode === 'random') {
+		const pos = (code: string) => {
+			const i = randomOrder.indexOf(code)
+			return i === -1 ? Number.MAX_SAFE_INTEGER : i
+		}
+		return list.sort((a, b) => pos(a.code) - pos(b.code) || a.code.localeCompare(b.code))
+	}
+	return list.sort((a, b) => a.code.localeCompare(b.code))
+}
 
 // short win/lose feedback sounds
 function playFx(name: 'correct' | 'wrong') {
@@ -152,14 +171,26 @@ function App() {
 		applyTheme(next.theme)
 	}
 
-	// what the main screen actually shows
-	const COUNTRIES = ALL_COUNTRIES.filter(c => !settings.hiddenCountries.includes(c.code))
 	const LANGUAGES = ALL_LANGUAGES.filter(l => !settings.hiddenLanguages.includes(l.code))
 
 	// language of the displayed and spoken country name; defaults to the browser's
 	// preferred language on first load (the fallback effect below keeps it visible)
 	const [lang, setLang] = useState<Language>(() => preferredLanguage())
 	const [spokenName, setSpokenName] = useState('')
+
+	// choose a sort mode for the flags; picking random (from another mode) reshuffles
+	const setSort = (mode: SortMode) => {
+		if (mode === 'random' && settings.sortMode !== 'random') {
+			updateSettings({ ...settings, sortMode: 'random', randomOrder: shuffle(ALL_COUNTRIES.map(c => c.code)) })
+		} else {
+			updateSettings({ ...settings, sortMode: mode })
+		}
+	}
+
+	// what the main screen actually shows: all countries sorted by the chosen mode,
+	// then filtered to the visible ones (hidden flags still hold their sorted slot)
+	const COUNTRIES = sortCountries(ALL_COUNTRIES, settings.sortMode, lang, LANGUAGES.length > 0, settings.randomOrder)
+		.filter(c => !settings.hiddenCountries.includes(c.code))
 
 	// if the selected language gets hidden in settings, fall back to the first visible one
 	useEffect(() => {
@@ -542,6 +573,7 @@ function App() {
 					cachedCount={cachedCount}
 					locked={gameOn}
 					onChange={updateSettings}
+					onSetSort={setSort}
 					onClearCache={clearSoundCache}
 				/>
 			</div>

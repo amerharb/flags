@@ -7,6 +7,11 @@
 - Support URL parameters for a shareable view: `f` sets which flags are shown
   (e.g. `?f=us,de,fr`) and `l` sets which languages are shown with the first
   one selected (e.g. `?l=en,ar`). List order does not affect the on-screen order.
+- Add a flag sort setting ⇵: by ISO code (🌐, default), by the selected language's
+  names (🗣️, so switching language re-sorts; falls back to ISO when no language
+  is selected), or random (🎲). The random order is fixed until you pick another
+  mode and choose random again, and it covers hidden flags too so each keeps its
+  slot when shown.
 
 ### Fixed
 - In the game, answering the final country before the previous prompt's sound

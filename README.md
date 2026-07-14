@@ -71,7 +71,7 @@ English, Arabic selected. The order in each list does not affect the on-screen
 order (flags and languages always render in the app's own order).
 
 - Settings (⚙️ top right): theme (system / light / dark, system is the
-  default), a language checklist and a flag grid to show/hide anything on the
+  default), flag sort order (🌐 ISO code / 🗣️ selected language / 🎲 random), a language checklist and a flag grid to show/hide anything on the
   main screen (with ✅/⬜ select-all/deselect-all buttons), a flight mode
   toggle (✈️), and cache info (🔊 count and a 🗑️ clear button).
   Saved in localStorage, remembered between visits.
