@@ -176,7 +176,8 @@ button:active {
 	cursor: not-allowed;
 }
 
-.wrong-icon {
+.wrong-icon,
+.solved-icon {
 	position: absolute;
 	top: 4px;
 	right: 8px;

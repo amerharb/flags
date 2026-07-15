@@ -505,6 +505,7 @@ function App() {
 						>
 							{c.flag}
 							{playingCode === c.code && <span className="play-icon">▶</span>}
+							{isSolved && <span className="solved-icon">👍</span>}
 							{isWrong && <span className="wrong-icon">👎</span>}
 						</button>
 					)
