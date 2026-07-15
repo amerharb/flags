@@ -176,8 +176,8 @@ button:active {
 	cursor: not-allowed;
 }
 
-.wrong-icon,
-.solved-icon {
+/* corner state marker (👍 solved / 🤷‍♂️ given up / 👎 wrong) on a flag */
+.swatch-mark {
 	position: absolute;
 	top: 4px;
 	right: 8px;

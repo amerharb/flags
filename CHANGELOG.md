@@ -13,7 +13,9 @@
   order covers hidden flags too, so each keeps its slot when shown.
 
 ### Changed
-- In the game, a solved flag shows a 👍 marker (in addition to being dimmed)
+- In the game, a solved flag shows a 👍 marker (in addition to being dimmed);
+  a flag revealed with "I don't know" is marked 🤷‍♂️ instead and plays a
+  distinct give-up sound
 - In the game, a wrong flag is temporarily disabled with a 👎 marker so you
   can't tap it again; all such flags re-enable once you find the correct one
 - Cache all sounds in a single store (IndexedDB) instead of the previous mix of
