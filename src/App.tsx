@@ -415,6 +415,7 @@ function App() {
 	const [gameFlags, setGameFlags] = useState<Country[]>([]) // shuffled board for this game
 	const [target, setTarget] = useState<string | null>(null) // country code to find
 	const [solved, setSolved] = useState<string[]>([])         // codes already played (guessed or given up)
+	const [wrongGuesses, setWrongGuesses] = useState<string[]>([]) // wrong flags for the CURRENT target (temporarily disabled)
 	const [mistakes, setMistakes] = useState(0)      // wrong taps this game
 	const [giveUps, setGiveUps] = useState(0)        // countries given up on this game
 	const gameStart = useRef(0)                       // Date.now() when the game began
@@ -451,6 +452,7 @@ function App() {
 		const first = randomOf(board)
 		setGameFlags(board)
 		setSolved([])
+		setWrongGuesses([])
 		setMistakes(0)
 		setGiveUps(0)
 		setResult(null)
@@ -465,6 +467,7 @@ function App() {
 		stopSound()
 		setGameOn(false)
 		setTarget(null)
+		setWrongGuesses([])
 		setFeedback(null)
 		// show the result for the countries played so far
 		setResult({
@@ -485,6 +488,8 @@ function App() {
 			clearTimeout(promptTimer.current)
 			promptTimer.current = null
 		}
+		// reaching the correct answer re-enables the flags marked wrong this round
+		setWrongGuesses([])
 		const nextSolved = [...solved, code]
 		setSolved(nextSolved)
 		const remaining = gameFlags.filter(c => !nextSolved.includes(c.code))
@@ -510,12 +515,14 @@ function App() {
 	}
 
 	const guessFlag = (code: string) => {
-		if (target === null || solved.includes(code)) return
+		if (target === null || solved.includes(code) || wrongGuesses.includes(code)) return
 		if (code === target) {
 			playFx('correct')
 			flashFeedback('👍')
 			advance(code, mistakes, giveUps)
 		} else {
+			// temporarily disable this wrong flag (with a 👎 marker) until the round is won
+			setWrongGuesses(w => (w.includes(code) ? w : [...w, code]))
 			setMistakes(m => m + 1)
 			playFx('wrong')
 			flashFeedback('👎')
@@ -580,12 +587,13 @@ function App() {
 			<hgroup>
 				{board.map(c => {
 					const isSolved = gameOn && solved.includes(c.code)
+					const isWrong = gameOn && wrongGuesses.includes(c.code)
 					return (
 						<button
 							key={`country-${c.code}`}
-							className={playingCode === c.code ? 'button-flag playing' : 'button-flag'}
+							className={'button-flag' + (playingCode === c.code ? ' playing' : '') + (isWrong ? ' wrong' : '')}
 							title={gameOn ? '' : (LANGUAGES.length > 0 ? c.name[lang] : '🤷‍♂️')}
-							disabled={isSolved}
+							disabled={isSolved || isWrong}
 							onClick={() => {
 								if (gameOn) {
 									guessFlag(c.code)
@@ -603,6 +611,7 @@ function App() {
 						>
 							{c.flag}
 							{playingCode === c.code && <span className="play-icon">▶</span>}
+							{isWrong && <span className="wrong-icon">👎</span>}
 						</button>
 					)
 				})}

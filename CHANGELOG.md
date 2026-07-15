@@ -13,6 +13,10 @@
   mode and choose random again, and it covers hidden flags too so each keeps its
   slot when shown.
 
+### Changed
+- In the game, a wrong flag is temporarily disabled with a 👎 marker so you
+  can't tap it again; all such flags re-enable once you find the correct one
+
 ### Fixed
 - In the game, answering the final country before the previous prompt's sound
   was scheduled to play no longer leaves that sound playing after the game ends
