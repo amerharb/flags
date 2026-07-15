@@ -300,16 +300,16 @@ button:active {
 	align-items: center;
 }
 
-/* small leading indicator (e.g. the sort ↕️) inside a segmented row */
+/* small leading indicator (e.g. the sort ⇵) inside a segmented row */
 .settings-segmented-icon {
-	font-size: 16px;
+	font-size: 20px;
 	line-height: 1;
 	flex: none;
 }
 
 .settings-segmented .segment {
 	flex: 1;
-	font-size: 12px;
+	font-size: 20px;
 	font-weight: 500;
 	padding: 8px 4px;
 	margin: 0;
@@ -336,7 +336,7 @@ button:active {
 }
 
 .flag-toggle {
-	font-size: 24px;
+	font-size: 28px;
 	line-height: 1;
 	aspect-ratio: 1;
 	padding: 0;
