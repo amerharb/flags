@@ -9,9 +9,8 @@
   one selected (e.g. `?l=en,ar`). List order does not affect the on-screen order.
 - Add a flag sort setting ⇵: by ISO code (🌐, default), by the selected language's
   names (🗣️, so switching language re-sorts; falls back to ISO when no language
-  is selected), or random (🎲). The random order is fixed until you pick another
-  mode and choose random again, and it covers hidden flags too so each keeps its
-  slot when shown.
+  is selected), or random (🎲, reshuffles every time you choose it). The random
+  order covers hidden flags too, so each keeps its slot when shown.
 
 ### Changed
 - In the game, a wrong flag is temporarily disabled with a 👎 marker so you

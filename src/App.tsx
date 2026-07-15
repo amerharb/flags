@@ -179,9 +179,9 @@ function App() {
 	const [lang, setLang] = useState<Language>(() => preferredLanguage())
 	const [spokenName, setSpokenName] = useState('')
 
-	// choose a sort mode for the flags; picking random (from another mode) reshuffles
+	// choose a sort mode for the flags; choosing random reshuffles every time
 	const setSort = (mode: SortMode) => {
-		if (mode === 'random' && settings.sortMode !== 'random') {
+		if (mode === 'random') {
 			updateSettings({ ...settings, sortMode: 'random', randomOrder: shuffle(ALL_COUNTRIES.map(c => c.code)) })
 		} else {
 			updateSettings({ ...settings, sortMode: mode })
