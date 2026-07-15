@@ -16,6 +16,10 @@
 ### Changed
 - In the game, a wrong flag is temporarily disabled with a 👎 marker so you
   can't tap it again; all such flags re-enable once you find the correct one
+- Cache all sounds in a single store (IndexedDB) instead of the previous mix of
+  Cache Storage and an in-memory map. Simpler, persists across reloads, works in
+  Safari Lockdown Mode, and drops the 7-day TTL (the cache lives until cleared
+  with the 🗑️ button)
 
 ### Fixed
 - In the game, answering the final country before the previous prompt's sound
