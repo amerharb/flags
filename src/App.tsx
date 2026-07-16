@@ -6,12 +6,14 @@ import { Country, Language } from './countries/Country'
 import { isVisible } from './featureFlags'
 import {
 	Settings,
+	SortMode,
 	DEFAULT_SETTINGS,
 	loadSettings,
 	saveSettings,
 	applyTheme,
 	preferredLanguage,
 } from './settingsStore'
+import { getAudioBlob, ensureCached, idbCount, idbClear } from './audioCache'
 import { ae } from './countries/ae'
 import { al } from './countries/al'
 import { at } from './countries/at'
@@ -56,8 +58,26 @@ function shuffle<T>(items: T[]): T[] {
 
 const randomOf = <T,>(items: T[]): T => items[Math.floor(Math.random() * items.length)]
 
+// Order the countries for display. 'lang' sorts by the country name in the given
+// language (only when one is selected — otherwise falls back to iso); 'random' uses
+// the frozen randomOrder (unknown codes go last); 'iso' (default) sorts by code.
+function sortCountries(countries: Country[], mode: SortMode, lang: Language, hasLanguage: boolean, randomOrder: string[]): Country[] {
+	const list = countries.slice()
+	if (mode === 'lang' && hasLanguage) {
+		return list.sort((a, b) => a.name[lang].localeCompare(b.name[lang], lang) || a.code.localeCompare(b.code))
+	}
+	if (mode === 'random') {
+		const pos = (code: string) => {
+			const i = randomOrder.indexOf(code)
+			return i === -1 ? Number.MAX_SAFE_INTEGER : i
+		}
+		return list.sort((a, b) => pos(a.code) - pos(b.code) || a.code.localeCompare(b.code))
+	}
+	return list.sort((a, b) => a.code.localeCompare(b.code))
+}
+
 // short win/lose feedback sounds
-function playFx(name: 'correct' | 'wrong') {
+function playFx(name: 'correct' | 'wrong' | 'giveup') {
 	try {
 		new Audio(`/sound/fx/${name}.aac`).play().catch(() => {})
 	} catch {
@@ -87,9 +107,33 @@ function App() {
 	// user settings (theme + which languages/countries to show on the main screen)
 	const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
 	useEffect(() => {
-		const loaded = loadSettings()
+		let loaded = loadSettings()
+
+		// URL params override visibility for a shareable/deep-linked view:
+		//   ?f=us,de,fr  -> only these flags (countries) are visible
+		//   ?l=en,ar     -> only these languages are visible; the first is selected
+		// Order in the params does not affect the on-screen order.
+		const params = new URLSearchParams(window.location.search)
+
+		const fParam = params.get('f')
+		if (fParam !== null) {
+			const want = new Set(fParam.split(',').map(s => s.trim()).filter(Boolean))
+			const hiddenCountries = ALL_COUNTRIES.map(c => c.code).filter(c => !want.has(c))
+			loaded = { ...loaded, hiddenCountries }
+		}
+
+		const lParam = params.get('l')
+		if (lParam !== null) {
+			const valid = new Set(ALL_LANGUAGES.map(l => l.code))
+			const want = lParam.split(',').map(s => s.trim()).filter(c => valid.has(c as Language))
+			const hiddenLanguages = ALL_LANGUAGES.map(l => l.code).filter(c => !want.includes(c))
+			loaded = { ...loaded, hiddenLanguages }
+			if (want.length > 0) setLang(want[0] as Language) // first listed = selected
+		}
+
 		setSettings(loaded)
 		applyTheme(loaded.theme)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 	const updateSettings = (next: Settings) => {
 		// stop playback when its country, or the selected language, just got hidden —
@@ -128,14 +172,26 @@ function App() {
 		applyTheme(next.theme)
 	}
 
-	// what the main screen actually shows
-	const COUNTRIES = ALL_COUNTRIES.filter(c => !settings.hiddenCountries.includes(c.code))
 	const LANGUAGES = ALL_LANGUAGES.filter(l => !settings.hiddenLanguages.includes(l.code))
 
 	// language of the displayed and spoken country name; defaults to the browser's
 	// preferred language on first load (the fallback effect below keeps it visible)
 	const [lang, setLang] = useState<Language>(() => preferredLanguage())
 	const [spokenName, setSpokenName] = useState('')
+
+	// choose a sort mode for the flags; choosing random reshuffles every time
+	const setSort = (mode: SortMode) => {
+		if (mode === 'random') {
+			updateSettings({ ...settings, sortMode: 'random', randomOrder: shuffle(ALL_COUNTRIES.map(c => c.code)) })
+		} else {
+			updateSettings({ ...settings, sortMode: mode })
+		}
+	}
+
+	// what the main screen actually shows: all countries sorted by the chosen mode,
+	// then filtered to the visible ones (hidden flags still hold their sorted slot)
+	const COUNTRIES = sortCountries(ALL_COUNTRIES, settings.sortMode, lang, LANGUAGES.length > 0, settings.randomOrder)
+		.filter(c => !settings.hiddenCountries.includes(c.code))
 
 	// if the selected language gets hidden in settings, fall back to the first visible one
 	useEffect(() => {
@@ -155,10 +211,8 @@ function App() {
 	const [cachedCount, setCachedCount] = useState(0)
 
 	const refreshCacheCount = useCallback(async () => {
-		if (!('caches' in globalThis)) return
 		try {
-			const audioCache = await caches.open('audio-cache')
-			setCachedCount((await audioCache.keys()).length)
+			setCachedCount(await idbCount())
 		} catch {
 			// leave the previous count
 		}
@@ -169,109 +223,29 @@ function App() {
 
 	// delete only the downloaded sound files (settings stay); not allowed in flight mode
 	const clearSoundCache = useCallback(async () => {
-		if (!('caches' in globalThis)) return
-		await Promise.all([
-			caches.delete('audio-cache'),
-			caches.delete('audio-cache-timestamps'),
-		])
+		try {
+			await idbClear()
+		} catch {
+			// ignore
+		}
 		setCachedCount(0)
 	}, [])
 
-	async function getAudio(audioUrl: string) {
-		const TTL = 1000 * 60 * 60 * 24 * 7 // 7 days
-		if ('caches' in globalThis) {
-			const audioCache = await caches.open('audio-cache')
-			const audioCacheTimestamps = await caches.open('audio-cache-timestamps')
-			const cachedResponse = await audioCache.match(audioUrl)
-
-			if (cachedResponse) {
-				const timestampResponse = await audioCacheTimestamps.match(audioUrl)
-				if (timestampResponse) {
-					const timestamp = await timestampResponse.text()
-					const cachedTime = Number(timestamp)
-					const currentTime = Date.now()
-
-					if (currentTime - cachedTime > TTL) {
-						await Promise.all([
-							audioCache.delete(audioUrl),
-							audioCacheTimestamps.delete(audioUrl),
-						])
-					} else {
-						return cachedResponse
-					}
-				}
-			}
-
-			const response = await fetch(audioUrl)
-			// skip caching if response failed or empty, so a 404 page is never cached as audio
-			if (!response.ok || !response.headers.get('Content-Length') || response.headers.get('Content-Length') === '0') {
-				return response
-			}
-
-			await audioCache.put(audioUrl, response.clone())
-			const timestampResponse = new Response(Date.now().toString())
-			await audioCacheTimestamps.put(audioUrl, timestampResponse)
-
-			return response
-		} else {
-			return await fetch(audioUrl)
-		}
-	}
-
-	// Download the given sound files into the cache (already-cached ones are skipped,
-	// so incremental calls only fetch what is missing). Never deletes anything:
-	// switching flight mode off keeps the cached files.
-	async function cacheAudioUrls(audioUrls: string[]) {
-		// Some browsers like Safari disable Cache Storage in lockdown mode
-		if (!('caches' in globalThis)) {
-			console.warn('Cache Storage API not available; skipping flight mode cache')
-			return
-		}
+	// Flight mode: download the given sounds into the cache, showing the busy state.
+	const cacheAudioUrls = useCallback(async (audioUrls: string[]) => {
 		setCaching(true)
-		console.time('cacheAudioUrls')
 		try {
-			const [audioCache, audioCacheTimestamps] = await Promise.all([
-				caches.open('audio-cache'),
-				caches.open('audio-cache-timestamps'),
-			])
-
-			await Promise.all(
-				audioUrls.map(async url => {
-					try {
-						// already downloaded earlier — keep it
-						if (await audioCache.match(url)) {
-							return
-						}
-						const res = await fetch(url)
-						if (res.ok && res.body && res.headers.get('Content-Length') && res.headers.get('Content-Length') !== '0') {
-							await Promise.all([
-								audioCache.put(url, res.clone()),
-								audioCacheTimestamps.put(url, new Response(Date.now().toString())),
-							])
-						} else {
-							console.warn(`Failed to cache: ${url} (status: ${res.status})`)
-						}
-					} catch (err) {
-						console.error(`Error fetching ${url}:`, err)
-					}
-				}),
-			)
-
-			console.log('Audio files cached successfully')
-		} catch (error) {
-			console.error('Failed to cache audio files:', error)
+			await ensureCached(audioUrls)
 		} finally {
-			console.timeEnd('cacheAudioUrls')
 			setCaching(false)
 			refreshCacheCount()
 		}
-	}
+	}, [refreshCacheCount])
 
 	const playSound = useCallback(async (code: string) => {
 		try {
-			const audioUrl = `/sound/lang/${lang}/${code}.aac`
-			const response = await getAudio(audioUrl)
-			const blob = await response.blob()
+			const blob = await getAudioBlob(`/sound/lang/${lang}/${code}.aac`)
+			if (!blob) return
 			const objectUrl = URL.createObjectURL(blob)
 			if (playingAudio.current) {
 				playingAudio.current.pause()
@@ -291,7 +265,16 @@ function App() {
 		}
 	}, [lang, refreshCacheCount])
 
+	// pending "play the next prompt" timer during the game, so it can be cancelled
+	// if the game ends (or is stopped) before it fires — otherwise a late timer
+	// would start a sound after the game is already over
+	const promptTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
 	const stopSound = useCallback(() => {
+		if (promptTimer.current) {
+			clearTimeout(promptTimer.current)
+			promptTimer.current = null
+		}
 		if (playingAudio.current) {
 			playingAudio.current.pause()
 			URL.revokeObjectURL(playingAudio.current.src)
@@ -300,37 +283,12 @@ function App() {
 		setPlayingCode(null)
 	}, [])
 
-	// In-memory blob cache for game sounds. This works in every browser — including
-	// Safari Lockdown Mode, where the Cache Storage API is disabled — so the game
-	// can pre-load its sounds regardless of whether the offline cache is available.
-	const memAudio = useRef<Map<string, Blob>>(new Map())
-
-	// Fetch the given sounds into memory (skipping ones already held). Falls back to
-	// the network when Cache Storage is unavailable, so it always succeeds if online.
-	const prefetchToMemory = useCallback(async (urls: string[]) => {
-		await Promise.all(urls.map(async url => {
-			if (memAudio.current.has(url)) return
-			try {
-				const response = await getAudio(url)
-				if (!response.ok) return
-				const blob = await response.blob()
-				if (blob.size > 0) memAudio.current.set(url, blob)
-			} catch (e) {
-				console.error(`Failed to preload ${url}:`, e)
-			}
-		}))
-	}, [])
-
 	// play a country sound without touching the play-icon UI (used by the game).
-	// Prefers the in-memory blob so gameplay is instant and offline-cache-independent.
+	// Reads from the cache (IndexedDB, works in Safari Lockdown) or the network.
 	const playFile = useCallback(async (url: string) => {
 		try {
-			let blob = memAudio.current.get(url)
-			if (!blob) {
-				const response = await getAudio(url)
-				blob = await response.blob()
-				if (blob.size > 0) memAudio.current.set(url, blob)
-			}
+			const blob = await getAudioBlob(url)
+			if (!blob) return
 			const objectUrl = URL.createObjectURL(blob)
 			if (playingAudio.current) {
 				playingAudio.current.pause()
@@ -340,19 +298,20 @@ function App() {
 			audio.onended = () => URL.revokeObjectURL(objectUrl)
 			playingAudio.current = audio
 			await audio.play()
-			refreshCacheCount()
 		} catch (e) {
 			console.error(e)
 		}
-	}, [refreshCacheCount])
+	}, [])
 
 	// ---- Game mode ----
 	const [gameOn, setGameOn] = useState(false)
 	const [gameFlags, setGameFlags] = useState<Country[]>([]) // shuffled board for this game
 	const [target, setTarget] = useState<string | null>(null) // country code to find
 	const [solved, setSolved] = useState<string[]>([])         // codes already played (guessed or given up)
+	const [wrongGuesses, setWrongGuesses] = useState<string[]>([]) // wrong flags for the CURRENT target (temporarily disabled)
 	const [mistakes, setMistakes] = useState(0)      // wrong taps this game
 	const [giveUps, setGiveUps] = useState(0)        // countries given up on this game
+	const [gaveUpCodes, setGaveUpCodes] = useState<string[]>([]) // codes given up on, to mark them 🤷‍♂️
 	const gameStart = useRef(0)                       // Date.now() when the game began
 	const [result, setResult] = useState<{ played: number, total: number, mistakes: number, giveUps: number, ms: number } | null>(null)
 	const [feedback, setFeedback] = useState<{ emoji: string, id: number } | null>(null)
@@ -380,15 +339,18 @@ function App() {
 		stopSound()
 		const board = shuffle(COUNTRIES)
 		// pre-load every prompt sound before the game begins, so gameplay never waits
-		// on the network — and so it works where Cache Storage is unavailable
+		// on the network (cached in IndexedDB, which also works in Safari Lockdown)
 		setPreparing(true)
-		await prefetchToMemory(board.map(c => `/sound/lang/${lang}/${c.code}.aac`))
+		await ensureCached(board.map(c => `/sound/lang/${lang}/${c.code}.aac`))
+		refreshCacheCount()
 		setPreparing(false)
 		const first = randomOf(board)
 		setGameFlags(board)
 		setSolved([])
+		setWrongGuesses([])
 		setMistakes(0)
 		setGiveUps(0)
+		setGaveUpCodes([])
 		setResult(null)
 		setSpokenName('')
 		gameStart.current = Date.now()
@@ -401,6 +363,7 @@ function App() {
 		stopSound()
 		setGameOn(false)
 		setTarget(null)
+		setWrongGuesses([])
 		setFeedback(null)
 		// show the result for the countries played so far
 		setResult({
@@ -415,6 +378,14 @@ function App() {
 	// mark the target country played and move on (or finish). mistakesTotal and
 	// giveUpsTotal are the running counts to record if this was the last country.
 	const advance = (code: string, mistakesTotal: number, giveUpsTotal: number) => {
+		// cancel any not-yet-fired next-prompt timer (e.g. the player answered the
+		// last country before the previous prompt was scheduled to play)
+		if (promptTimer.current) {
+			clearTimeout(promptTimer.current)
+			promptTimer.current = null
+		}
+		// reaching the correct answer re-enables the flags marked wrong this round
+		setWrongGuesses([])
 		const nextSolved = [...solved, code]
 		setSolved(nextSolved)
 		const remaining = gameFlags.filter(c => !nextSolved.includes(c.code))
@@ -435,17 +406,19 @@ function App() {
 			const next = randomOf(remaining)
 			setTarget(next.code)
 			// let the feedback land before the next prompt
-			setTimeout(() => playFile(`/sound/lang/${lang}/${next.code}.aac`), 650)
+			promptTimer.current = setTimeout(() => playFile(`/sound/lang/${lang}/${next.code}.aac`), 650)
 		}
 	}
 
 	const guessFlag = (code: string) => {
-		if (target === null || solved.includes(code)) return
+		if (target === null || solved.includes(code) || wrongGuesses.includes(code)) return
 		if (code === target) {
 			playFx('correct')
 			flashFeedback('👍')
 			advance(code, mistakes, giveUps)
 		} else {
+			// temporarily disable this wrong flag (with a 👎 marker) until the round is won
+			setWrongGuesses(w => (w.includes(code) ? w : [...w, code]))
 			setMistakes(m => m + 1)
 			playFx('wrong')
 			flashFeedback('👎')
@@ -457,6 +430,8 @@ function App() {
 		if (target === null) return
 		const nextGiveUps = giveUps + 1
 		setGiveUps(nextGiveUps)
+		setGaveUpCodes(g => (g.includes(target) ? g : [...g, target]))
+		playFx('giveup')
 		flashFeedback('🤷‍♂️')
 		advance(target, mistakes, nextGiveUps)
 	}
@@ -503,18 +478,21 @@ function App() {
 					cachedCount={cachedCount}
 					locked={gameOn}
 					onChange={updateSettings}
+					onSetSort={setSort}
 					onClearCache={clearSoundCache}
 				/>
 			</div>
 			<hgroup>
 				{board.map(c => {
-					const isSolved = gameOn && solved.includes(c.code)
+					const isGivenUp = gameOn && gaveUpCodes.includes(c.code)
+					const isSolved = gameOn && solved.includes(c.code) && !isGivenUp
+					const isWrong = gameOn && wrongGuesses.includes(c.code)
 					return (
 						<button
 							key={`country-${c.code}`}
-							className={playingCode === c.code ? 'button-flag playing' : 'button-flag'}
+							className={'button-flag' + (playingCode === c.code ? ' playing' : '') + (isWrong ? ' wrong' : '')}
 							title={gameOn ? '' : (LANGUAGES.length > 0 ? c.name[lang] : '🤷‍♂️')}
-							disabled={isSolved}
+							disabled={isSolved || isGivenUp || isWrong}
 							onClick={() => {
 								if (gameOn) {
 									guessFlag(c.code)
@@ -532,6 +510,9 @@ function App() {
 						>
 							{c.flag}
 							{playingCode === c.code && <span className="play-icon">▶</span>}
+							{isSolved && <span className="swatch-mark">👍</span>}
+							{isGivenUp && <span className="swatch-mark">🤷‍♂️</span>}
+							{isWrong && <span className="swatch-mark">👎</span>}
 						</button>
 					)
 				})}

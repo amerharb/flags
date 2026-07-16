@@ -2,6 +2,32 @@
 
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.14.0] 2026-07-12
+### Added
+- Support URL parameters for a shareable view: `f` sets which flags are shown
+  (e.g. `?f=us,de,fr`) and `l` sets which languages are shown with the first
+  one selected (e.g. `?l=en,ar`). List order does not affect the on-screen order.
+- Add a flag sort setting ⇵: by ISO code (🌐, default), by the selected language's
+  names (🗣️, so switching language re-sorts; falls back to ISO when no language
+  is selected), or random (🎲, reshuffles every time you choose it). The random
+  order covers hidden flags too, so each keeps its slot when shown.
+
+### Changed
+- In the game, a solved flag shows a 👍 marker (in addition to being dimmed);
+  a flag revealed with "I don't know" is marked 🤷‍♂️ instead and plays a
+  distinct give-up sound
+- In the game, a wrong flag is temporarily disabled with a 👎 marker so you
+  can't tap it again; all such flags re-enable once you find the correct one
+- Cache all sounds in a single store (IndexedDB) instead of the previous mix of
+  Cache Storage and an in-memory map. Simpler, persists across reloads, works in
+  Safari Lockdown Mode, and drops the 7-day TTL (the cache lives until cleared
+  with the 🗑️ button)
+
+### Fixed
+- In the game, answering the final country before the previous prompt's sound
+  was scheduled to play no longer leaves that sound playing after the game ends
+  (the pending next-prompt timer is now cancelled)
+
 ## [0.13.0] 2026-07-09
 ### Added
 - Add an About section at the bottom of the settings panel showing the app

@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.13.0-blue.svg)](https://github.com/amerharb/flags)
+[![Version](https://img.shields.io/badge/version-0.14.0-blue.svg)](https://github.com/amerharb/flags)
 # Flags
 
 Small react project to show country flags (as emoji) and pronounce the country
@@ -59,8 +59,19 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 Pick a language from the dropdown in the top right, then click a flag to hear
 the country's name spoken (or its anthem played) and see it written.
 
+### URL parameters
+The visible flags and languages can be set from the URL, for a shareable view:
+
+- `f` — comma-separated country codes to show, e.g. `?f=us,de,fr`
+- `l` — comma-separated language codes to show, e.g. `?l=en,ar`; the **first**
+  one is the selected language
+
+Example: `/?f=us,de,fr&l=ar,en` shows only those three flags with Arabic and
+English, Arabic selected. The order in each list does not affect the on-screen
+order (flags and languages always render in the app's own order).
+
 - Settings (⚙️ top right): theme (system / light / dark, system is the
-  default), a language checklist and a flag grid to show/hide anything on the
+  default), flag sort order (🌐 ISO code / 🗣️ selected language / 🎲 random), a language checklist and a flag grid to show/hide anything on the
   main screen (with ✅/⬜ select-all/deselect-all buttons), a flight mode
   toggle (✈️), and cache info (🔊 count and a 🗑️ clear button).
   Saved in localStorage, remembered between visits.

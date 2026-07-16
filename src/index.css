@@ -170,6 +170,21 @@ button:active {
 	color: var(--fg);
 }
 
+/* a flag guessed wrong this round: temporarily disabled but kept legible, with a 👎 */
+.button-flag.wrong:disabled {
+	opacity: 0.7;
+	cursor: not-allowed;
+}
+
+/* corner state marker (👍 solved / 🤷‍♂️ given up / 👎 wrong) on a flag */
+.swatch-mark {
+	position: absolute;
+	top: 4px;
+	right: 8px;
+	font-size: 16px;
+	line-height: 1;
+}
+
 /* fixed top-right control bar: game toggle, language, settings */
 .top-controls {
 	position: fixed;
@@ -283,11 +298,19 @@ button:active {
 .settings-segmented {
 	display: flex;
 	gap: 6px;
+	align-items: center;
+}
+
+/* small leading indicator (e.g. the sort ⇵) inside a segmented row */
+.settings-segmented-icon {
+	font-size: 20px;
+	line-height: 1;
+	flex: none;
 }
 
 .settings-segmented .segment {
 	flex: 1;
-	font-size: 12px;
+	font-size: 20px;
 	font-weight: 500;
 	padding: 8px 4px;
 	margin: 0;
@@ -314,7 +337,7 @@ button:active {
 }
 
 .flag-toggle {
-	font-size: 24px;
+	font-size: 28px;
 	line-height: 1;
 	aspect-ratio: 1;
 	padding: 0;

@@ -8,6 +8,12 @@ import { Language } from './countries/Country'
 
 export type Theme = 'system' | 'light' | 'dark'
 
+// how the flags are ordered on the main screen:
+//   'iso'    — by ISO country code (the default)
+//   'lang'   — by the country's name in the selected language (falls back to iso)
+//   'random' — a fixed random order (see Settings.randomOrder)
+export type SortMode = 'iso' | 'lang' | 'random'
+
 export type Settings = {
 	theme: Theme,
 	// codes the user chose to hide from the main screen; empty = show everything,
@@ -17,6 +23,11 @@ export type Settings = {
 	// when on, all visible sounds are downloaded to the cache, and newly shown
 	// languages/countries are cached as soon as they are enabled
 	flightMode: boolean,
+	// order the flags are shown in on the main screen
+	sortMode: SortMode,
+	// the frozen random order (country codes) used when sortMode === 'random'.
+	// covers every country, including hidden ones, so a flag keeps its slot when shown.
+	randomOrder: string[],
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -24,6 +35,8 @@ export const DEFAULT_SETTINGS: Settings = {
 	hiddenLanguages: [],
 	hiddenCountries: [],
 	flightMode: false,
+	sortMode: 'iso',
+	randomOrder: [],
 }
 
 const STORAGE_KEY = 'flags:settings'
