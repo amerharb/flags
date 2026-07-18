@@ -78,12 +78,12 @@ order (flags and languages always render in the app's own order).
 - Flight mode (✈️): downloads all visible sounds to the cache; anything newly
   shown while it is on is downloaded right away. Turning it off keeps the
   cached files.
-- Game (🎮 in the top bar): start a guessing game — a random country name is
+- Game (🕹️ in the top bar): start a guessing game — a random country name is
   spoken and you tap the matching flag (👍 correct, 👎 wrong). Stuck? The
   give-up button (🤷‍♂️) reveals it (tracked separately from mistakes). It runs
   through every visible country, with your progress (played,
   mistakes, give-ups, time) shown live above the board next to the give-up
-  button; the final result stays there when the game ends. Press 🎮 again to
+  button; the final result stays there when the game ends. Press 🕹️ again to
   stop early. Theme and flight mode
   stay changeable mid-game; the language and country lists are locked. Needs at
   least one language and one country visible.

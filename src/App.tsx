@@ -461,7 +461,7 @@ function App() {
 					disabled={(!gameOn && !canPlayGame) || preparing}
 					onClick={() => (gameOn ? endGame() : startGame())}
 				>
-					🎮
+					🕹️
 				</button>
 				<select
 					className="language-select"
