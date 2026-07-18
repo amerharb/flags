@@ -2,6 +2,8 @@
 
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.15.0] 2026-07-18
+
 ## [0.14.0] 2026-07-12
 ### Added
 - Support URL parameters for a shareable view: `f` sets which flags are shown
