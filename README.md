@@ -82,9 +82,10 @@ order (flags and languages always render in the app's own order).
   spoken and you tap the matching flag (👍 correct, 👎 wrong). Stuck? The
   give-up button (🤷‍♂️) reveals it (tracked separately from mistakes). It runs
   through every visible country, with your progress (played,
-  mistakes, give-ups, time) shown live above the board next to the give-up
-  button; the final result stays there when the game ends. Press 🕹️ again to
-  stop early. Theme and flight mode
+  mistakes, give-ups, time) shown live in the app bar next to the round
+  buttons. When every country has been played the round is over — the clock
+  freezes and the score stays — but game mode stays on: ✋ stops a round
+  early, 🔄 starts a fresh one, and pressing 🕹️ again leaves game mode. Theme and flight mode
   stay changeable mid-game; the language and country lists are locked. Needs at
   least one language and one country visible.
 - First visit: the starting language and which languages are shown come from
