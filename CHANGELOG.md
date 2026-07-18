@@ -3,6 +3,10 @@
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
 ## [0.15.0] 2026-07-18
+### Added
+- Add `vercel.json` (framework Vite, output directory `dist`) so the Vercel
+  deployment configuration is explicit and versioned, like the sister project
+  Arqaam
 
 ## [0.14.0] 2026-07-12
 ### Added
