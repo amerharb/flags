@@ -7,6 +7,11 @@
 - Add `vercel.json` (framework Vite, output directory `dist`) so the Vercel
   deployment configuration is explicit and versioned, like the sister project
   Arqaam
+### Changed
+- Replace the generated favicon set (ico + five pngs of the Twemoji 🚩) with a
+  single hand-drawn `favicon.svg` (a red waving flag), like the sister projects
+  Colors and Week; the manifest now uses the svg and matches the app's dark
+  background (#121212) instead of the old Create React App colors
 
 ## [0.14.0] 2026-07-12
 ### Added
