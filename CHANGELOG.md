@@ -3,6 +3,11 @@
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
 ## [0.15.0] 2026-07-18
+### Fixed
+- The open settings gear (⚙️) now uses the same accent background as the
+  other pressed controls (game/mute toggles, selected segments): the active
+  color moved to a shared `--active-bg` variable — `--flag-bg` stays for the
+  flag tiles themselves — and the sister projects adopted the same accent
 ### Added
 - Add a mute toggle (🔊/🔇) in the toolbar, right of the game button: while
   muted nothing plays — names, game prompts or feedback sounds — and whatever
