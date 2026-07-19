@@ -88,7 +88,9 @@ function playFx(name: 'correct' | 'wrong' | 'giveup') {
 function App() {
 	// everything the build supports (after the beta feature flag)
 	const ALL_COUNTRIES: Country[] = [ae, al, at, be, ch, cz, de, dk, eg, es, fr, gr, iq, ir, it, lb, lu, nl, no, om, pl, ps, pt, se, sy, th, tn, tr, ua, us, va].filter(isVisible)
-	const LANGUAGE_DEFS: { code: Language, display: string, beta?: boolean }[] = [
+	// hidePrompt: don't write the prompted name in the display during a game —
+	// for 🎺/🎹 the "name" is the anthem title, which would give the country away
+	const LANGUAGE_DEFS: { code: Language, display: string, beta?: boolean, hidePrompt?: boolean }[] = [
 		{ code: 'sq', display: 'Shqip' },
 		{ code: 'ar', display: 'عربي' },
 		{ code: 'da', display: 'Dansk' },
@@ -99,8 +101,8 @@ function App() {
 		{ code: 'sv', display: 'Svenska' },
 		{ code: 'tr', display: 'Türkçe' },
 		{ code: 'uk', display: 'Українська' },
-		{ code: 'xa', display: '🎺' },
-		{ code: 'xt', display: '🎹', beta: true },
+		{ code: 'xa', display: '🎺', hidePrompt: true },
+		{ code: 'xt', display: '🎹', beta: true, hidePrompt: true },
 	]
 	const ALL_LANGUAGES = LANGUAGE_DEFS.filter(isVisible)
 
@@ -467,9 +469,11 @@ function App() {
 
 	const board = gameOn ? gameFlags : COUNTRIES
 	// what the display segment shows: the prompted name during a round (so the
-	// game is playable while muted), otherwise the last clicked name
+	// game is playable while muted), otherwise the last clicked name. Languages
+	// flagged hidePrompt (🎺/🎹) keep the prompt secret during a round
+	const promptHidden = ALL_LANGUAGES.find(l => l.code === lang)?.hidePrompt ?? false
 	const displayText = gameOn && target !== null
-		? (gameFlags.find(c => c.code === target)?.name[lang] ?? '')
+		? (promptHidden ? '' : (gameFlags.find(c => c.code === target)?.name[lang] ?? ''))
 		: spokenName
 
 	return (
