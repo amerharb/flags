@@ -470,8 +470,9 @@ function App() {
 	const board = gameOn ? gameFlags : COUNTRIES
 	// what the display segment shows: the prompted name during a round (so the
 	// game is playable while muted), otherwise the last clicked name. Languages
-	// flagged hidePrompt (🎺/🎹) keep the prompt secret during a round
-	const promptHidden = ALL_LANGUAGES.find(l => l.code === lang)?.hidePrompt ?? false
+	// flagged hidePrompt (🎺/🎹) keep the prompt secret during a round — unless
+	// the game is muted, where the title is the only prompt left to play by
+	const promptHidden = (ALL_LANGUAGES.find(l => l.code === lang)?.hidePrompt ?? false) && !muted
 	const displayText = gameOn && target !== null
 		? (promptHidden ? '' : (gameFlags.find(c => c.code === target)?.name[lang] ?? ''))
 		: spokenName

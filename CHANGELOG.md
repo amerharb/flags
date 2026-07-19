@@ -13,9 +13,11 @@
   muted nothing plays — names, game prompts or feedback sounds — and whatever
   is playing at that moment stops
 - During a round, the prompted country's name is written in the display
-  segment (muted or not), so the game can also be played by reading — except
-  for 🎺 and 🎹, whose "name" is the anthem title and would give the country
-  away (a new `hidePrompt` flag on the language definition, like `beta`)
+  segment, so the game can also be played by reading — except for 🎺 and 🎹,
+  whose "name" is the anthem title and would give the country away (a new
+  `hidePrompt` flag on the language definition, like `beta`). While muted the
+  title is shown even for 🎺/🎹, since it is then the only prompt left to
+  play by
 - Add a replay button (👂) to the game actions: plays the current prompt
   again; disabled while muted or between rounds
 - Add `vercel.json` (framework Vite, output directory `dist`) so the Vercel
