@@ -70,6 +70,8 @@ Example: `/?f=us,de,fr&l=ar,en` shows only those three flags with Arabic and
 English, Arabic selected. The order in each list does not affect the on-screen
 order (flags and languages always render in the app's own order).
 
+- Mute (🔊/🔇, right of 🕹️): silences everything — names, game prompts and
+  feedback sounds — until clicked again.
 - Settings (⚙️ top right): theme (system / light / dark, system is the
   default), flag sort order (🌐 ISO code / 🗣️ selected language / 🎲 random), a language checklist and a flag grid to show/hide anything on the
   main screen (with ✅/⬜ select-all/deselect-all buttons), a flight mode
@@ -83,7 +85,8 @@ order (flags and languages always render in the app's own order).
   give-up button (🤷‍♂️) reveals it (tracked separately from mistakes). It runs
   through every visible country, with your progress (played,
   mistakes, give-ups, time) shown live in the app bar next to the round
-  buttons. When every country has been played the round is over — the clock
+  buttons. The prompted name is also written in the display segment (even
+  while muted), and the 👂 button plays it again. When every country has been played the round is over — the clock
   freezes and the score stays — but game mode stays on: ✋ stops a round
   early, 🔄 starts a fresh one, and pressing 🕹️ again leaves game mode. Theme and flight mode
   stay changeable mid-game; the language and country lists are locked. Needs at
