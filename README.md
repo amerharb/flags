@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.14.0-blue.svg)](https://github.com/amerharb/flags)
+[![Version](https://img.shields.io/badge/version-0.15.0-blue.svg)](https://github.com/amerharb/flags)
 # Flags
 
 Small react project to show country flags (as emoji) and pronounce the country
@@ -70,6 +70,8 @@ Example: `/?f=us,de,fr&l=ar,en` shows only those three flags with Arabic and
 English, Arabic selected. The order in each list does not affect the on-screen
 order (flags and languages always render in the app's own order).
 
+- Mute (🔊/🔇, right of 🕹️): silences everything — names, game prompts and
+  feedback sounds — until clicked again.
 - Settings (⚙️ top right): theme (system / light / dark, system is the
   default), flag sort order (🌐 ISO code / 🗣️ selected language / 🎲 random), a language checklist and a flag grid to show/hide anything on the
   main screen (with ✅/⬜ select-all/deselect-all buttons), a flight mode
@@ -78,11 +80,15 @@ order (flags and languages always render in the app's own order).
 - Flight mode (✈️): downloads all visible sounds to the cache; anything newly
   shown while it is on is downloaded right away. Turning it off keeps the
   cached files.
-- Game (🎮 in the top bar): start a guessing game — a random country name is
+- Game (🕹️ in the top bar): start a guessing game — a random country name is
   spoken and you tap the matching flag (👍 correct, 👎 wrong). Stuck? The
   give-up button (🤷‍♂️) reveals it (tracked separately from mistakes). It runs
-  through every visible country, then shows how many you played, your mistakes,
-  give-ups, and your time; press 🎮 again to stop early. Theme and flight mode
+  through every visible country, with your progress (played,
+  mistakes, give-ups, time) shown live in the app bar next to the round
+  buttons. The prompted name is also written in the display segment (even
+  while muted), and the 👂 button plays it again. When every country has been played the round is over — the clock
+  freezes and the score stays — but game mode stays on: ✋ stops a round
+  early, 🔄 starts a fresh one, and pressing 🕹️ again leaves game mode. Theme and flight mode
   stay changeable mid-game; the language and country lists are locked. Needs at
   least one language and one country visible.
 - First visit: the starting language and which languages are shown come from

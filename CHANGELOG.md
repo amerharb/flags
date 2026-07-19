@@ -2,6 +2,50 @@
 
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.15.0] 2026-07-18
+### Fixed
+- The open settings gear (⚙️) now uses the same accent background as the
+  other pressed controls (game/mute toggles, selected segments): the active
+  color moved to a shared `--active-bg` variable — `--flag-bg` stays for the
+  flag tiles themselves — and the sister projects adopted the same accent
+### Added
+- Add a mute toggle (🔊/🔇) in the toolbar, right of the game button: while
+  muted nothing plays — names, game prompts or feedback sounds — and whatever
+  is playing at that moment stops
+- During a round, the prompted country's name is written in the display
+  segment, so the game can also be played by reading — except for 🎺 and 🎹,
+  whose "name" is the anthem title and would give the country away (a new
+  `hidePrompt` flag on the language definition, like `beta`). While muted the
+  title is shown even for 🎺/🎹, since it is then the only prompt left to
+  play by
+- Add a replay button (👂) to the game actions: plays the current prompt
+  again; disabled while muted or between rounds
+- Add `vercel.json` (framework Vite, output directory `dist`) so the Vercel
+  deployment configuration is explicit and versioned, like the sister project
+  Arqaam
+### Changed
+- Change the game toggle emoji from 🎮 to 🕹️ (the classic joystick)
+- Restructure the top of the app into one sticky app bar with four segments,
+  right-to-left: toolbar (🕹️ game, 🔊 mute, language, ⚙️ settings), display
+  (the spoken name), live game score (🏁 played 👎 mistakes 🤷‍♂️ give-ups
+  ⏱️ time, ticking every second) and game actions. The game segments anchor
+  to the left, the toolbar to the right, and the display stretches between
+  them — a long name first shrinks its font (down to a limit) and only then
+  auto-scrolls back and forth. The game segments only appear in game mode,
+  unfolding with a smooth transition; on narrow screens the bar stacks the
+  segments top-to-bottom in the same order, with the display on a full row
+- The game no longer ends by itself: when every country has been played the
+  round is over — the clock freezes and the score stays — but game mode
+  stays on. New round actions sit next to the give-up button (🤷‍♂️): stop
+  (✋) ends the current round early and restart (🔄) starts a fresh one;
+  clicking 🕹️ again leaves game mode and hides the game score and actions
+- In the game result, show the mistakes count with 👎 instead of ❌, matching
+  the marker shown on a wrong guess
+- Replace the generated favicon set (ico + five pngs of the Twemoji 🚩) with a
+  single hand-drawn `favicon.svg` (a red waving flag), like the sister projects
+  Colors and Week; the manifest now uses the svg and matches the app's dark
+  background (#121212) instead of the old Create React App colors
+
 ## [0.14.0] 2026-07-12
 ### Added
 - Support URL parameters for a shareable view: `f` sets which flags are shown

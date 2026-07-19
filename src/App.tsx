@@ -1,5 +1,5 @@
 import './App.css'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import SettingsPanel from './SettingsPanel'
 import { Country, Language } from './countries/Country'
@@ -88,7 +88,9 @@ function playFx(name: 'correct' | 'wrong' | 'giveup') {
 function App() {
 	// everything the build supports (after the beta feature flag)
 	const ALL_COUNTRIES: Country[] = [ae, al, at, be, ch, cz, de, dk, eg, es, fr, gr, iq, ir, it, lb, lu, nl, no, om, pl, ps, pt, se, sy, th, tn, tr, ua, us, va].filter(isVisible)
-	const LANGUAGE_DEFS: { code: Language, display: string, beta?: boolean }[] = [
+	// hidePrompt: don't write the prompted name in the display during a game —
+	// for 🎺/🎹 the "name" is the anthem title, which would give the country away
+	const LANGUAGE_DEFS: { code: Language, display: string, beta?: boolean, hidePrompt?: boolean }[] = [
 		{ code: 'sq', display: 'Shqip' },
 		{ code: 'ar', display: 'عربي' },
 		{ code: 'da', display: 'Dansk' },
@@ -99,8 +101,8 @@ function App() {
 		{ code: 'sv', display: 'Svenska' },
 		{ code: 'tr', display: 'Türkçe' },
 		{ code: 'uk', display: 'Українська' },
-		{ code: 'xa', display: '🎺' },
-		{ code: 'xt', display: '🎹', beta: true },
+		{ code: 'xa', display: '🎺', hidePrompt: true },
+		{ code: 'xt', display: '🎹', beta: true, hidePrompt: true },
 	]
 	const ALL_LANGUAGES = LANGUAGE_DEFS.filter(isVisible)
 
@@ -210,6 +212,12 @@ function App() {
 	// how many sound files are currently in the cache, shown in settings
 	const [cachedCount, setCachedCount] = useState(0)
 
+	// 🔇: when muted, nothing plays (prompts, names, or feedback sounds).
+	// A ref mirrors the state so the audio helpers and pending prompt timers
+	// always see the current value.
+	const [muted, setMuted] = useState(false)
+	const mutedRef = useRef(false)
+
 	const refreshCacheCount = useCallback(async () => {
 		try {
 			setCachedCount(await idbCount())
@@ -243,6 +251,7 @@ function App() {
 	}, [refreshCacheCount])
 
 	const playSound = useCallback(async (code: string) => {
+		if (mutedRef.current) return
 		try {
 			const blob = await getAudioBlob(`/sound/lang/${lang}/${code}.aac`)
 			if (!blob) return
@@ -283,9 +292,18 @@ function App() {
 		setPlayingCode(null)
 	}, [])
 
+	// mute toggle (🔊/🔇): muting also silences whatever is playing right now
+	const toggleMute = () => {
+		const next = !muted
+		mutedRef.current = next
+		if (next) stopSound()
+		setMuted(next)
+	}
+
 	// play a country sound without touching the play-icon UI (used by the game).
 	// Reads from the cache (IndexedDB, works in Safari Lockdown) or the network.
 	const playFile = useCallback(async (url: string) => {
+		if (mutedRef.current) return
 		try {
 			const blob = await getAudioBlob(url)
 			if (!blob) return
@@ -312,11 +330,21 @@ function App() {
 	const [mistakes, setMistakes] = useState(0)      // wrong taps this game
 	const [giveUps, setGiveUps] = useState(0)        // countries given up on this game
 	const [gaveUpCodes, setGaveUpCodes] = useState<string[]>([]) // codes given up on, to mark them 🤷‍♂️
-	const gameStart = useRef(0)                       // Date.now() when the game began
-	const [result, setResult] = useState<{ played: number, total: number, mistakes: number, giveUps: number, ms: number } | null>(null)
+	const gameStart = useRef(0)                       // Date.now() when the round began
+	// when the round ended (all played, or ✋): freezes the clock and stats until
+	// 🔄 starts a new round or 🕹️ leaves game mode; null while a round is running
+	const [endedAt, setEndedAt] = useState<number | null>(null)
 	const [feedback, setFeedback] = useState<{ emoji: string, id: number } | null>(null)
 	const feedbackId = useRef(0)
 	const [preparing, setPreparing] = useState(false) // downloading game sounds before start
+
+	// tick every second while a round runs, so the live ⏱️ time updates
+	const [, setClockTick] = useState(0)
+	useEffect(() => {
+		if (!gameOn || endedAt !== null) return
+		const id = setInterval(() => setClockTick(t => t + 1), 1000)
+		return () => clearInterval(id)
+	}, [gameOn, endedAt])
 
 	const canPlayGame = LANGUAGES.length > 0 && COUNTRIES.length > 0
 
@@ -334,11 +362,13 @@ function App() {
 		setTimeout(() => setFeedback(f => (f && f.id === id ? null : f)), 700)
 	}
 
-	const startGame = async () => {
+	// start a round (also used by 🔄 to restart): preload the prompt sounds, reset
+	// the counters, pick the first target and turn game mode on
+	const startRound = async () => {
 		if (!canPlayGame || preparing) return
 		stopSound()
 		const board = shuffle(COUNTRIES)
-		// pre-load every prompt sound before the game begins, so gameplay never waits
+		// pre-load every prompt sound before the round begins, so gameplay never waits
 		// on the network (cached in IndexedDB, which also works in Safari Lockdown)
 		setPreparing(true)
 		await ensureCached(board.map(c => `/sound/lang/${lang}/${c.code}.aac`))
@@ -351,7 +381,7 @@ function App() {
 		setMistakes(0)
 		setGiveUps(0)
 		setGaveUpCodes([])
-		setResult(null)
+		setEndedAt(null)
 		setSpokenName('')
 		gameStart.current = Date.now()
 		setTarget(first.code)
@@ -359,25 +389,33 @@ function App() {
 		playFile(`/sound/lang/${lang}/${first.code}.aac`)
 	}
 
-	const endGame = () => {
+	// 🕹️ off: leave game mode entirely (hides the game score and actions)
+	const exitGame = () => {
 		stopSound()
 		setGameOn(false)
 		setTarget(null)
 		setWrongGuesses([])
 		setFeedback(null)
-		// show the result for the countries played so far
-		setResult({
-			played: solved.length,
-			total: gameFlags.length,
-			mistakes,
-			giveUps,
-			ms: Date.now() - gameStart.current,
-		})
+		setEndedAt(null)
 	}
 
-	// mark the target country played and move on (or finish). mistakesTotal and
-	// giveUpsTotal are the running counts to record if this was the last country.
-	const advance = (code: string, mistakesTotal: number, giveUpsTotal: number) => {
+	// ✋: stop the current round early — freeze the clock and stats, stay in game mode
+	const stopRound = () => {
+		if (target === null) return
+		stopSound()
+		setTarget(null)
+		setWrongGuesses([])
+		setEndedAt(Date.now())
+	}
+
+	// 👂: play the current prompt again
+	const replaySound = () => {
+		if (target === null) return
+		playFile(`/sound/lang/${lang}/${target}.aac`)
+	}
+
+	// mark the target country played and move on (or finish the round)
+	const advance = (code: string) => {
 		// cancel any not-yet-fired next-prompt timer (e.g. the player answered the
 		// last country before the previous prompt was scheduled to play)
 		if (promptTimer.current) {
@@ -390,18 +428,12 @@ function App() {
 		setSolved(nextSolved)
 		const remaining = gameFlags.filter(c => !nextSolved.includes(c.code))
 		if (remaining.length === 0) {
-			// all visible countries played — game over.
+			// all countries played — the round is over, but game mode stays on until
+			// 🕹️ is clicked again (or 🔄 starts a new round).
 			// stop the last prompt sound (an anthem can run for minutes)
 			stopSound()
-			setGameOn(false)
 			setTarget(null)
-			setResult({
-				played: nextSolved.length,
-				total: gameFlags.length,
-				mistakes: mistakesTotal,
-				giveUps: giveUpsTotal,
-				ms: Date.now() - gameStart.current,
-			})
+			setEndedAt(Date.now())
 		} else {
 			const next = randomOf(remaining)
 			setTarget(next.code)
@@ -413,14 +445,14 @@ function App() {
 	const guessFlag = (code: string) => {
 		if (target === null || solved.includes(code) || wrongGuesses.includes(code)) return
 		if (code === target) {
-			playFx('correct')
+			if (!mutedRef.current) playFx('correct')
 			flashFeedback('👍')
-			advance(code, mistakes, giveUps)
+			advance(code)
 		} else {
 			// temporarily disable this wrong flag (with a 👎 marker) until the round is won
 			setWrongGuesses(w => (w.includes(code) ? w : [...w, code]))
 			setMistakes(m => m + 1)
-			playFx('wrong')
+			if (!mutedRef.current) playFx('wrong')
 			flashFeedback('👎')
 		}
 	}
@@ -428,32 +460,72 @@ function App() {
 	// give up on the current country: counts as played and as a give-up (not a mistake)
 	const giveUp = () => {
 		if (target === null) return
-		const nextGiveUps = giveUps + 1
-		setGiveUps(nextGiveUps)
+		setGiveUps(g => g + 1)
 		setGaveUpCodes(g => (g.includes(target) ? g : [...g, target]))
-		playFx('giveup')
+		if (!mutedRef.current) playFx('giveup')
 		flashFeedback('🤷‍♂️')
-		advance(target, mistakes, nextGiveUps)
+		advance(target)
 	}
 
 	const board = gameOn ? gameFlags : COUNTRIES
+	// what the display segment shows: the prompted name during a round (so the
+	// game is playable while muted), otherwise the last clicked name. Languages
+	// flagged hidePrompt (🎺/🎹) keep the prompt secret during a round — unless
+	// the game is muted, where the title is the only prompt left to play by
+	const promptHidden = (ALL_LANGUAGES.find(l => l.code === lang)?.hidePrompt ?? false) && !muted
+	const displayText = gameOn && target !== null
+		? (promptHidden ? '' : (gameFlags.find(c => c.code === target)?.name[lang] ?? ''))
+		: spokenName
+
+	// the display font shrinks (to a limit) before the marquee kicks in: measure
+	// the name at the stylesheet size and scale the font down to fit the segment;
+	// only a name that still overflows at the minimum font starts scrolling
+	const displayRef = useRef<HTMLHeadingElement | null>(null)
+	useLayoutEffect(() => {
+		const el = displayRef.current
+		const box = el?.parentElement
+		if (!el || !box) return
+		const fit = () => {
+			el.style.fontSize = '' // measure at the stylesheet size first
+			const base = parseFloat(getComputedStyle(el).fontSize)
+			if (el.scrollWidth > box.clientWidth) {
+				el.style.fontSize = `${Math.max(18, base * box.clientWidth / el.scrollWidth)}px`
+			}
+		}
+		fit()
+		const ro = new ResizeObserver(fit)
+		ro.observe(box)
+		return () => ro.disconnect()
+	}, [displayText])
 
 	return (
 		<div className="Flags">
-			<div className="top-controls">
+			{/* the app bar's four segments sit right-to-left: toolbar, display,
+			    game score, game actions (the last two only in game mode) */}
+			<header className="app-bar">
+				<div className="toolbar">
 				<button
 					className={(gameOn ? 'game-toggle on' : 'game-toggle') + (preparing ? ' busy' : '')}
 					aria-label={gameOn ? 'End game' : 'Start game'}
 					aria-pressed={gameOn}
 					title={
 						gameOn
-							? 'End game'
+							? 'End game mode'
 							: (canPlayGame ? 'Start game' : 'Select at least one language and country to play')
 					}
 					disabled={(!gameOn && !canPlayGame) || preparing}
-					onClick={() => (gameOn ? endGame() : startGame())}
+					onClick={() => (gameOn ? exitGame() : startRound())}
 				>
-					🎮
+					🕹️
+				</button>
+				<button
+					className={muted ? 'mute-toggle on' : 'mute-toggle'}
+					aria-label={muted ? 'Unmute' : 'Mute'}
+					aria-pressed={muted}
+					title={muted ? 'Unmute sounds' : 'Mute all sounds'}
+					onClick={toggleMute}
+				>
+					{muted ? '🔇' : '🔊'}
 				</button>
 				<select
 					className="language-select"
@@ -481,7 +553,57 @@ function App() {
 					onSetSort={setSort}
 					onClearCache={clearSoundCache}
 				/>
-			</div>
+				</div>
+				<div className="display">
+					<h1 className="display-text" ref={displayRef}>
+						{preparing ? '⏳' : displayText}
+					</h1>
+				</div>
+				{gameOn && (
+					<div className="game-score">
+						<span title="Countries played">🏁 {solved.length} / {gameFlags.length}</span>
+						<span title="Mistakes">👎 {mistakes}</span>
+						<span title="Give-ups">🤷‍♂️ {giveUps}</span>
+						<span title="Time">⏱️ {formatDuration((endedAt ?? Date.now()) - gameStart.current)}</span>
+					</div>
+				)}
+				{gameOn && (
+					<div className="game-actions">
+						<button
+							aria-label="Replay the sound"
+							title="Play the prompt again"
+							disabled={muted || target === null}
+							onClick={replaySound}
+						>
+							👂
+						</button>
+						<button
+							aria-label="Give up"
+							title="Give up: reveal this one and move on"
+							disabled={target === null}
+							onClick={giveUp}
+						>
+							🤷‍♂️
+						</button>
+						<button
+							aria-label="Stop round"
+							title="Stop this round (the score stays until you restart or leave the game)"
+							disabled={target === null}
+							onClick={stopRound}
+						>
+							✋
+						</button>
+						<button
+							aria-label="Restart round"
+							title="Restart: start a new round"
+							disabled={preparing}
+							onClick={startRound}
+						>
+							🔄
+						</button>
+					</div>
+				)}
+			</header>
 			<hgroup>
 				{board.map(c => {
 					const isGivenUp = gameOn && gaveUpCodes.includes(c.code)
@@ -502,7 +624,6 @@ function App() {
 									// every language is hidden: nothing to say
 									setSpokenName('🤷‍♂️')
 								} else {
-									setResult(null)
 									playSound(c.code)
 									setSpokenName(c.name[lang])
 								}
@@ -517,30 +638,6 @@ function App() {
 					)
 				})}
 			</hgroup>
-			<hgroup>
-				{!gameOn && result ? (
-					<div className="game-result">
-						<span title="Countries played">🏁 {result.played} / {result.total}</span>
-						<span title="Mistakes">❌ {result.mistakes}</span>
-						<span title="Give-ups">🤷‍♂️ {result.giveUps}</span>
-						<span title="Time">⏱️ {formatDuration(result.ms)}</span>
-					</div>
-				) : (
-					<h1>
-						{preparing ? '⏳' : gameOn ? `${solved.length} / ${gameFlags.length}` : spokenName}
-					</h1>
-				)}
-			</hgroup>
-			{gameOn && (
-				<button
-					className="game-giveup"
-					aria-label="Give up"
-					title="Give up: reveal this one and move on"
-					onClick={giveUp}
-				>
-					🤷‍♂️
-				</button>
-			)}
 			{feedback && (
 				<div key={feedback.id} className="game-feedback" aria-hidden="true">
 					{feedback.emoji}
