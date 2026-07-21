@@ -89,8 +89,9 @@ order (flags and languages always render in the app's own order).
   while muted), and the 👂 button plays it again. When every country has been played the round is over — the clock
   freezes and the score stays — but game mode stays on: ✋ stops a round
   early, 🔄 starts a fresh one, and pressing 🕹️ again leaves game mode. Theme and flight mode
-  stay changeable mid-game; the language and country lists are locked. Needs at
-  least one language and one country visible.
+  stay changeable mid-game; the language and country lists are locked, and the
+  selected language can be changed only between rounds (after ✋ or when a
+  round finishes). Needs at least one language and one country visible.
 - First visit: the starting language and which languages are shown come from
   your browser's language settings (plus 🎺 and 🎹).
 

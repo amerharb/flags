@@ -299,7 +299,7 @@ function App() {
 						className="language-select"
 						title="Language of the country name"
 						value={lang}
-						disabled={game.gameOn}
+						disabled={game.target !== null}
 						onChange={(e) => {
 							setLang(e.target.value as Language)
 							setSpokenName('')
