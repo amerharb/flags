@@ -41,5 +41,18 @@
 	"group.sort": "Sort flags",
 	"group.countries": "Countries",
 	"selectAllCountries": "Select all countries",
-	"deselectAllCountries": "Deselect all countries"
+	"deselectAllCountries": "Deselect all countries",
+	"uiLanguage": "Interface language",
+	"language.sq": "Albanian",
+	"language.ar": "Arabic",
+	"language.da": "Danish",
+	"language.en": "English",
+	"language.de": "German",
+	"language.fa": "Persian",
+	"language.pt": "Portuguese",
+	"language.sv": "Swedish",
+	"language.tr": "Turkish",
+	"language.uk": "Ukrainian",
+	"language.xa": "🎺 Anthem",
+	"language.xt": "🎹 Anthem (tones)"
 }

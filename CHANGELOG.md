@@ -6,9 +6,24 @@
 ### Added
 - Localize the interface: all UI text (button tooltips, the "select a language
   and country to play" hint, settings labels, game score/actions) now lives in
-  `src/i18n/*.json` and follows the selected language (English, Arabic, German,
-  Swedish translated; others fall back to English)
+  `src/i18n/*.json`, falling back to English for any missing string
+- Add an interface-language dropdown (👁️) to the settings panel with the four
+  localized languages (English, Arabic, German, Swedish). It is now a separate,
+  persisted setting — independent of the content/country-language dropdown — so
+  the UI and the spoken language can differ. On first run it follows the browser
+  (primary language, then any of the browser's languages, else the
+  content-language pick if it is a UI language, else English)
+- Show the content-language names (top dropdown and settings checklist) in the
+  current interface language — e.g. "Persian" in an English UI, "Persisch" in a
+  German UI — falling back to the native name for any untranslated pair, and
+  sorted alphabetically by that displayed name (using the UI language's
+  collation). The interface-language dropdown itself keeps native names
+  (English, عربي, Deutsch, Svenska) so it is always self-findable
 ### Changed
+- Label the two anthem options with text instead of a bare emoji: 🎺 → "🎺
+  Anthem" (the recorded anthem) and 🎹 → "🎹 Anthem (tones)" (the synthesized
+  melody). Both keep their icon and are localized like any other content
+  language — e.g. German "🎺 Hymne" / "🎹 Hymne (Töne)", Arabic "🎺 النشيد"
 - In game mode with the round stopped (finished or ✋), the selected language
   can be changed again — the next 🔄 round uses it. It stays locked while a
   round is running, and showing or hiding languages/items in settings stays

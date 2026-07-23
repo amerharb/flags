@@ -41,5 +41,18 @@
 	"group.sort": "Sortera flaggor",
 	"group.countries": "Länder",
 	"selectAllCountries": "Markera alla länder",
-	"deselectAllCountries": "Avmarkera alla länder"
+	"deselectAllCountries": "Avmarkera alla länder",
+	"uiLanguage": "Gränssnittsspråk",
+	"language.sq": "Albanska",
+	"language.ar": "Arabiska",
+	"language.da": "Danska",
+	"language.en": "Engelska",
+	"language.de": "Tyska",
+	"language.fa": "Persiska",
+	"language.pt": "Portugisiska",
+	"language.sv": "Svenska",
+	"language.tr": "Turkiska",
+	"language.uk": "Ukrainska",
+	"language.xa": "🎺 Hymn",
+	"language.xt": "🎹 Hymn (toner)"
 }

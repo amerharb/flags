@@ -18,7 +18,7 @@ import { ensureCached, idbCount, idbClear } from './audioCache'
 import { useAudio } from './useAudio'
 import { useGame } from './useGame'
 import { useFitText } from './useFitText'
-import { translator } from './i18n'
+import { translator, languageName, UI_LANGUAGES } from './i18n'
 import { ae } from './countries/ae'
 import { al } from './countries/al'
 import { at } from './countries/at'
@@ -95,8 +95,8 @@ function App() {
 		{ code: 'sv', display: 'Svenska' },
 		{ code: 'tr', display: 'Türkçe' },
 		{ code: 'uk', display: 'Українська' },
-		{ code: 'xa', display: '🎺', hidePrompt: true },
-		{ code: 'xt', display: '🎹', beta: true, hidePrompt: true },
+		{ code: 'xa', display: '🎺 Anthem', hidePrompt: true },
+		{ code: 'xt', display: '🎹 Anthem (tones)', beta: true, hidePrompt: true },
 	]
 	const ALL_LANGUAGES = LANGUAGE_DEFS.filter(isVisible)
 
@@ -264,8 +264,16 @@ function App() {
 		? (promptHidden ? '' : (game.board.find(c => c.code === game.target)?.name[lang] ?? ''))
 		: spokenName
 
-	// UI-string translator, following the selected language (falls back to English)
-	const t = translator(lang)
+	// UI-string translator, following the interface language chosen in settings
+	// (independent of the content/country-name language; falls back to English)
+	const t = translator(settings.uiLanguage)
+	const setUiLanguage = (code: string) => updateSettings({ ...settings, uiLanguage: code as Language })
+
+	// content languages as { code, display } with names in the UI language,
+	// sorted alphabetically by that display name (using the UI language's collation)
+	const localizedContent = (list: { code: Language, display: string }[]) => list
+		.map(l => ({ code: l.code, display: languageName(t, l.code, l.display) }))
+		.sort((a, b) => a.display.localeCompare(b.display, settings.uiLanguage))
 
 	// shrink the display font before falling back to the marquee
 	const displayRef = useFitText(displayText)
@@ -310,18 +318,21 @@ function App() {
 							audio.stopSound()
 						}}
 					>
-						{LANGUAGES.map(l => (
+						{localizedContent(LANGUAGES).map(l => (
 							<option key={`lang-${l.code}`} value={l.code}>{l.display}</option>
 						))}
 					</select>
 					<SettingsPanel
 						settings={settings}
-						languages={ALL_LANGUAGES}
+						languages={localizedContent(ALL_LANGUAGES)}
 						countries={ALL_COUNTRIES.map(c => ({ code: c.code, flag: c.flag }))}
 						caching={caching}
 						cachedCount={cachedCount}
 						locked={game.gameOn}
 						t={t}
+						uiLanguage={settings.uiLanguage}
+						uiLanguages={UI_LANGUAGES}
+						onSetUiLanguage={setUiLanguage}
 						onChange={updateSettings}
 						onSetSort={setSort}
 						onClearCache={clearSoundCache}

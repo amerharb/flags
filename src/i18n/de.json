@@ -41,5 +41,18 @@
 	"group.sort": "Flaggen sortieren",
 	"group.countries": "Länder",
 	"selectAllCountries": "Alle Länder auswählen",
-	"deselectAllCountries": "Alle Länder abwählen"
+	"deselectAllCountries": "Alle Länder abwählen",
+	"uiLanguage": "Oberflächensprache",
+	"language.sq": "Albanisch",
+	"language.ar": "Arabisch",
+	"language.da": "Dänisch",
+	"language.en": "Englisch",
+	"language.de": "Deutsch",
+	"language.fa": "Persisch",
+	"language.pt": "Portugiesisch",
+	"language.sv": "Schwedisch",
+	"language.tr": "Türkisch",
+	"language.uk": "Ukrainisch",
+	"language.xa": "🎺 Hymne",
+	"language.xt": "🎹 Hymne (Töne)"
 }

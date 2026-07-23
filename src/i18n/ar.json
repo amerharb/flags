@@ -41,5 +41,18 @@
 	"group.sort": "ترتيب الأعلام",
 	"group.countries": "الدول",
 	"selectAllCountries": "تحديد كل الدول",
-	"deselectAllCountries": "إلغاء تحديد كل الدول"
+	"deselectAllCountries": "إلغاء تحديد كل الدول",
+	"uiLanguage": "لغة الواجهة",
+	"language.sq": "الألبانية",
+	"language.ar": "العربية",
+	"language.da": "الدنماركية",
+	"language.en": "الإنجليزية",
+	"language.de": "الألمانية",
+	"language.fa": "الفارسية",
+	"language.pt": "البرتغالية",
+	"language.sv": "السويدية",
+	"language.tr": "التركية",
+	"language.uk": "الأوكرانية",
+	"language.xa": "🎺 النشيد",
+	"language.xt": "🎹 النشيد (نغمات)"
 }
