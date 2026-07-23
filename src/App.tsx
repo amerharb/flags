@@ -1,7 +1,8 @@
 import './App.css'
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import SettingsPanel from './SettingsPanel'
+import { GameScore, GameActions } from './GameHud'
 import { Country, Language } from './countries/Country'
 import { isVisible } from './featureFlags'
 import {
@@ -13,7 +14,11 @@ import {
 	applyTheme,
 	preferredLanguage,
 } from './settingsStore'
-import { getAudioBlob, ensureCached, idbCount, idbClear } from './audioCache'
+import { ensureCached, idbCount, idbClear } from './audioCache'
+import { useAudio } from './useAudio'
+import { useGame } from './useGame'
+import { useFitText } from './useFitText'
+import { translator, languageName, UI_LANGUAGES } from './i18n'
 import { ae } from './countries/ae'
 import { al } from './countries/al'
 import { at } from './countries/at'
@@ -25,7 +30,9 @@ import { dk } from './countries/dk'
 import { eg } from './countries/eg'
 import { es } from './countries/es'
 import { fr } from './countries/fr'
+import { gb } from './countries/gb'
 import { gr } from './countries/gr'
+import { hu } from './countries/hu'
 import { iq } from './countries/iq'
 import { ir } from './countries/ir'
 import { it } from './countries/it'
@@ -56,8 +63,6 @@ function shuffle<T>(items: T[]): T[] {
 	return out
 }
 
-const randomOf = <T,>(items: T[]): T => items[Math.floor(Math.random() * items.length)]
-
 // Order the countries for display. 'lang' sorts by the country name in the given
 // language (only when one is selected — otherwise falls back to iso); 'random' uses
 // the frozen randomOrder (unknown codes go last); 'iso' (default) sorts by code.
@@ -76,18 +81,9 @@ function sortCountries(countries: Country[], mode: SortMode, lang: Language, has
 	return list.sort((a, b) => a.code.localeCompare(b.code))
 }
 
-// short win/lose feedback sounds
-function playFx(name: 'correct' | 'wrong' | 'giveup') {
-	try {
-		new Audio(`/sound/fx/${name}.aac`).play().catch(() => {})
-	} catch {
-		// ignore
-	}
-}
-
 function App() {
 	// everything the build supports (after the beta feature flag)
-	const ALL_COUNTRIES: Country[] = [ae, al, at, be, ch, cz, de, dk, eg, es, fr, gr, iq, ir, it, lb, lu, nl, no, om, pl, ps, pt, se, sy, th, tn, tr, ua, us, va].filter(isVisible)
+	const ALL_COUNTRIES: Country[] = [ae, al, at, be, ch, cz, de, dk, eg, es, fr, gb, gr, hu, iq, ir, it, lb, lu, nl, no, om, pl, ps, pt, se, sy, th, tn, tr, ua, us, va].filter(isVisible)
 	// hidePrompt: don't write the prompted name in the display during a game —
 	// for 🎺/🎹 the "name" is the anthem title, which would give the country away
 	const LANGUAGE_DEFS: { code: Language, display: string, beta?: boolean, hidePrompt?: boolean }[] = [
@@ -101,10 +97,29 @@ function App() {
 		{ code: 'sv', display: 'Svenska' },
 		{ code: 'tr', display: 'Türkçe' },
 		{ code: 'uk', display: 'Українська' },
-		{ code: 'xa', display: '🎺', hidePrompt: true },
-		{ code: 'xt', display: '🎹', beta: true, hidePrompt: true },
+		{ code: 'xa', display: '🎺 Anthem', hidePrompt: true },
+		{ code: 'xt', display: '🎹 Anthem (tones)', beta: true, hidePrompt: true },
 	]
 	const ALL_LANGUAGES = LANGUAGE_DEFS.filter(isVisible)
+
+	// true while flight-mode downloads are in progress, to show it on the toggle
+	const [caching, setCaching] = useState(false)
+	// how many sound files are currently in the cache, shown in settings
+	const [cachedCount, setCachedCount] = useState(0)
+
+	const refreshCacheCount = useCallback(async () => {
+		try {
+			setCachedCount(await idbCount())
+		} catch {
+			// leave the previous count
+		}
+	}, [])
+	useEffect(() => {
+		refreshCacheCount()
+	}, [refreshCacheCount])
+
+	// playback, mute and the feedback sounds
+	const audio = useAudio(refreshCacheCount)
 
 	// user settings (theme + which languages/countries to show on the main screen)
 	const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
@@ -137,14 +152,41 @@ function App() {
 		applyTheme(loaded.theme)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
+
+	// language of the displayed and spoken country name; defaults to the browser's
+	// preferred language on first load (the fallback effect below keeps it visible)
+	const [lang, setLang] = useState<Language>(() => preferredLanguage())
+	const [spokenName, setSpokenName] = useState('')
+
+	// delete only the downloaded sound files (settings stay); not allowed in flight mode
+	const clearSoundCache = useCallback(async () => {
+		try {
+			await idbClear()
+		} catch {
+			// ignore
+		}
+		setCachedCount(0)
+	}, [])
+
+	// Flight mode: download the given sounds into the cache, showing the busy state.
+	const cacheAudioUrls = useCallback(async (audioUrls: string[]) => {
+		setCaching(true)
+		try {
+			await ensureCached(audioUrls)
+		} finally {
+			setCaching(false)
+			refreshCacheCount()
+		}
+	}, [refreshCacheCount])
+
 	const updateSettings = (next: Settings) => {
 		// stop playback when its country, or the selected language, just got hidden —
 		// otherwise the sound would keep playing with no button left to stop it
 		if (
-			(playingCode && next.hiddenCountries.includes(playingCode)) ||
+			(audio.playingCode && next.hiddenCountries.includes(audio.playingCode)) ||
 			next.hiddenLanguages.includes(lang)
 		) {
-			stopSound()
+			audio.stopSound()
 		}
 
 		// flight mode: download what is (or becomes) visible
@@ -174,13 +216,6 @@ function App() {
 		applyTheme(next.theme)
 	}
 
-	const LANGUAGES = ALL_LANGUAGES.filter(l => !settings.hiddenLanguages.includes(l.code))
-
-	// language of the displayed and spoken country name; defaults to the browser's
-	// preferred language on first load (the fallback effect below keeps it visible)
-	const [lang, setLang] = useState<Language>(() => preferredLanguage())
-	const [spokenName, setSpokenName] = useState('')
-
 	// choose a sort mode for the flags; choosing random reshuffles every time
 	const setSort = (mode: SortMode) => {
 		if (mode === 'random') {
@@ -190,6 +225,7 @@ function App() {
 		}
 	}
 
+	const LANGUAGES = ALL_LANGUAGES.filter(l => !settings.hiddenLanguages.includes(l.code))
 	// what the main screen actually shows: all countries sorted by the chosen mode,
 	// then filtered to the visible ones (hidden flags still hold their sorted slot)
 	const COUNTRIES = sortCountries(ALL_COUNTRIES, settings.sortMode, lang, LANGUAGES.length > 0, settings.randomOrder)
@@ -203,300 +239,46 @@ function App() {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [settings.hiddenLanguages])
-	// the sound currently playing, so starting a new one can stop it first
-	const playingAudio = useRef<HTMLAudioElement | null>(null)
-	// code of the country whose sound is playing, to show the play icon on its button
-	const [playingCode, setPlayingCode] = useState<string | null>(null)
-	// true while flight-mode downloads are in progress, to show it on the toggle
-	const [caching, setCaching] = useState(false)
-	// how many sound files are currently in the cache, shown in settings
-	const [cachedCount, setCachedCount] = useState(0)
 
-	// 🔇: when muted, nothing plays (prompts, names, or feedback sounds).
-	// A ref mirrors the state so the audio helpers and pending prompt timers
-	// always see the current value.
-	const [muted, setMuted] = useState(false)
-	const mutedRef = useRef(false)
+	// the sound file of a country's name (or anthem) in the selected language
+	const countryUrl = (code: string) => `/sound/lang/${lang}/${code}.aac`
 
-	const refreshCacheCount = useCallback(async () => {
-		try {
-			setCachedCount(await idbCount())
-		} catch {
-			// leave the previous count
-		}
-	}, [])
-	useEffect(() => {
-		refreshCacheCount()
-	}, [refreshCacheCount])
-
-	// delete only the downloaded sound files (settings stay); not allowed in flight mode
-	const clearSoundCache = useCallback(async () => {
-		try {
-			await idbClear()
-		} catch {
-			// ignore
-		}
-		setCachedCount(0)
-	}, [])
-
-	// Flight mode: download the given sounds into the cache, showing the busy state.
-	const cacheAudioUrls = useCallback(async (audioUrls: string[]) => {
-		setCaching(true)
-		try {
-			await ensureCached(audioUrls)
-		} finally {
-			setCaching(false)
+	// the game: the flags shuffle on every round
+	const game = useGame<Country>({
+		canPlay: LANGUAGES.length > 0 && COUNTRIES.length > 0,
+		buildBoard: () => shuffle(COUNTRIES),
+		promptUrl: c => countryUrl(c.code),
+		preload: async urls => {
+			await ensureCached(urls)
 			refreshCacheCount()
-		}
-	}, [refreshCacheCount])
+		},
+		audio,
+		onRoundStart: () => setSpokenName(''),
+	})
 
-	const playSound = useCallback(async (code: string) => {
-		if (mutedRef.current) return
-		try {
-			const blob = await getAudioBlob(`/sound/lang/${lang}/${code}.aac`)
-			if (!blob) return
-			const objectUrl = URL.createObjectURL(blob)
-			if (playingAudio.current) {
-				playingAudio.current.pause()
-				URL.revokeObjectURL(playingAudio.current.src)
-			}
-			const audio = new Audio(objectUrl)
-			audio.onended = () => {
-				URL.revokeObjectURL(objectUrl)
-				setPlayingCode(null)
-			}
-			playingAudio.current = audio
-			await audio.play()
-			setPlayingCode(code)
-			refreshCacheCount() // playing may have added the file to the cache
-		} catch (e) {
-			console.error(e)
-		}
-	}, [lang, refreshCacheCount])
-
-	// pending "play the next prompt" timer during the game, so it can be cancelled
-	// if the game ends (or is stopped) before it fires — otherwise a late timer
-	// would start a sound after the game is already over
-	const promptTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-	const stopSound = useCallback(() => {
-		if (promptTimer.current) {
-			clearTimeout(promptTimer.current)
-			promptTimer.current = null
-		}
-		if (playingAudio.current) {
-			playingAudio.current.pause()
-			URL.revokeObjectURL(playingAudio.current.src)
-			playingAudio.current = null
-		}
-		setPlayingCode(null)
-	}, [])
-
-	// mute toggle (🔊/🔇): muting also silences whatever is playing right now
-	const toggleMute = () => {
-		const next = !muted
-		mutedRef.current = next
-		if (next) stopSound()
-		setMuted(next)
-	}
-
-	// play a country sound without touching the play-icon UI (used by the game).
-	// Reads from the cache (IndexedDB, works in Safari Lockdown) or the network.
-	const playFile = useCallback(async (url: string) => {
-		if (mutedRef.current) return
-		try {
-			const blob = await getAudioBlob(url)
-			if (!blob) return
-			const objectUrl = URL.createObjectURL(blob)
-			if (playingAudio.current) {
-				playingAudio.current.pause()
-				URL.revokeObjectURL(playingAudio.current.src)
-			}
-			const audio = new Audio(objectUrl)
-			audio.onended = () => URL.revokeObjectURL(objectUrl)
-			playingAudio.current = audio
-			await audio.play()
-		} catch (e) {
-			console.error(e)
-		}
-	}, [])
-
-	// ---- Game mode ----
-	const [gameOn, setGameOn] = useState(false)
-	const [gameFlags, setGameFlags] = useState<Country[]>([]) // shuffled board for this game
-	const [target, setTarget] = useState<string | null>(null) // country code to find
-	const [solved, setSolved] = useState<string[]>([])         // codes already played (guessed or given up)
-	const [wrongGuesses, setWrongGuesses] = useState<string[]>([]) // wrong flags for the CURRENT target (temporarily disabled)
-	const [mistakes, setMistakes] = useState(0)      // wrong taps this game
-	const [giveUps, setGiveUps] = useState(0)        // countries given up on this game
-	const [gaveUpCodes, setGaveUpCodes] = useState<string[]>([]) // codes given up on, to mark them 🤷‍♂️
-	const gameStart = useRef(0)                       // Date.now() when the round began
-	// when the round ended (all played, or ✋): freezes the clock and stats until
-	// 🔄 starts a new round or 🕹️ leaves game mode; null while a round is running
-	const [endedAt, setEndedAt] = useState<number | null>(null)
-	const [feedback, setFeedback] = useState<{ emoji: string, id: number } | null>(null)
-	const feedbackId = useRef(0)
-	const [preparing, setPreparing] = useState(false) // downloading game sounds before start
-
-	// tick every second while a round runs, so the live ⏱️ time updates
-	const [, setClockTick] = useState(0)
-	useEffect(() => {
-		if (!gameOn || endedAt !== null) return
-		const id = setInterval(() => setClockTick(t => t + 1), 1000)
-		return () => clearInterval(id)
-	}, [gameOn, endedAt])
-
-	const canPlayGame = LANGUAGES.length > 0 && COUNTRIES.length > 0
-
-	const formatDuration = (ms: number) => {
-		const total = Math.round(ms / 1000)
-		const m = Math.floor(total / 60)
-		const s = total % 60
-		return m > 0 ? `${m}:${String(s).padStart(2, '0')}` : `${s}s`
-	}
-
-	const flashFeedback = (emoji: string) => {
-		feedbackId.current += 1
-		const id = feedbackId.current
-		setFeedback({ emoji, id })
-		setTimeout(() => setFeedback(f => (f && f.id === id ? null : f)), 700)
-	}
-
-	// start a round (also used by 🔄 to restart): preload the prompt sounds, reset
-	// the counters, pick the first target and turn game mode on
-	const startRound = async () => {
-		if (!canPlayGame || preparing) return
-		stopSound()
-		const board = shuffle(COUNTRIES)
-		// pre-load every prompt sound before the round begins, so gameplay never waits
-		// on the network (cached in IndexedDB, which also works in Safari Lockdown)
-		setPreparing(true)
-		await ensureCached(board.map(c => `/sound/lang/${lang}/${c.code}.aac`))
-		refreshCacheCount()
-		setPreparing(false)
-		const first = randomOf(board)
-		setGameFlags(board)
-		setSolved([])
-		setWrongGuesses([])
-		setMistakes(0)
-		setGiveUps(0)
-		setGaveUpCodes([])
-		setEndedAt(null)
-		setSpokenName('')
-		gameStart.current = Date.now()
-		setTarget(first.code)
-		setGameOn(true)
-		playFile(`/sound/lang/${lang}/${first.code}.aac`)
-	}
-
-	// 🕹️ off: leave game mode entirely (hides the game score and actions)
-	const exitGame = () => {
-		stopSound()
-		setGameOn(false)
-		setTarget(null)
-		setWrongGuesses([])
-		setFeedback(null)
-		setEndedAt(null)
-	}
-
-	// ✋: stop the current round early — freeze the clock and stats, stay in game mode
-	const stopRound = () => {
-		if (target === null) return
-		stopSound()
-		setTarget(null)
-		setWrongGuesses([])
-		setEndedAt(Date.now())
-	}
-
-	// 👂: play the current prompt again
-	const replaySound = () => {
-		if (target === null) return
-		playFile(`/sound/lang/${lang}/${target}.aac`)
-	}
-
-	// mark the target country played and move on (or finish the round)
-	const advance = (code: string) => {
-		// cancel any not-yet-fired next-prompt timer (e.g. the player answered the
-		// last country before the previous prompt was scheduled to play)
-		if (promptTimer.current) {
-			clearTimeout(promptTimer.current)
-			promptTimer.current = null
-		}
-		// reaching the correct answer re-enables the flags marked wrong this round
-		setWrongGuesses([])
-		const nextSolved = [...solved, code]
-		setSolved(nextSolved)
-		const remaining = gameFlags.filter(c => !nextSolved.includes(c.code))
-		if (remaining.length === 0) {
-			// all countries played — the round is over, but game mode stays on until
-			// 🕹️ is clicked again (or 🔄 starts a new round).
-			// stop the last prompt sound (an anthem can run for minutes)
-			stopSound()
-			setTarget(null)
-			setEndedAt(Date.now())
-		} else {
-			const next = randomOf(remaining)
-			setTarget(next.code)
-			// let the feedback land before the next prompt
-			promptTimer.current = setTimeout(() => playFile(`/sound/lang/${lang}/${next.code}.aac`), 650)
-		}
-	}
-
-	const guessFlag = (code: string) => {
-		if (target === null || solved.includes(code) || wrongGuesses.includes(code)) return
-		if (code === target) {
-			if (!mutedRef.current) playFx('correct')
-			flashFeedback('👍')
-			advance(code)
-		} else {
-			// temporarily disable this wrong flag (with a 👎 marker) until the round is won
-			setWrongGuesses(w => (w.includes(code) ? w : [...w, code]))
-			setMistakes(m => m + 1)
-			if (!mutedRef.current) playFx('wrong')
-			flashFeedback('👎')
-		}
-	}
-
-	// give up on the current country: counts as played and as a give-up (not a mistake)
-	const giveUp = () => {
-		if (target === null) return
-		setGiveUps(g => g + 1)
-		setGaveUpCodes(g => (g.includes(target) ? g : [...g, target]))
-		if (!mutedRef.current) playFx('giveup')
-		flashFeedback('🤷‍♂️')
-		advance(target)
-	}
-
-	const board = gameOn ? gameFlags : COUNTRIES
+	const board = game.gameOn ? game.board : COUNTRIES
 	// what the display segment shows: the prompted name during a round (so the
 	// game is playable while muted), otherwise the last clicked name. Languages
 	// flagged hidePrompt (🎺/🎹) keep the prompt secret during a round — unless
 	// the game is muted, where the title is the only prompt left to play by
-	const promptHidden = (ALL_LANGUAGES.find(l => l.code === lang)?.hidePrompt ?? false) && !muted
-	const displayText = gameOn && target !== null
-		? (promptHidden ? '' : (gameFlags.find(c => c.code === target)?.name[lang] ?? ''))
+	const promptHidden = (ALL_LANGUAGES.find(l => l.code === lang)?.hidePrompt ?? false) && !audio.muted
+	const displayText = game.gameOn && game.target !== null
+		? (promptHidden ? '' : (game.board.find(c => c.code === game.target)?.name[lang] ?? ''))
 		: spokenName
 
-	// the display font shrinks (to a limit) before the marquee kicks in: measure
-	// the name at the stylesheet size and scale the font down to fit the segment;
-	// only a name that still overflows at the minimum font starts scrolling
-	const displayRef = useRef<HTMLHeadingElement | null>(null)
-	useLayoutEffect(() => {
-		const el = displayRef.current
-		const box = el?.parentElement
-		if (!el || !box) return
-		const fit = () => {
-			el.style.fontSize = '' // measure at the stylesheet size first
-			const base = parseFloat(getComputedStyle(el).fontSize)
-			if (el.scrollWidth > box.clientWidth) {
-				el.style.fontSize = `${Math.max(18, base * box.clientWidth / el.scrollWidth)}px`
-			}
-		}
-		fit()
-		const ro = new ResizeObserver(fit)
-		ro.observe(box)
-		return () => ro.disconnect()
-	}, [displayText])
+	// UI-string translator, following the interface language chosen in settings
+	// (independent of the content/country-name language; falls back to English)
+	const t = translator(settings.uiLanguage)
+	const setUiLanguage = (code: string) => updateSettings({ ...settings, uiLanguage: code as Language })
+
+	// content languages as { code, display } with names in the UI language,
+	// sorted alphabetically by that display name (using the UI language's collation)
+	const localizedContent = (list: { code: Language, display: string }[]) => list
+		.map(l => ({ code: l.code, display: languageName(t, l.code, l.display) }))
+		.sort((a, b) => a.display.localeCompare(b.display, settings.uiLanguage))
+
+	// shrink the display font before falling back to the marquee
+	const displayRef = useFitText(displayText)
 
 	return (
 		<div className="Flags">
@@ -504,133 +286,115 @@ function App() {
 			    game score, game actions (the last two only in game mode) */}
 			<header className="app-bar">
 				<div className="toolbar">
-				<button
-					className={(gameOn ? 'game-toggle on' : 'game-toggle') + (preparing ? ' busy' : '')}
-					aria-label={gameOn ? 'End game' : 'Start game'}
-					aria-pressed={gameOn}
-					title={
-						gameOn
-							? 'End game mode'
-							: (canPlayGame ? 'Start game' : 'Select at least one language and country to play')
-					}
-					disabled={(!gameOn && !canPlayGame) || preparing}
-					onClick={() => (gameOn ? exitGame() : startRound())}
-				>
-					🕹️
-				</button>
-				<button
-					className={muted ? 'mute-toggle on' : 'mute-toggle'}
-					aria-label={muted ? 'Unmute' : 'Mute'}
-					aria-pressed={muted}
-					title={muted ? 'Unmute sounds' : 'Mute all sounds'}
-					onClick={toggleMute}
-				>
-					{muted ? '🔇' : '🔊'}
-				</button>
-				<select
-					className="language-select"
-					title="Language of the country name"
-					value={lang}
-					disabled={gameOn}
-					onChange={(e) => {
-						setLang(e.target.value as Language)
-						setSpokenName('')
-						stopSound()
-					}}
-				>
-					{LANGUAGES.map(l => (
-						<option key={`lang-${l.code}`} value={l.code}>{l.display}</option>
-					))}
-				</select>
-				<SettingsPanel
-					settings={settings}
-					languages={ALL_LANGUAGES}
-					countries={ALL_COUNTRIES.map(c => ({ code: c.code, flag: c.flag }))}
-					caching={caching}
-					cachedCount={cachedCount}
-					locked={gameOn}
-					onChange={updateSettings}
-					onSetSort={setSort}
-					onClearCache={clearSoundCache}
-				/>
+					<button
+						className={(game.gameOn ? 'game-toggle on' : 'game-toggle') + (game.preparing ? ' busy' : '')}
+						aria-label={game.gameOn ? t('game.end') : t('game.start')}
+						aria-pressed={game.gameOn}
+						title={
+							game.gameOn
+								? t('game.end')
+								: (game.canPlay ? t('game.start') : t('game.selectToPlay'))
+						}
+						disabled={(!game.gameOn && !game.canPlay) || game.preparing}
+						onClick={() => (game.gameOn ? game.exitGame() : game.startRound())}
+					>
+						🕹️
+					</button>
+					<button
+						className={audio.muted ? 'mute-toggle on' : 'mute-toggle'}
+						aria-label={audio.muted ? t('mute.unmute') : t('mute.mute')}
+						aria-pressed={audio.muted}
+						title={audio.muted ? t('mute.unmuteTitle') : t('mute.muteTitle')}
+						onClick={audio.toggleMute}
+					>
+						{audio.muted ? '🔇' : '🔊'}
+					</button>
+					<select
+						className="language-select"
+						title={t('lang.title')}
+						value={lang}
+						disabled={game.target !== null}
+						onChange={(e) => {
+							setLang(e.target.value as Language)
+							setSpokenName('')
+							audio.stopSound()
+						}}
+					>
+						{localizedContent(LANGUAGES).map(l => (
+							<option key={`lang-${l.code}`} value={l.code}>{l.display}</option>
+						))}
+					</select>
+					<SettingsPanel
+						settings={settings}
+						languages={localizedContent(ALL_LANGUAGES)}
+						countries={ALL_COUNTRIES.map(c => ({ code: c.code, flag: c.flag }))}
+						caching={caching}
+						cachedCount={cachedCount}
+						locked={game.gameOn}
+						t={t}
+						uiLanguage={settings.uiLanguage}
+						uiLanguages={UI_LANGUAGES}
+						onSetUiLanguage={setUiLanguage}
+						onChange={updateSettings}
+						onSetSort={setSort}
+						onClearCache={clearSoundCache}
+					/>
 				</div>
 				<div className="display">
 					<h1 className="display-text" ref={displayRef}>
-						{preparing ? '⏳' : displayText}
+						{game.preparing ? '⏳' : displayText}
 					</h1>
 				</div>
-				{gameOn && (
-					<div className="game-score">
-						<span title="Countries played">🏁 {solved.length} / {gameFlags.length}</span>
-						<span title="Mistakes">👎 {mistakes}</span>
-						<span title="Give-ups">🤷‍♂️ {giveUps}</span>
-						<span title="Time">⏱️ {formatDuration((endedAt ?? Date.now()) - gameStart.current)}</span>
-					</div>
+				{game.gameOn && (
+					<GameScore
+						t={t}
+						played={game.solved.length}
+						total={game.board.length}
+						mistakes={game.mistakes}
+						giveUps={game.giveUps}
+						ms={game.elapsedMs}
+					/>
 				)}
-				{gameOn && (
-					<div className="game-actions">
-						<button
-							aria-label="Replay the sound"
-							title="Play the prompt again"
-							disabled={muted || target === null}
-							onClick={replaySound}
-						>
-							👂
-						</button>
-						<button
-							aria-label="Give up"
-							title="Give up: reveal this one and move on"
-							disabled={target === null}
-							onClick={giveUp}
-						>
-							🤷‍♂️
-						</button>
-						<button
-							aria-label="Stop round"
-							title="Stop this round (the score stays until you restart or leave the game)"
-							disabled={target === null}
-							onClick={stopRound}
-						>
-							✋
-						</button>
-						<button
-							aria-label="Restart round"
-							title="Restart: start a new round"
-							disabled={preparing}
-							onClick={startRound}
-						>
-							🔄
-						</button>
-					</div>
+				{game.gameOn && (
+					<GameActions
+						t={t}
+						roundActive={game.target !== null}
+						muted={audio.muted}
+						preparing={game.preparing}
+						onReplay={game.replay}
+						onGiveUp={game.giveUp}
+						onStop={game.stopRound}
+						onRestart={game.startRound}
+					/>
 				)}
 			</header>
 			<hgroup>
 				{board.map(c => {
-					const isGivenUp = gameOn && gaveUpCodes.includes(c.code)
-					const isSolved = gameOn && solved.includes(c.code) && !isGivenUp
-					const isWrong = gameOn && wrongGuesses.includes(c.code)
+					const isGivenUp = game.gameOn && game.gaveUpCodes.includes(c.code)
+					const isSolved = game.gameOn && game.solved.includes(c.code) && !isGivenUp
+					const isWrong = game.gameOn && game.wrongGuesses.includes(c.code)
 					return (
 						<button
 							key={`country-${c.code}`}
-							className={'button-flag' + (playingCode === c.code ? ' playing' : '') + (isWrong ? ' wrong' : '')}
-							title={gameOn ? '' : (LANGUAGES.length > 0 ? c.name[lang] : '🤷‍♂️')}
+							className={'button-flag' + (audio.playingCode === c.code ? ' playing' : '') + (isWrong ? ' wrong' : '')}
+							title={game.gameOn ? '' : (LANGUAGES.length > 0 ? c.name[lang] : '🤷‍♂️')}
 							disabled={isSolved || isGivenUp || isWrong}
 							onClick={() => {
-								if (gameOn) {
-									guessFlag(c.code)
-								} else if (playingCode === c.code) {
-									stopSound()
+								if (game.gameOn) {
+									game.guess(c.code)
+								} else if (audio.playingCode === c.code) {
+									audio.stopSound()
 								} else if (LANGUAGES.length === 0) {
 									// every language is hidden: nothing to say
 									setSpokenName('🤷‍♂️')
 								} else {
-									playSound(c.code)
+									audio.play(countryUrl(c.code), c.code)
 									setSpokenName(c.name[lang])
 								}
 							}}
 						>
 							{c.flag}
-							{playingCode === c.code && <span className="play-icon">▶</span>}
+							{audio.playingCode === c.code && <span className="play-icon">▶</span>}
 							{isSolved && <span className="swatch-mark">👍</span>}
 							{isGivenUp && <span className="swatch-mark">🤷‍♂️</span>}
 							{isWrong && <span className="swatch-mark">👎</span>}
@@ -638,9 +402,9 @@ function App() {
 					)
 				})}
 			</hgroup>
-			{feedback && (
-				<div key={feedback.id} className="game-feedback" aria-hidden="true">
-					{feedback.emoji}
+			{game.feedback && (
+				<div key={game.feedback.id} className="game-feedback" aria-hidden="true">
+					{game.feedback.emoji}
 				</div>
 			)}
 			<Analytics/>
