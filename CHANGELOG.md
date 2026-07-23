@@ -19,6 +19,12 @@
   sorted alphabetically by that displayed name (using the UI language's
   collation). The interface-language dropdown itself keeps native names
   (English, عربي, Deutsch, Svenska) so it is always self-findable
+- Add the United Kingdom 🇬🇧 and Hungary 🇭🇺, with names and Microsoft Edge
+  neural recordings in all ten spoken languages, plus the 🎺 anthem recordings
+  (God Save the King, Himnusz — public-domain U.S. Navy Band performances from
+  Wikimedia Commons, like the existing anthems). The 🎹 anthem-tones (`xt`) for
+  the two are not yet synthesized, but that option is itself beta so it is hidden
+  from production anyway
 ### Changed
 - Label the two anthem options with text instead of a bare emoji: 🎺 → "🎺
   Anthem" (the recorded anthem) and 🎹 → "🎹 Anthem (tones)" (the synthesized
