@@ -30,7 +30,9 @@ import { dk } from './countries/dk'
 import { eg } from './countries/eg'
 import { es } from './countries/es'
 import { fr } from './countries/fr'
+import { gb } from './countries/gb'
 import { gr } from './countries/gr'
+import { hu } from './countries/hu'
 import { iq } from './countries/iq'
 import { ir } from './countries/ir'
 import { it } from './countries/it'
@@ -81,7 +83,7 @@ function sortCountries(countries: Country[], mode: SortMode, lang: Language, has
 
 function App() {
 	// everything the build supports (after the beta feature flag)
-	const ALL_COUNTRIES: Country[] = [ae, al, at, be, ch, cz, de, dk, eg, es, fr, gr, iq, ir, it, lb, lu, nl, no, om, pl, ps, pt, se, sy, th, tn, tr, ua, us, va].filter(isVisible)
+	const ALL_COUNTRIES: Country[] = [ae, al, at, be, ch, cz, de, dk, eg, es, fr, gb, gr, hu, iq, ir, it, lb, lu, nl, no, om, pl, ps, pt, se, sy, th, tn, tr, ua, us, va].filter(isVisible)
 	// hidePrompt: don't write the prompted name in the display during a game —
 	// for 🎺/🎹 the "name" is the anthem title, which would give the country away
 	const LANGUAGE_DEFS: { code: Language, display: string, beta?: boolean, hidePrompt?: boolean }[] = [
