@@ -26,6 +26,10 @@
   the two are not yet synthesized, but that option is itself beta so it is hidden
   from production anyway
 ### Changed
+- Re-record all Arabic country names with ar-SA-Hamed (Saudi, formal MSA),
+  replacing the earlier Amany (Syrian) recordings for clearer, more standard
+  pronunciation. The ten trickiest names are fed diacritized (tashkeel) text so
+  the voice reads them correctly
 - Label the two anthem options with text instead of a bare emoji: 🎺 → "🎺
   Anthem" (the recorded anthem) and 🎹 → "🎹 Anthem (tones)" (the synthesized
   melody). Both keep their icon and are localized like any other content
