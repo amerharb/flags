@@ -14,7 +14,6 @@ export const it: Country = {
 		fa: 'ایتالیا',
 		uk: 'Італія',
 		xa: 'Il Canto degli Italiani',
-		xt: 'Il Canto degli Italiani',
 	},
 	flag: '🇮🇹',
 }

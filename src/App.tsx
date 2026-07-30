@@ -85,7 +85,7 @@ function App() {
 	// everything the build supports (after the beta feature flag)
 	const ALL_COUNTRIES: Country[] = [ae, al, at, be, ch, cz, de, dk, eg, es, fr, gb, gr, hu, iq, ir, it, lb, lu, nl, no, om, pl, ps, pt, se, sy, th, tn, tr, ua, us, va].filter(isVisible)
 	// hidePrompt: don't write the prompted name in the display during a game —
-	// for 🎺/🎹 the "name" is the anthem title, which would give the country away
+	// for 🎺 the "name" is the anthem title, which would give the country away
 	const LANGUAGE_DEFS: { code: Language, display: string, beta?: boolean, hidePrompt?: boolean }[] = [
 		{ code: 'sq', display: 'Shqip' },
 		{ code: 'ar', display: 'عربي' },
@@ -98,7 +98,6 @@ function App() {
 		{ code: 'tr', display: 'Türkçe' },
 		{ code: 'uk', display: 'Українська' },
 		{ code: 'xa', display: '🎺 Anthem', hidePrompt: true },
-		{ code: 'xt', display: '🎹 Anthem (tones)', beta: true, hidePrompt: true },
 	]
 	const ALL_LANGUAGES = LANGUAGE_DEFS.filter(isVisible)
 
@@ -253,13 +252,15 @@ function App() {
 			refreshCacheCount()
 		},
 		audio,
+		// a round is labelled by the language (or 🎺) it was played in
+		mode: lang,
 		onRoundStart: () => setSpokenName(''),
 	})
 
 	const board = game.gameOn ? game.board : COUNTRIES
 	// what the display segment shows: the prompted name during a round (so the
 	// game is playable while muted), otherwise the last clicked name. Languages
-	// flagged hidePrompt (🎺/🎹) keep the prompt secret during a round — unless
+	// flagged hidePrompt (🎺) keep the prompt secret during a round — unless
 	// the game is muted, where the title is the only prompt left to play by
 	const promptHidden = (ALL_LANGUAGES.find(l => l.code === lang)?.hidePrompt ?? false) && !audio.muted
 	const displayText = game.gameOn && game.target !== null
@@ -363,8 +364,7 @@ function App() {
 						preparing={game.preparing}
 						onReplay={game.replay}
 						onGiveUp={game.giveUp}
-						onStop={game.stopRound}
-						onRestart={game.startRound}
+						onToggleRound={game.toggleRound}
 					/>
 				)}
 			</header>
@@ -393,7 +393,7 @@ function App() {
 								}
 							}}
 						>
-							{c.flag}
+							<span className="flag-emoji">{c.flag}</span>
 							{audio.playingCode === c.code && <span className="play-icon">▶</span>}
 							{isSolved && <span className="swatch-mark">👍</span>}
 							{isGivenUp && <span className="swatch-mark">🤷‍♂️</span>}

@@ -14,7 +14,6 @@ export const iq: Country = {
 		fa: 'عراق',
 		uk: 'Ірак',
 		xa: 'موطني',
-		xt: 'موطني',
 	},
 	flag: '🇮🇶',
 }

@@ -14,7 +14,6 @@ export const nl: Country = {
 		fa: 'هلند',
 		uk: 'Нідерланди',
 		xa: 'Het Wilhelmus',
-		xt: 'Het Wilhelmus',
 	},
 	flag: '🇳🇱',
 }

@@ -14,7 +14,6 @@ export const se: Country = {
 		fa: 'سوئد',
 		uk: 'Швеція',
 		xa: 'Du gamla, du fria',
-		xt: 'Du gamla, du fria',
 	},
 	flag: '🇸🇪',
 }

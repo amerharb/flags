@@ -2,6 +2,33 @@
 
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.17.0] (unreleased)
+### Added
+- Two new round sounds: a rising fanfare when a round is played to the end, and
+  a softer two-tone when the player ends it early with ⏹️
+- Keep a result per finished round while game mode is on — `{ solved, total,
+  elapsedMs, mistakes, giveUps, mode }`, where `mode` records which
+  language/anthem type it was played in. A round that ran to the end is simply
+  one where `solved === total`. The list is cleared on leaving game mode
+### Changed
+- Merge the ✋ stop and 🔄 restart buttons into one media-style control: it shows
+  ⏹️ while a round is running and ▶️ once it has ended, so the same spot always
+  stops or starts
+### Removed
+- Remove the 🎹 anthem-tones option (`xt`) entirely: the pure-tone renderings are
+  gone from the language list, the country data, the translations and
+  `public/sound/lang/xt/` (31 files, ~24 MB). The 🎺 recorded anthem stays. The
+  idea lives on in the sister project Anthem, which synthesizes melodies from
+  stored notes instead
+
+## [0.16.1] 2026-07-30
+### Added
+- Bundle a `flags` webfont (`public/flags.woff2`) and use it wherever a country
+  flag emoji is shown (the flag tiles and the settings flag grid), so flags
+  render on platforms/browsers whose OS lacks flag-emoji glyphs (e.g.
+  Windows/Chromium). Scoped to those spots only, with the platform emoji fonts
+  as fallback for everything else
+
 ## [0.16.0] 2026-07-20
 ### Added
 - Localize the interface: all UI text (button tooltips, the "select a language

@@ -14,7 +14,6 @@ export const ch: Country = {
 		fa: 'سوئیس',
 		uk: 'Швейцарія',
 		xa: 'Schweizerpsalm',
-		xt: 'Schweizerpsalm',
 	},
 	flag: '🇨🇭',
 }

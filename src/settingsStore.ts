@@ -45,7 +45,7 @@ export const DEFAULT_SETTINGS: Settings = {
 
 const STORAGE_KEY = 'flags:settings'
 
-// real spoken languages that a browser locale can match (excludes 🎺 xa / 🎹 xt)
+// real spoken languages that a browser locale can match (excludes the 🎺 anthem)
 const SPOKEN_LANGUAGES: Language[] = ['sq', 'ar', 'da', 'en', 'de', 'fa', 'pt', 'sv', 'tr', 'uk']
 // the interface languages we actually have translations for (a subset)
 const UI_LANGUAGE_CODES: Language[] = ['en', 'ar', 'de', 'sv']
@@ -80,7 +80,7 @@ export function preferredUiLanguage(): Language {
 }
 
 // first-run settings: show only the browser's languages (navigator.languages) plus
-// the preferred one and the anthem options 🎺/🎹; everything else starts hidden.
+// the preferred one and the 🎺 anthem option; everything else starts hidden.
 // The UI language follows the browser too (see preferredUiLanguage).
 function firstRunSettings(): Settings {
 	const tags = (typeof navigator !== 'undefined' && navigator.languages) || []

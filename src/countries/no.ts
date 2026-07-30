@@ -14,7 +14,6 @@ export const no: Country = {
 		fa: 'نروژ',
 		uk: 'Норвегія',
 		xa: 'Ja, vi elsker dette landet',
-		xt: 'Ja, vi elsker dette landet',
 	},
 	flag: '🇳🇴',
 }

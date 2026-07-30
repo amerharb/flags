@@ -14,7 +14,6 @@ export const pl: Country = {
 		fa: 'لهستان',
 		uk: 'Польща',
 		xa: 'Mazurek Dąbrowskiego',
-		xt: 'Mazurek Dąbrowskiego',
 	},
 	flag: '🇵🇱',
 }

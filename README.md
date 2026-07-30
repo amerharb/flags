@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.16.0-blue.svg)](https://github.com/amerharb/flags)
+[![Version](https://img.shields.io/badge/version-0.17.0-blue.svg)](https://github.com/amerharb/flags)
 # Flags
 
 Small react project to show country flags (as emoji) and pronounce the country
@@ -52,8 +52,6 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 - Ukrainian
 - 🎺 National Anthem (fictional language code `xa`: shows the anthem title in
   its native language and plays a recorded performance)
-- 🎹 (fictional language code `xt`: shows the anthem title and plays a pure-tone
-  rendering of the melody's main notes)
 
 ## How it works
 Pick a language from the dropdown in the top right, then click a flag to hear
@@ -93,7 +91,7 @@ order (flags and languages always render in the app's own order).
   selected language can be changed only between rounds (after ✋ or when a
   round finishes). Needs at least one language and one country visible.
 - First visit: the starting language and which languages are shown come from
-  your browser's language settings (plus 🎺 and 🎹).
+  your browser's language settings (plus 🎺).
 
 ## How to contribute
 ### Media files
@@ -141,5 +139,3 @@ Vercel integration tool with GitHub.
 - National anthem recordings: [Wikimedia Commons](https://commons.wikimedia.org/)
   public-domain uploads, including performances by the United States Navy Band
   and the USAREUR Band
-- 🎹 pure-tone anthems: synthesized as sine tones from the melody (top voice) of
-  public-domain MIDI transcriptions

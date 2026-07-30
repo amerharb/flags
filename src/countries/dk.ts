@@ -14,7 +14,6 @@ export const dk: Country = {
 		fa: 'دانمارک',
 		uk: 'Данія',
 		xa: 'Der er et yndigt land',
-		xt: 'Der er et yndigt land',
 	},
 	flag: '🇩🇰',
 }

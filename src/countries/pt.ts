@@ -14,7 +14,6 @@ export const pt: Country = {
 		fa: 'پرتغال',
 		uk: 'Португалія',
 		xa: 'A Portuguesa',
-		xt: 'A Portuguesa',
 	},
 	flag: '🇵🇹',
 }

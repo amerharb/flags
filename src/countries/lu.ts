@@ -14,7 +14,6 @@ export const lu: Country = {
 		fa: 'لوکزامبورگ',
 		uk: 'Люксембург',
 		xa: 'Ons Heemecht',
-		xt: 'Ons Heemecht',
 	},
 	flag: '🇱🇺',
 }
