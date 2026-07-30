@@ -125,6 +125,20 @@ button:active {
 	100% { opacity: 0; transform: scale(1.1); }
 }
 
+/* the flags webfont renders country flag emoji even where the OS/browser lacks
+   them (e.g. Windows/Chromium). Scoped to the flag-emoji spots only, with the
+   platform emoji fonts as fallback for everything else. */
+@font-face {
+	font-family: 'flags';
+	src: url('/flags.woff2') format('woff2');
+	font-display: swap;
+}
+
+.flag-emoji,
+.flag-toggle {
+	font-family: 'flags', 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
 .button-flag {
 	background-color: var(--flag-bg);
 	position: relative;
