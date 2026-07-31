@@ -2,6 +2,14 @@
 
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.16.1] 2026-07-30
+### Added
+- Bundle a `flags` webfont (`public/flags.woff2`) and use it wherever a country
+  flag emoji is shown (the flag tiles and the settings flag grid), so flags
+  render on platforms/browsers whose OS lacks flag-emoji glyphs (e.g.
+  Windows/Chromium). Scoped to those spots only, with the platform emoji fonts
+  as fallback for everything else
+
 ## [0.16.0] 2026-07-20
 ### Added
 - Localize the interface: all UI text (button tooltips, the "select a language

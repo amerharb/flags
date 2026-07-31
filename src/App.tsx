@@ -393,7 +393,7 @@ function App() {
 								}
 							}}
 						>
-							{c.flag}
+							<span className="flag-emoji">{c.flag}</span>
 							{audio.playingCode === c.code && <span className="play-icon">▶</span>}
 							{isSolved && <span className="swatch-mark">👍</span>}
 							{isGivenUp && <span className="swatch-mark">🤷‍♂️</span>}
