@@ -4,6 +4,12 @@
 
 ## [0.17.0] (unreleased)
 ### Added
+- Add Slovakia 🇸🇰, Japan 🇯🇵, Morocco 🇲🇦, Gibraltar 🇬🇮, Andorra 🇦🇩, Iceland 🇮🇸,
+  Canada 🇨🇦, Serbia 🇷🇸 and Bulgaria 🇧🇬, with names and recordings in all ten
+  spoken languages, taking the board from 36 to 45 countries. All nine of the
+  Arabic names are fed diacritized (tashkeel) so the voice reads them
+  correctly; the stored spelling stays plain. Gibraltar is a British Overseas
+  Territory rather than a sovereign state, like Scotland above
 - Add Croatia 🇭🇷, Bosnia and Herzegovina 🇧🇦 and Scotland 🏴󠁧󠁢󠁳󠁣󠁴󠁿, with names and
   recordings in all ten spoken languages (each language's existing voice). The
   Arabic for Bosnia and Scotland is fed diacritized (tashkeel), like the other
