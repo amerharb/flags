@@ -17,7 +17,7 @@ export type SortMode = 'iso' | 'lang' | 'random'
 
 export type Settings = {
 	theme: Theme,
-	// the interface language (button tooltips, settings labels): one of the seven
+	// the interface language (button tooltips, settings labels): one of the eight
 	// localized languages, independent of the content (country-name) language
 	uiLanguage: UiLanguage,
 	// codes the user chose to hide from the main screen; empty = show everything,
@@ -55,7 +55,7 @@ function uiTagToCode(tag: string): UiLanguage | null {
 	return (UI_LANGUAGE_CODES as string[]).includes(primary) ? primary as UiLanguage : null
 }
 
-const UI_LANGUAGE_CODES: UiLanguage[] = ['en', 'ar', 'de', 'el', 'sv', 'th', 'tr']
+const UI_LANGUAGE_CODES: UiLanguage[] = ['en', 'ar', 'de', 'el', 'sv', 'th', 'tr', 'zh']
 
 // map a BCP-47 tag (e.g. "en-US", "sv") to a code within the given set, or null
 function tagToCode(tag: string, set: readonly Language[]): Language | null {
