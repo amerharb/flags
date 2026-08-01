@@ -3,6 +3,11 @@
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
 ## [0.17.0] (unreleased)
+### Added
+- Add Simplified Chinese (简体中文) as an interface language, bringing every
+  sister project to the same eight: English, Arabic, German, Greek, Swedish,
+  Thai, Turkish and Simplified Chinese
+
 ### Removed
 - Remove the 🎺 Anthem option entirely: the fictional `xa` language code, the
   anthem title on all 33 countries, its 33 recordings and the `hidePrompt`
