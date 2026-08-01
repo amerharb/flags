@@ -18,7 +18,7 @@ import { ensureCached, idbCount, idbClear } from './audioCache'
 import { useAudio } from './useAudio'
 import { useGame } from './useGame'
 import { useFitText } from './useFitText'
-import { translator, languageName, UI_LANGUAGES } from './i18n'
+import { translator, languageName, UI_LANGUAGES, UiLanguage } from './i18n'
 import { ae } from './countries/ae'
 import { al } from './countries/al'
 import { at } from './countries/at'
@@ -270,7 +270,7 @@ function App() {
 	// UI-string translator, following the interface language chosen in settings
 	// (independent of the content/country-name language; falls back to English)
 	const t = translator(settings.uiLanguage)
-	const setUiLanguage = (code: string) => updateSettings({ ...settings, uiLanguage: code as Language })
+	const setUiLanguage = (code: string) => updateSettings({ ...settings, uiLanguage: code as UiLanguage })
 
 	// content languages as { code, display } with names in the UI language,
 	// sorted alphabetically by that display name (using the UI language's collation)

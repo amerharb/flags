@@ -4,6 +4,7 @@
  * sending the data on every request). Stored as one JSON blob under STORAGE_KEY
  * so new settings can be added over time without new storage keys.
  */
+import { UiLanguage } from './i18n'
 import { Language } from './countries/Country'
 
 export type Theme = 'system' | 'light' | 'dark'
@@ -16,9 +17,9 @@ export type SortMode = 'iso' | 'lang' | 'random'
 
 export type Settings = {
 	theme: Theme,
-	// the interface language (button tooltips, settings labels): one of the four
+	// the interface language (button tooltips, settings labels): one of the seven
 	// localized languages, independent of the content (country-name) language
-	uiLanguage: Language,
+	uiLanguage: UiLanguage,
 	// codes the user chose to hide from the main screen; empty = show everything,
 	// so newly added languages/countries are visible by default
 	hiddenLanguages: Language[],
@@ -48,7 +49,13 @@ const STORAGE_KEY = 'flags:settings'
 // real spoken languages that a browser locale can match (excludes the 🎺 anthem)
 const SPOKEN_LANGUAGES: Language[] = ['sq', 'ar', 'da', 'en', 'de', 'fa', 'pt', 'sv', 'tr', 'uk']
 // the interface languages we actually have translations for (a subset)
-const UI_LANGUAGE_CODES: Language[] = ['en', 'ar', 'de', 'sv']
+// map a BCP-47 tag to one of the interface languages, or null
+function uiTagToCode(tag: string): UiLanguage | null {
+	const primary = tag.toLowerCase().split('-')[0]
+	return (UI_LANGUAGE_CODES as string[]).includes(primary) ? primary as UiLanguage : null
+}
+
+const UI_LANGUAGE_CODES: UiLanguage[] = ['en', 'ar', 'de', 'el', 'sv', 'th', 'tr']
 
 // map a BCP-47 tag (e.g. "en-US", "sv") to a code within the given set, or null
 function tagToCode(tag: string, set: readonly Language[]): Language | null {
@@ -67,16 +74,16 @@ export function preferredLanguage(): Language {
 //   2) else the first of the browser's other languages that is supported
 //   3) else the content-language pick if it happens to be a UI language
 //   4) else English
-export function preferredUiLanguage(): Language {
-	const primary = tagToCode((typeof navigator !== 'undefined' && navigator.language) || '', UI_LANGUAGE_CODES)
+export function preferredUiLanguage(): UiLanguage {
+	const primary = uiTagToCode((typeof navigator !== 'undefined' && navigator.language) || '')
 	if (primary) return primary
 	const tags = (typeof navigator !== 'undefined' && navigator.languages) || []
 	for (const tag of tags) {
-		const m = tagToCode(tag, UI_LANGUAGE_CODES)
+		const m = uiTagToCode(tag)
 		if (m) return m
 	}
 	const content = preferredLanguage()
-	return (UI_LANGUAGE_CODES as string[]).includes(content) ? content : 'en'
+	return (UI_LANGUAGE_CODES as string[]).includes(content) ? content as UiLanguage : 'en'
 }
 
 // first-run settings: show only the browser's languages (navigator.languages) plus
