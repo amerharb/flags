@@ -4,6 +4,13 @@
 
 ## [0.17.0] (unreleased)
 ### Added
+- Add Croatia 🇭🇷, Bosnia and Herzegovina 🇧🇦 and Scotland 🏴󠁧󠁢󠁳󠁣󠁴󠁿, with names and
+  recordings in all ten spoken languages (each language's existing voice). The
+  Arabic for Bosnia and Scotland is fed diacritized (tashkeel), like the other
+  names the voice would otherwise misread. Scotland is the first entry that is
+  not a sovereign state: its code is the subdivision tag `gb-sct` and its flag
+  is an emoji tag sequence rather than a regional-indicator pair — it renders
+  from `flags.woff2` as a single glyph, the same width as the others
 - Add Simplified Chinese (简体中文) as an interface language, bringing every
   sister project to the same eight: English, Arabic, German, Greek, Swedish,
   Thai, Turkish and Simplified Chinese

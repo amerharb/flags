@@ -22,6 +22,7 @@ import { translator, languageName, UI_LANGUAGES, UiLanguage } from './i18n'
 import { ae } from './countries/ae'
 import { al } from './countries/al'
 import { at } from './countries/at'
+import { ba } from './countries/ba'
 import { be } from './countries/be'
 import { ch } from './countries/ch'
 import { cz } from './countries/cz'
@@ -31,7 +32,9 @@ import { eg } from './countries/eg'
 import { es } from './countries/es'
 import { fr } from './countries/fr'
 import { gb } from './countries/gb'
+import { gbSct } from './countries/gb-sct'
 import { gr } from './countries/gr'
+import { hr } from './countries/hr'
 import { hu } from './countries/hu'
 import { iq } from './countries/iq'
 import { ir } from './countries/ir'
@@ -83,7 +86,7 @@ function sortCountries(countries: Country[], mode: SortMode, lang: Language, has
 
 function App() {
 	// everything the build supports (after the beta feature flag)
-	const ALL_COUNTRIES: Country[] = [ae, al, at, be, ch, cz, de, dk, eg, es, fr, gb, gr, hu, iq, ir, it, lb, lu, nl, no, om, pl, ps, pt, se, sy, th, tn, tr, ua, us, va].filter(isVisible)
+	const ALL_COUNTRIES: Country[] = [ae, al, at, ba, be, ch, cz, de, dk, eg, es, fr, gb, gbSct, gr, hr, hu, iq, ir, it, lb, lu, nl, no, om, pl, ps, pt, se, sy, th, tn, tr, ua, us, va].filter(isVisible)
 	const LANGUAGE_DEFS: { code: Language, display: string, beta?: boolean }[] = [
 		{ code: 'sq', display: 'Shqip' },
 		{ code: 'ar', display: 'عربي' },
