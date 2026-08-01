@@ -13,7 +13,6 @@ export const ir: Country = {
 		tr: 'İran',
 		fa: 'ایران',
 		uk: 'Іран',
-		xa: 'سرود ملی جمهوری اسلامی ایران',
 	},
 	flag: '🇮🇷',
 	beta: true,

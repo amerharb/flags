@@ -13,7 +13,6 @@ export const ua: Country = {
 		tr: 'Ukrayna',
 		fa: 'اوکراین',
 		uk: 'Україна',
-		xa: 'Ще не вмерла України і слава, і воля',
 	},
 	flag: '🇺🇦',
 	beta: true,

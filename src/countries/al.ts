@@ -13,7 +13,6 @@ export const al: Country = {
 		tr: 'Arnavutluk',
 		fa: 'آلبانی',
 		uk: 'Албанія',
-		xa: 'Himni i Flamurit',
 	},
 	flag: '🇦🇱',
 }

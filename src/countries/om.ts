@@ -13,7 +13,6 @@ export const om: Country = {
 		tr: 'Umman',
 		fa: 'عمان',
 		uk: 'Оман',
-		xa: 'السلام السلطاني',
 	},
 	flag: '🇴🇲',
 }

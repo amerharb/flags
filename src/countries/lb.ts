@@ -13,7 +13,6 @@ export const lb: Country = {
 		tr: 'Lübnan',
 		fa: 'لبنان',
 		uk: 'Ліван',
-		xa: 'كلّنا للوطن',
 	},
 	flag: '🇱🇧',
 }

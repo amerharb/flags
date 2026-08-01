@@ -13,7 +13,6 @@ export const lu: Country = {
 		tr: 'Lüksemburg',
 		fa: 'لوکزامبورگ',
 		uk: 'Люксембург',
-		xa: 'Ons Heemecht',
 	},
 	flag: '🇱🇺',
 }

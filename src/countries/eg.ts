@@ -13,7 +13,6 @@ export const eg: Country = {
 		tr: 'Mısır',
 		fa: 'مصر',
 		uk: 'Єгипет',
-		xa: 'بلادي بلادي بلادي',
 	},
 	flag: '🇪🇬',
 }

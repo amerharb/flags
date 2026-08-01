@@ -13,7 +13,6 @@ export const es: Country = {
 		tr: 'İspanya',
 		fa: 'اسپانیا',
 		uk: 'Іспанія',
-		xa: 'La Marcha Real',
 	},
 	flag: '🇪🇸',
 }

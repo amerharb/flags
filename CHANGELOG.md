@@ -3,6 +3,12 @@
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
 ## [0.17.0] (unreleased)
+### Removed
+- Remove the 🎺 Anthem option entirely: the fictional `xa` language code, the
+  anthem title on all 33 countries, its 33 recordings and the `hidePrompt`
+  machinery that kept the title secret during a round. National anthems now
+  live in their own sister project, [Anthem](https://github.com/amerharb/anthem)
+
 ### Added
 - Add Greek (Ελληνικά), Thai (ไทย) and Turkish (Türkçe) as interface languages,
   bringing every sister project to the same seven: English, Arabic, German,

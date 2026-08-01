@@ -13,7 +13,6 @@ export const tr: Country = {
 		tr: 'Türkiye',
 		fa: 'ترکیه',
 		uk: 'Туреччина',
-		xa: 'İstiklal Marşı',
 	},
 	flag: '🇹🇷',
 }

@@ -13,7 +13,6 @@ export const no: Country = {
 		tr: 'Norveç',
 		fa: 'نروژ',
 		uk: 'Норвегія',
-		xa: 'Ja, vi elsker dette landet',
 	},
 	flag: '🇳🇴',
 }

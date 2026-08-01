@@ -13,7 +13,6 @@ export const fr: Country = {
 		tr: 'Fransa',
 		fa: 'فرانسه',
 		uk: 'Франція',
-		xa: 'La Marseillaise',
 	},
 	flag: '🇫🇷',
 }

@@ -13,7 +13,6 @@ export const us: Country = {
 		tr: 'Amerika Birleşik Devletleri',
 		fa: 'ایالات متحده آمریکا',
 		uk: 'Сполучені Штати Америки',
-		xa: 'The Star-Spangled Banner',
 	},
 	flag: '🇺🇸',
 }

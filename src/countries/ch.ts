@@ -13,7 +13,6 @@ export const ch: Country = {
 		tr: 'İsviçre',
 		fa: 'سوئیس',
 		uk: 'Швейцарія',
-		xa: 'Schweizerpsalm',
 	},
 	flag: '🇨🇭',
 }

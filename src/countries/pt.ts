@@ -13,7 +13,6 @@ export const pt: Country = {
 		tr: 'Portekiz',
 		fa: 'پرتغال',
 		uk: 'Португалія',
-		xa: 'A Portuguesa',
 	},
 	flag: '🇵🇹',
 }

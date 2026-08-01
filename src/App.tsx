@@ -84,9 +84,7 @@ function sortCountries(countries: Country[], mode: SortMode, lang: Language, has
 function App() {
 	// everything the build supports (after the beta feature flag)
 	const ALL_COUNTRIES: Country[] = [ae, al, at, be, ch, cz, de, dk, eg, es, fr, gb, gr, hu, iq, ir, it, lb, lu, nl, no, om, pl, ps, pt, se, sy, th, tn, tr, ua, us, va].filter(isVisible)
-	// hidePrompt: don't write the prompted name in the display during a game —
-	// for 🎺 the "name" is the anthem title, which would give the country away
-	const LANGUAGE_DEFS: { code: Language, display: string, beta?: boolean, hidePrompt?: boolean }[] = [
+	const LANGUAGE_DEFS: { code: Language, display: string, beta?: boolean }[] = [
 		{ code: 'sq', display: 'Shqip' },
 		{ code: 'ar', display: 'عربي' },
 		{ code: 'da', display: 'Dansk' },
@@ -97,7 +95,6 @@ function App() {
 		{ code: 'sv', display: 'Svenska' },
 		{ code: 'tr', display: 'Türkçe' },
 		{ code: 'uk', display: 'Українська' },
-		{ code: 'xa', display: '🎺 Anthem', hidePrompt: true },
 	]
 	const ALL_LANGUAGES = LANGUAGE_DEFS.filter(isVisible)
 
@@ -259,12 +256,9 @@ function App() {
 
 	const board = game.gameOn ? game.board : COUNTRIES
 	// what the display segment shows: the prompted name during a round (so the
-	// game is playable while muted), otherwise the last clicked name. Languages
-	// flagged hidePrompt (🎺) keep the prompt secret during a round — unless
-	// the game is muted, where the title is the only prompt left to play by
-	const promptHidden = (ALL_LANGUAGES.find(l => l.code === lang)?.hidePrompt ?? false) && !audio.muted
+	// game is playable while muted), otherwise the last clicked name
 	const displayText = game.gameOn && game.target !== null
-		? (promptHidden ? '' : (game.board.find(c => c.code === game.target)?.name[lang] ?? ''))
+		? (game.board.find(c => c.code === game.target)?.name[lang] ?? '')
 		: spokenName
 
 	// UI-string translator, following the interface language chosen in settings

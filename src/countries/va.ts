@@ -13,7 +13,6 @@ export const va: Country = {
 		tr: 'Vatikan',
 		fa: 'واتیکان',
 		uk: 'Ватикан',
-		xa: 'Inno e Marcia Pontificale',
 	},
 	flag: '🇻🇦',
 }
