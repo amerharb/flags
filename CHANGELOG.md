@@ -2,6 +2,59 @@
 
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.17.0] 2026-08-03
+### Fixed
+- Correct the README: regenerate the country list from the data (45, was 30
+  listed), drop the removed 🎺 anthem option, and fix the Arabic credit — the
+  set was re-recorded with Hamed, not Amany
+### Added
+- Add Slovakia 🇸🇰, Japan 🇯🇵, Morocco 🇲🇦, Gibraltar 🇬🇮, Andorra 🇦🇩, Iceland 🇮🇸,
+  Canada 🇨🇦, Serbia 🇷🇸 and Bulgaria 🇧🇬, with names and recordings in all ten
+  spoken languages, taking the board from 36 to 45 countries. All nine of the
+  Arabic names are fed diacritized (tashkeel) so the voice reads them
+  correctly; the stored spelling stays plain. Gibraltar is a British Overseas
+  Territory rather than a sovereign state, like Scotland above
+- Add Croatia 🇭🇷, Bosnia and Herzegovina 🇧🇦 and Scotland 🏴󠁧󠁢󠁳󠁣󠁴󠁿, with names and
+  recordings in all ten spoken languages (each language's existing voice). The
+  Arabic for Bosnia and Scotland is fed diacritized (tashkeel), like the other
+  names the voice would otherwise misread. Scotland is the first entry that is
+  not a sovereign state: its code is the subdivision tag `gb-sct` and its flag
+  is an emoji tag sequence rather than a regional-indicator pair — it renders
+  from `flags.woff2` as a single glyph, the same width as the others
+- Add Simplified Chinese (简体中文) as an interface language, bringing every
+  sister project to the same eight: English, Arabic, German, Greek, Swedish,
+  Thai, Turkish and Simplified Chinese
+
+### Removed
+- Remove the 🎺 Anthem option entirely: the fictional `xa` language code, the
+  anthem title on all 33 countries, its 33 recordings and the `hidePrompt`
+  machinery that kept the title secret during a round. National anthems now
+  live in their own sister project, [Anthem](https://github.com/amerharb/anthem)
+
+### Added
+- Add Greek (Ελληνικά), Thai (ไทย) and Turkish (Türkçe) as interface languages,
+  bringing every sister project to the same seven: English, Arabic, German,
+  Greek, Swedish, Thai and Turkish
+- The interface language is now a type of its own, separate from the content
+  (country-name) languages, so a new UI language no longer asks for 99 country
+  translations
+- Two new round sounds: a rising fanfare when a round is played to the end, and
+  a softer two-tone when the player ends it early with ⏹️
+- Keep a result per finished round while game mode is on — `{ solved, total,
+  elapsedMs, mistakes, giveUps, mode }`, where `mode` records which
+  language/anthem type it was played in. A round that ran to the end is simply
+  one where `solved === total`. The list is cleared on leaving game mode
+### Changed
+- Merge the ✋ stop and 🔄 restart buttons into one media-style control: it shows
+  ⏹️ while a round is running and ▶️ once it has ended, so the same spot always
+  stops or starts
+### Removed
+- Remove the 🎹 anthem-tones option (`xt`) entirely: the pure-tone renderings are
+  gone from the language list, the country data, the translations and
+  `public/sound/lang/xt/` (31 files, ~24 MB). The 🎺 recorded anthem stays. The
+  idea lives on in the sister project Anthem, which synthesizes melodies from
+  stored notes instead
+
 ## [0.16.1] 2026-07-30
 ### Added
 - Bundle a `flags` webfont (`public/flags.woff2`) and use it wherever a country

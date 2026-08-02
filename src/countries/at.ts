@@ -13,8 +13,6 @@ export const at: Country = {
 		tr: 'Avusturya',
 		fa: 'اتریش',
 		uk: 'Австрія',
-		xa: 'Land der Berge, Land am Strome',
-		xt: 'Land der Berge, Land am Strome',
 	},
 	flag: '🇦🇹',
 }

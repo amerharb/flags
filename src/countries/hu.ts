@@ -13,8 +13,6 @@ export const hu: Country = {
 		tr: 'Macaristan',
 		fa: 'مجارستان',
 		uk: 'Угорщина',
-		xa: 'Himnusz',
-		xt: 'Himnusz',
 	},
 	flag: '🇭🇺',
 }

@@ -13,8 +13,6 @@ export const ps: Country = {
 		tr: 'Filistin',
 		fa: 'فلسطین',
 		uk: 'Палестина',
-		xa: 'فدائي',
-		xt: 'فدائي',
 	},
 	flag: '🇵🇸',
 }

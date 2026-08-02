@@ -13,8 +13,6 @@ export const tn: Country = {
 		tr: 'Tunus',
 		fa: 'تونس',
 		uk: 'Туніс',
-		xa: 'حماة الحمى',
-		xt: 'حماة الحمى',
 	},
 	flag: '🇹🇳',
 }

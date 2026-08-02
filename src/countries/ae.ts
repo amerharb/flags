@@ -13,8 +13,6 @@ export const ae: Country = {
 		tr: 'Birleşik Arap Emirlikleri',
 		fa: 'امارات متحده عربی',
 		uk: 'Обʼєднані Арабські Емірати',
-		xa: 'عيشي بلادي',
-		xt: 'عيشي بلادي',
 	},
 	flag: '🇦🇪',
 }

@@ -18,11 +18,15 @@ import { ensureCached, idbCount, idbClear } from './audioCache'
 import { useAudio } from './useAudio'
 import { useGame } from './useGame'
 import { useFitText } from './useFitText'
-import { translator, languageName, UI_LANGUAGES } from './i18n'
+import { translator, languageName, UI_LANGUAGES, UiLanguage } from './i18n'
+import { ad } from './countries/ad'
 import { ae } from './countries/ae'
 import { al } from './countries/al'
 import { at } from './countries/at'
+import { ba } from './countries/ba'
 import { be } from './countries/be'
+import { bg } from './countries/bg'
+import { ca } from './countries/ca'
 import { ch } from './countries/ch'
 import { cz } from './countries/cz'
 import { de } from './countries/de'
@@ -31,23 +35,31 @@ import { eg } from './countries/eg'
 import { es } from './countries/es'
 import { fr } from './countries/fr'
 import { gb } from './countries/gb'
+import { gbSct } from './countries/gb-sct'
+import { gi } from './countries/gi'
 import { gr } from './countries/gr'
+import { hr } from './countries/hr'
 import { hu } from './countries/hu'
 import { iq } from './countries/iq'
 import { ir } from './countries/ir'
+import { is } from './countries/is'
 import { it } from './countries/it'
+import { jp } from './countries/jp'
 import { lb } from './countries/lb'
 import { lu } from './countries/lu'
+import { ma } from './countries/ma'
 import { nl } from './countries/nl'
 import { no } from './countries/no'
 import { om } from './countries/om'
 import { pl } from './countries/pl'
 import { ps } from './countries/ps'
 import { pt } from './countries/pt'
+import { rs } from './countries/rs'
 import { se } from './countries/se'
+import { sk } from './countries/sk'
 import { sy } from './countries/sy'
-import { tn } from './countries/tn'
 import { th } from './countries/th'
+import { tn } from './countries/tn'
 import { tr } from './countries/tr'
 import { ua } from './countries/ua'
 import { us } from './countries/us'
@@ -83,10 +95,8 @@ function sortCountries(countries: Country[], mode: SortMode, lang: Language, has
 
 function App() {
 	// everything the build supports (after the beta feature flag)
-	const ALL_COUNTRIES: Country[] = [ae, al, at, be, ch, cz, de, dk, eg, es, fr, gb, gr, hu, iq, ir, it, lb, lu, nl, no, om, pl, ps, pt, se, sy, th, tn, tr, ua, us, va].filter(isVisible)
-	// hidePrompt: don't write the prompted name in the display during a game —
-	// for 🎺/🎹 the "name" is the anthem title, which would give the country away
-	const LANGUAGE_DEFS: { code: Language, display: string, beta?: boolean, hidePrompt?: boolean }[] = [
+	const ALL_COUNTRIES: Country[] = [ad, ae, al, at, ba, be, bg, ca, ch, cz, de, dk, eg, es, fr, gb, gbSct, gi, gr, hr, hu, iq, ir, is, it, jp, lb, lu, ma, nl, no, om, pl, ps, pt, rs, se, sk, sy, th, tn, tr, ua, us, va].filter(isVisible)
+	const LANGUAGE_DEFS: { code: Language, display: string, beta?: boolean }[] = [
 		{ code: 'sq', display: 'Shqip' },
 		{ code: 'ar', display: 'عربي' },
 		{ code: 'da', display: 'Dansk' },
@@ -97,8 +107,6 @@ function App() {
 		{ code: 'sv', display: 'Svenska' },
 		{ code: 'tr', display: 'Türkçe' },
 		{ code: 'uk', display: 'Українська' },
-		{ code: 'xa', display: '🎺 Anthem', hidePrompt: true },
-		{ code: 'xt', display: '🎹 Anthem (tones)', beta: true, hidePrompt: true },
 	]
 	const ALL_LANGUAGES = LANGUAGE_DEFS.filter(isVisible)
 
@@ -253,23 +261,22 @@ function App() {
 			refreshCacheCount()
 		},
 		audio,
+		// a round is labelled by the language (or 🎺) it was played in
+		mode: lang,
 		onRoundStart: () => setSpokenName(''),
 	})
 
 	const board = game.gameOn ? game.board : COUNTRIES
 	// what the display segment shows: the prompted name during a round (so the
-	// game is playable while muted), otherwise the last clicked name. Languages
-	// flagged hidePrompt (🎺/🎹) keep the prompt secret during a round — unless
-	// the game is muted, where the title is the only prompt left to play by
-	const promptHidden = (ALL_LANGUAGES.find(l => l.code === lang)?.hidePrompt ?? false) && !audio.muted
+	// game is playable while muted), otherwise the last clicked name
 	const displayText = game.gameOn && game.target !== null
-		? (promptHidden ? '' : (game.board.find(c => c.code === game.target)?.name[lang] ?? ''))
+		? (game.board.find(c => c.code === game.target)?.name[lang] ?? '')
 		: spokenName
 
 	// UI-string translator, following the interface language chosen in settings
 	// (independent of the content/country-name language; falls back to English)
 	const t = translator(settings.uiLanguage)
-	const setUiLanguage = (code: string) => updateSettings({ ...settings, uiLanguage: code as Language })
+	const setUiLanguage = (code: string) => updateSettings({ ...settings, uiLanguage: code as UiLanguage })
 
 	// content languages as { code, display } with names in the UI language,
 	// sorted alphabetically by that display name (using the UI language's collation)
@@ -363,8 +370,7 @@ function App() {
 						preparing={game.preparing}
 						onReplay={game.replay}
 						onGiveUp={game.giveUp}
-						onStop={game.stopRound}
-						onRestart={game.startRound}
+						onToggleRound={game.toggleRound}
 					/>
 				)}
 			</header>

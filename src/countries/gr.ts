@@ -13,8 +13,6 @@ export const gr: Country = {
 		tr: 'Yunanistan',
 		fa: 'یونان',
 		uk: 'Греція',
-		xa: 'Ύμνος εις την Ελευθερίαν',
-		xt: 'Ύμνος εις την Ελευθερίαν',
 	},
 	flag: '🇬🇷',
 }

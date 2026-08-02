@@ -13,8 +13,6 @@ export const be: Country = {
 		tr: 'Belçika',
 		fa: 'بلژیک',
 		uk: 'Бельгія',
-		xa: 'La Brabançonne',
-		xt: 'La Brabançonne',
 	},
 	flag: '🇧🇪',
 }

@@ -13,8 +13,6 @@ export const gb: Country = {
 		tr: 'Birleşik Krallık',
 		fa: 'پادشاهی متحده',
 		uk: 'Велика Британія',
-		xa: 'God Save the King',
-		xt: 'God Save the King',
 	},
 	flag: '🇬🇧',
 }

@@ -13,8 +13,6 @@ export const cz: Country = {
 		tr: 'Çekya',
 		fa: 'جمهوری چک',
 		uk: 'Чехія',
-		xa: 'Kde domov můj',
-		xt: 'Kde domov můj',
 	},
 	flag: '🇨🇿',
 }

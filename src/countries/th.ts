@@ -13,8 +13,6 @@ export const th: Country = {
 		tr: 'Tayland',
 		fa: 'تایلند',
 		uk: 'Таїланд',
-		xa: 'เพลงชาติไทย',
-		xt: 'เพลงชาติไทย',
 	},
 	flag: '🇹🇭',
 }
