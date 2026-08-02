@@ -2,29 +2,43 @@
 # Flags
 
 Small react project to show country flags (as emoji) and pronounce the country
-name out loud in the selected language, or play the national anthem.
-Sister project of [Arqaam](https://github.com/amerharb/arqaam).
+name out loud in the selected language. Sister project of
+[Arqaam](https://github.com/amerharb/arqaam); national anthems now live in
+[Anthem](https://github.com/amerharb/anthem).
 
 ## Countries supported
 - Albania 🇦🇱
+- Andorra 🇦🇩
 - Austria 🇦🇹
 - Belgium 🇧🇪
+- Bosnia and Herzegovina 🇧🇦
+- Bulgaria 🇧🇬
+- Canada 🇨🇦
+- Croatia 🇭🇷
 - Czech Republic 🇨🇿
 - Denmark 🇩🇰
 - Egypt 🇪🇬
 - France 🇫🇷
 - Germany 🇩🇪
+- Gibraltar 🇬🇮
 - Greece 🇬🇷
+- Hungary 🇭🇺
+- Iceland 🇮🇸
 - Iraq 🇮🇶
 - Italy 🇮🇹
+- Japan 🇯🇵
 - Lebanon 🇱🇧
 - Luxembourg 🇱🇺
+- Morocco 🇲🇦
 - Netherlands 🇳🇱
 - Norway 🇳🇴
 - Oman 🇴🇲
 - Palestine 🇵🇸
 - Poland 🇵🇱
 - Portugal 🇵🇹
+- Scotland 🏴󠁧󠁢󠁳󠁣󠁴󠁿
+- Serbia 🇷🇸
+- Slovakia 🇸🇰
 - Spain 🇪🇸
 - Sweden 🇸🇪
 - Switzerland 🇨🇭
@@ -33,6 +47,7 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 - Tunisia 🇹🇳
 - Turkey 🇹🇷
 - United Arab Emirates 🇦🇪
+- United Kingdom 🇬🇧
 - United States of America 🇺🇸
 - Vatican City 🇻🇦
 - Iran 🇮🇷, Ukraine 🇺🇦 (beta — visible in development, hidden from production
@@ -50,12 +65,13 @@ Sister project of [Arqaam](https://github.com/amerharb/arqaam).
 - Swedish
 - Turkish
 - Ukrainian
-- 🎺 National Anthem (fictional language code `xa`: shows the anthem title in
-  its native language and plays a recorded performance)
 
 ## How it works
 Pick a language from the dropdown in the top right, then click a flag to hear
-the country's name spoken (or its anthem played) and see it written.
+the country's name spoken and see it written.
+
+The interface is separately available in eight languages: English, Arabic,
+German, Greek, Swedish, Thai, Turkish and Simplified Chinese.
 
 ### URL parameters
 The visible flags and languages can be set from the URL, for a shareable view:
@@ -91,12 +107,12 @@ order (flags and languages always render in the app's own order).
   selected language can be changed only between rounds (after ✋ or when a
   round finishes). Needs at least one language and one country visible.
 - First visit: the starting language and which languages are shown come from
-  your browser's language settings (plus 🎺).
+  your browser's language settings.
 
 ## How to contribute
 ### Media files
 To support a new country, one sound file in AAC format is needed per language,
-with the spoken country name (or the anthem for `xa`).
+with the spoken country name.
 
 Audio files live under `public/sound/lang/<lang>/<country-code>.aac`, for example
 `public/sound/lang/en/ps.aac` for Palestine in English.
@@ -132,10 +148,7 @@ Vercel integration tool with GitHub.
 ## Credits
 ### For sound
 - Country name pronunciations: Microsoft Edge neural text-to-speech for
-  English (Ava), Arabic (Amany, Syrian Arabic), German (Katja),
-  Swedish (Sofie), Danish (Christel), Portuguese (Raquel), Turkish (Emel) and
+  English (Ava), Arabic (Hamed, Saudi — formal MSA), German (Katja),
+  Swedish (Sofie), Danish (Christel), Portuguese (Raquel), Turkish (Emel),
   Persian (Dilara) and Ukrainian (Polina), and Google Translate text-to-speech
   for Albanian
-- National anthem recordings: [Wikimedia Commons](https://commons.wikimedia.org/)
-  public-domain uploads, including performances by the United States Navy Band
-  and the USAREUR Band

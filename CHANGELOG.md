@@ -2,7 +2,11 @@
 
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
-## [0.17.0] (unreleased)
+## [0.17.0] 2026-08-03
+### Fixed
+- Correct the README: regenerate the country list from the data (45, was 30
+  listed), drop the removed 🎺 anthem option, and fix the Arabic credit — the
+  set was re-recorded with Hamed, not Amany
 ### Added
 - Add Slovakia 🇸🇰, Japan 🇯🇵, Morocco 🇲🇦, Gibraltar 🇬🇮, Andorra 🇦🇩, Iceland 🇮🇸,
   Canada 🇨🇦, Serbia 🇷🇸 and Bulgaria 🇧🇬, with names and recordings in all ten
