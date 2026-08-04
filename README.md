@@ -1,4 +1,14 @@
-[![Version](https://img.shields.io/badge/version-0.17.0-blue.svg)](https://github.com/amerharb/flags)
+> [!IMPORTANT]
+> **This repository has moved.**
+>
+> Flags now lives in the [**sawt**](https://github.com/amerharb/sawt)
+> monorepo, at [`apps/flags`](https://github.com/amerharb/sawt/tree/main/apps/flags),
+> alongside its four sister apps and a shared landing page.
+>
+> This repository is archived and read-only. It keeps the history up to the
+> move; everything after it happens in `sawt`.
+
+[![Version](https://img.shields.io/badge/version-0.18.0-blue.svg)](https://github.com/amerharb/flags)
 # Flags
 
 Small react project to show country flags (as emoji) and pronounce the country
@@ -101,10 +111,10 @@ order (flags and languages always render in the app's own order).
   mistakes, give-ups, time) shown live in the app bar next to the round
   buttons. The prompted name is also written in the display segment (even
   while muted), and the 👂 button plays it again. When every country has been played the round is over — the clock
-  freezes and the score stays — but game mode stays on: ✋ stops a round
-  early, 🔄 starts a fresh one, and pressing 🕹️ again leaves game mode. Theme and flight mode
+  freezes and the score stays — but game mode stays on: ⏹️ stops a round that is
+  running and ▶️ starts the next, and pressing 🕹️ again leaves game mode. Theme and flight mode
   stay changeable mid-game; the language and country lists are locked, and the
-  selected language can be changed only between rounds (after ✋ or when a
+  selected language can be changed only between rounds (after ⏹️ or when a
   round finishes). Needs at least one language and one country visible.
 - First visit: the starting language and which languages are shown come from
   your browser's language settings.
